@@ -1,0 +1,185 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use App\Enums\TrainingEventStatus;
+use App\Models\CourseTemplate;
+use App\Models\Product;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this->seedAdmin();
+        $this->seedCourses();
+        $this->seedProducts();
+    }
+
+    protected function seedAdmin(): void
+    {
+        $email = (string) env('ADMIN_EMAIL', 'dirk@tuneupprecision.co.za');
+        $password = (string) env('ADMIN_PASSWORD', 'password');
+
+        $admin = User::updateOrCreate(
+            ['email' => $email],
+            [
+                'name' => (string) env('ADMIN_NAME', 'Dirk'),
+                'password' => Hash::make($password),
+                'email_verified_at' => now(),
+            ],
+        );
+
+        $this->command?->info('──────────────────────────────────────────────');
+        $this->command?->info('  Admin login (Filament /admin):');
+        $this->command?->info("    Email:    {$admin->email}");
+        $this->command?->info("    Password: {$password}");
+        $this->command?->info('──────────────────────────────────────────────');
+    }
+
+    protected function seedCourses(): void
+    {
+        $templates = [
+            [
+                'title' => 'Zero to First Steel',
+                'level' => 'Level 01 · Foundation',
+                'blurb' => 'For new precision shooters. Rifle setup, a true 100 m zero and your first hits on distant steel.',
+                'base_price_cents' => 185000,
+                'specs' => [
+                    'Duration' => '1 day · 08:00–16:00',
+                    'Prerequisite' => 'None',
+                    'Max distance' => '600 m',
+                    'Squad' => '6 shooters',
+                ],
+            ],
+            [
+                'title' => 'Applied Long Range',
+                'level' => 'Level 02 · Applied',
+                'blurb' => 'Build and true your ballistic solution, read wind properly, and stretch out past a kilometre with confidence.',
+                'base_price_cents' => 340000,
+                'specs' => [
+                    'Duration' => '2 days · weekend',
+                    'Prerequisite' => 'Solid zero',
+                    'Max distance' => '1200 m',
+                    'Squad' => '6 shooters',
+                ],
+            ],
+            [
+                'title' => 'Match-Ready',
+                'level' => 'Level 03 · Competition',
+                'blurb' => 'Positional stages under a clock. Barricades, tank traps and transitions — the skills that score on match day.',
+                'base_price_cents' => 420000,
+                'specs' => [
+                    'Duration' => '1 day · intensive',
+                    'Prerequisite' => 'Level 02 or PRS',
+                    'Max distance' => '1000 m positional',
+                    'Squad' => '6 shooters',
+                ],
+            ],
+        ];
+
+        foreach ($templates as $index => $data) {
+            $template = CourseTemplate::updateOrCreate(
+                ['slug' => Str::slug($data['title'])],
+                [
+                    'title' => $data['title'],
+                    'level' => $data['level'],
+                    'blurb' => $data['blurb'],
+                    'specs' => $data['specs'],
+                    'base_price_cents' => $data['base_price_cents'],
+                    'default_capacity' => 6,
+                    'is_active' => true,
+                ],
+            );
+
+            // Two published future events per template.
+            $template->trainingEvents()->updateOrCreate(
+                ['starts_on' => now()->addWeeks(3 + $index)->toDateString()],
+                [
+                    'venue' => 'Private range · Gauteng',
+                    'capacity' => 6,
+                    'seats_taken' => 2,
+                    'status' => TrainingEventStatus::Published,
+                ],
+            );
+
+            $template->trainingEvents()->updateOrCreate(
+                ['starts_on' => now()->addWeeks(9 + $index)->toDateString()],
+                [
+                    'venue' => 'Private range · Gauteng',
+                    'capacity' => 6,
+                    'seats_taken' => 0,
+                    'status' => TrainingEventStatus::Published,
+                ],
+            );
+
+            // Give the Applied course one deliberately full event to exercise
+            // the public "Fully booked" state (which DOES display).
+            if ($template->slug === 'applied-long-range') {
+                $template->trainingEvents()->updateOrCreate(
+                    ['starts_on' => now()->addWeeks(2)->toDateString()],
+                    [
+                        'venue' => 'Private range · Gauteng',
+                        'capacity' => 6,
+                        'seats_taken' => 6,
+                        'status' => TrainingEventStatus::Full,
+                    ],
+                );
+            }
+        }
+    }
+
+    protected function seedProducts(): void
+    {
+        $products = [
+            [
+                'name' => 'Tune Up Trucker Cap',
+                'category' => 'Headwear',
+                'description' => '3D puff-embroidered trucker cap in tactical charcoal with a copper reticle.',
+                'price_cents' => 32000,
+                'stock_qty' => 25,
+            ],
+            [
+                'name' => 'Reticle Morale Patch',
+                'category' => 'Patch · Velcro',
+                'description' => 'PVC velcro-backed morale patch featuring the Tune Up reticle mark.',
+                'price_cents' => 15000,
+                'stock_qty' => 40,
+            ],
+            [
+                'name' => 'Weatherproof DOPE Cards',
+                'category' => 'Range · Data',
+                'description' => 'Set of 5 weatherproof DOPE cards for logging your ballistic solution on the line.',
+                'price_cents' => 18000,
+                'stock_qty' => 60,
+            ],
+            [
+                // Deliberately out of stock — proves the available() scope hides it.
+                'name' => 'Mini IPSC Gong 200mm',
+                'category' => 'Steel · 6mm',
+                'description' => '200 mm AR500 mini IPSC gong, rated for 6 mm centrefire at distance.',
+                'price_cents' => 69000,
+                'stock_qty' => 0,
+            ],
+        ];
+
+        foreach ($products as $data) {
+            Product::updateOrCreate(
+                ['slug' => Str::slug($data['name'])],
+                [
+                    'name' => $data['name'],
+                    'category' => $data['category'],
+                    'description' => $data['description'],
+                    'price_cents' => $data['price_cents'],
+                    'stock_qty' => $data['stock_qty'],
+                    'is_active' => true,
+                ],
+            );
+        }
+    }
+}

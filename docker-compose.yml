@@ -1,0 +1,186 @@
+# Tune Up Docker Stack (PostgreSQL)
+# Deploy:
+#   docker compose build --no-cache app && docker compose up -d --force-recreate app scheduler queue
+#
+# Reads secrets from a local .env (see docker/env.template). The app is served
+# on APP_PORT (default 8093) — put a reverse proxy (Nginx Proxy Manager) with
+# SSL in front, routing tuneupprecision.co.za -> 127.0.0.1:${APP_PORT}.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tuneupprecision-app:latest
+    container_name: tuneupprecision-app
+    restart: unless-stopped
+    environment:
+      - APP_NAME=${APP_NAME:-Tune Up Precision}
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_TIMEZONE=Africa/Johannesburg
+      - TZ=Africa/Johannesburg
+      - APP_URL=${APP_URL:-https://tuneupprecision.co.za}
+      - APP_KEY=${APP_KEY}
+      - RUN_SEED=${RUN_SEED:-false}
+      - ADMIN_NAME=${ADMIN_NAME:-Dirk}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-dirk@tuneupprecision.co.za}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-tuneupprecision}
+      - DB_USERNAME=${DB_USERNAME:-tuneup}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_CLIENT=phpredis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_STORE=redis
+      - SESSION_DRIVER=redis
+      - SESSION_LIFETIME=120
+      - SESSION_DOMAIN=${SESSION_DOMAIN:-.tuneupprecision.co.za}
+      - QUEUE_CONNECTION=redis
+      - FILESYSTEM_DISK=public
+      - MAIL_MAILER=${MAIL_MAILER:-log}
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-noreply@tuneupprecision.co.za}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-Tune Up}
+      - EFT_BANK_NAME=${EFT_BANK_NAME:-FNB}
+      - EFT_ACCOUNT_NAME=${EFT_ACCOUNT_NAME:-Tune Up Long Range Precision Shooting}
+      - EFT_ACCOUNT_NUMBER=${EFT_ACCOUNT_NUMBER:-}
+      - EFT_BRANCH_CODE=${EFT_BRANCH_CODE:-250655}
+    volumes:
+      - app-logs:/var/www/html/storage/logs
+      - app-storage:/var/www/html/storage/app/public
+    ports:
+      - "${APP_PORT:-8093}:80"
+    networks:
+      - tuneupprecision-network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: tuneupprecision-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_DATABASE:-tuneupprecision}
+      - POSTGRES_USER=${DB_USERNAME:-tuneup}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - TZ=Africa/Johannesburg
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - tuneupprecision-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-tuneup} -d ${DB_DATABASE:-tuneupprecision}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: tuneupprecision-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - tuneupprecision-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tuneupprecision-app:latest
+    container_name: tuneupprecision-scheduler
+    restart: unless-stopped
+    command: sh -c "while true; do php /var/www/html/artisan schedule:run --verbose --no-interaction & sleep 60; done"
+    environment:
+      - APP_ENV=production
+      - APP_TIMEZONE=Africa/Johannesburg
+      - TZ=Africa/Johannesburg
+      - APP_KEY=${APP_KEY}
+      - APP_URL=${APP_URL:-https://tuneupprecision.co.za}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-tuneupprecision}
+      - DB_USERNAME=${DB_USERNAME:-tuneup}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_CLIENT=phpredis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_STORE=redis
+      - QUEUE_CONNECTION=redis
+    volumes:
+      - app-logs:/var/www/html/storage/logs
+    networks:
+      - tuneupprecision-network
+    depends_on:
+      - app
+      - db
+      - redis
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tuneupprecision-app:latest
+    container_name: tuneupprecision-queue
+    restart: unless-stopped
+    command: php /var/www/html/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+    environment:
+      - APP_ENV=production
+      - APP_TIMEZONE=Africa/Johannesburg
+      - TZ=Africa/Johannesburg
+      - APP_KEY=${APP_KEY}
+      - APP_URL=${APP_URL:-https://tuneupprecision.co.za}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-tuneupprecision}
+      - DB_USERNAME=${DB_USERNAME:-tuneup}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_CLIENT=phpredis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_STORE=redis
+      - QUEUE_CONNECTION=redis
+      - MAIL_MAILER=${MAIL_MAILER:-log}
+      - MAIL_HOST=${MAIL_HOST:-}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-noreply@tuneupprecision.co.za}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-Tune Up}
+    volumes:
+      - app-logs:/var/www/html/storage/logs
+    networks:
+      - tuneupprecision-network
+    depends_on:
+      - app
+      - db
+      - redis
+
+networks:
+  tuneupprecision-network:
+    driver: bridge
+
+volumes:
+  app-logs:
+  app-storage:
+  db-data:
+  redis-data:
