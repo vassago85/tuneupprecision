@@ -20,6 +20,8 @@ class SmokeTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('Zero to First Steel')
+            ->assertSee('Book this date')   // dated agenda rendered
+            ->assertSee('Fully booked')     // the deliberately-full event still displays
             ->assertSee('Tune Up Trucker Cap')
             ->assertDontSee('Mini IPSC Gong'); // out of stock => hidden by available()
     }
@@ -40,6 +42,7 @@ class SmokeTest extends TestCase
         $pages = [
             '/admin/course-templates',
             '/admin/training-events',
+            '/admin/events-calendar',
             '/admin/bookings',
             '/admin/products',
             '/admin/orders',

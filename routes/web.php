@@ -2,26 +2,25 @@
 
 declare(strict_types=1);
 
-use App\Models\CourseTemplate;
 use App\Models\Product;
+use App\Models\TrainingEvent;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    // Active course templates with their next publicly-visible event (if any),
-    // so the card can show the correct price and "Fully booked" state.
-    $courses = CourseTemplate::query()
-        ->where('is_active', true)
-        ->with(['trainingEvents' => function ($query): void {
-            $query->publiclyVisible()->upcoming();
-        }])
-        ->orderBy('base_price_cents')
-        ->get();
+    // Upcoming, publicly-visible dated events (published or full), grouped by
+    // month for the agenda. Fully-booked dates DO display (as "Fully booked").
+    $eventsByMonth = TrainingEvent::query()
+        ->with('courseTemplate')
+        ->publiclyVisible()
+        ->upcoming()
+        ->get()
+        ->groupBy(fn (TrainingEvent $event): string => $event->starts_on->format('F Y'));
 
     // Out-of-stock / inactive products simply don't display (no "sold out").
     $products = Product::query()->available()->latest()->take(4)->get();
 
     return view('home', [
-        'courses' => $courses,
+        'eventsByMonth' => $eventsByMonth,
         'products' => $products,
     ]);
 })->name('home');

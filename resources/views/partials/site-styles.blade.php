@@ -142,6 +142,14 @@
   .course .price s{font-family:var(--mono);font-size:12px;color:var(--gray)}
   .course .btn{width:100%;justify-content:center;margin-top:auto}
   .course .fully{width:100%;justify-content:center;margin-top:auto;background:var(--base-2);color:var(--muted);border:1px solid var(--line);cursor:not-allowed}
+  /* dated event agenda */
+  .course .evt-date{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);display:flex;align-items:center;gap:9px;margin-bottom:4px}
+  .course .evt-date::before{content:"";width:16px;height:1px;background:var(--copper);opacity:.7}
+  .month-head{display:flex;align-items:center;gap:16px;margin:6px 0 22px}
+  .month-head h3{font-size:26px;color:var(--charcoal);white-space:nowrap}
+  .month-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .month-head:not(:first-of-type){margin-top:20px}
+  .schedule-empty{background:var(--paper);border:1px dashed var(--line);border-radius:16px;padding:40px 28px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:14px}
   .private{margin-top:20px;background:var(--charcoal);color:#fff;border-radius:16px;padding:26px 30px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
   .private .txt{flex:1;min-width:240px}
   .private h3{color:#fff;font-size:28px;margin-bottom:6px}

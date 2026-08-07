@@ -72,34 +72,33 @@
     </div>
   </section>
 
-  {{-- ============ COURSES ============ --}}
+  {{-- ============ COURSE DATES (agenda) ============ --}}
   <section id="courses">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="eyebrow">Course intakes · {{ date('Y') }}</span>
-        <h2>Pick your level. Book your seat.</h2>
-        <p>Each course is a full range day at a private facility. Ammunition, targets and use of the ballistic kit are included — seats are limited to six.</p>
+        <span class="eyebrow">Upcoming course dates</span>
+        <h2>Pick a date. Book your seat.</h2>
+        <p>Each date is a full range day at a private facility. Ammunition, targets and use of the ballistic kit are included — seats are limited to six.</p>
       </div>
 
-      <div class="courses">
-        @foreach ($courses as $course)
-          @php
-            $nextEvent = $course->trainingEvents->first();
-            $priceCents = $nextEvent?->effectivePriceCents() ?? (int) $course->base_price_cents;
-            $featured = $course->slug === 'applied-long-range';
-          @endphp
-          <x-training.course-card
-            :level="$course->level"
-            :title="$course->title"
-            :desc="$course->blurb"
-            :specs="$course->specs ?? []"
-            :price="\App\Support\Money::format($priceCents, false)"
-            :featured="$featured"
-            :tag="$featured ? 'Most booked' : null"
-            :fullyBooked="$nextEvent?->isFull() ?? false"
-          />
-        @endforeach
-      </div>
+      @forelse ($eventsByMonth as $month => $events)
+        <div class="month-head reveal">
+          <h3>{{ $month }}</h3>
+          <span class="rule"></span>
+        </div>
+        <div class="courses">
+          @foreach ($events as $event)
+            <x-training.event-card
+              :event="$event"
+              :featured="$event->courseTemplate?->slug === 'applied-long-range'"
+            />
+          @endforeach
+        </div>
+      @empty
+        <div class="schedule-empty reveal">
+          New dates are being scheduled — message Dirk to be first on the list.
+        </div>
+      @endforelse
 
       {{-- One-on-one coaching --}}
       <div class="private reveal">
