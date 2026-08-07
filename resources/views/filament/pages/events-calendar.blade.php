@@ -1,17 +1,74 @@
 <x-filament::page>
+    {{--
+        Self-contained calendar styling. The admin panel has no custom Filament
+        theme, so raw Tailwind utilities in custom Blade views aren't compiled.
+        Rather than add a whole theme build for one page, this view ships its own
+        scoped CSS (prefixed .tu-cal-*) — the same hand-written approach the public
+        site uses. Dark mode is handled via Filament's `.dark` root class.
+    --}}
+    <style>
+        .tu-cal-bar{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+        .tu-cal-bar .grp{display:flex;align-items:center;gap:.5rem}
+        .tu-cal-title{font-size:1.25rem;font-weight:600;line-height:1.2;color:rgb(3 7 18)}
+        .dark .tu-cal-title{color:#fff}
+
+        .tu-cal{margin-top:1rem;overflow:hidden;border-radius:.75rem;box-shadow:0 0 0 1px rgba(3,7,18,.05)}
+        .dark .tu-cal{box-shadow:0 0 0 1px rgba(255,255,255,.1)}
+
+        .tu-cal-week,.tu-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+        .tu-cal-week{background:#f9fafb}
+        .dark .tu-cal-week{background:rgba(255,255,255,.05)}
+        .tu-cal-week .wd{padding:.5rem;text-align:center;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:#6b7280}
+        .dark .tu-cal-week .wd{color:#9ca3af}
+
+        .tu-cal-cell{min-height:7rem;border-top:1px solid rgba(3,7,18,.05);border-left:1px solid rgba(3,7,18,.05);padding:.375rem}
+        .dark .tu-cal-cell{border-color:rgba(255,255,255,.1)}
+        .tu-cal-cell:nth-child(7n+1){border-left:0}
+        .tu-cal-cell.is-in{background:#fff}
+        .dark .tu-cal-cell.is-in{background:#111827}
+        .tu-cal-cell.is-out{background:rgba(249,250,251,.7)}
+        .dark .tu-cal-cell.is-out{background:rgba(255,255,255,.05)}
+
+        .tu-cal-day{margin-bottom:.25rem;display:flex;height:1.5rem;width:1.5rem;align-items:center;justify-content:center;border-radius:9999px;font-size:.75rem;line-height:1}
+        .tu-cal-day.is-in{font-weight:600;color:rgb(3 7 18)}
+        .dark .tu-cal-day.is-in{color:#fff}
+        .tu-cal-day.is-out{color:#9ca3af}
+        .dark .tu-cal-day.is-out{color:#4b5563}
+        .tu-cal-day.is-today{background:#D45B2E;color:#fff}
+
+        .tu-cal-events{display:flex;flex-direction:column;gap:.25rem}
+        .tu-cal-event{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-radius:.375rem;padding:.25rem .375rem;font-size:.75rem;line-height:1.2}
+        .tu-cal-event .cap{opacity:.7}
+
+        .tu-cal-note{margin-top:.75rem;font-size:.75rem;color:#6b7280}
+        .dark .tu-cal-note{color:#9ca3af}
+
+        /* status pills */
+        .tu-st-published{background:rgba(16,185,129,.15);color:#047857;box-shadow:inset 0 0 0 1px rgba(16,185,129,.3)}
+        .dark .tu-st-published{color:#6ee7b7}
+        .tu-st-full{background:rgba(245,158,11,.15);color:#b45309;box-shadow:inset 0 0 0 1px rgba(245,158,11,.3)}
+        .dark .tu-st-full{color:#fcd34d}
+        .tu-st-draft{background:rgba(107,114,128,.15);color:#4b5563;box-shadow:inset 0 0 0 1px rgba(107,114,128,.3)}
+        .dark .tu-st-draft{color:#d1d5db}
+        .tu-st-cancelled{background:rgba(239,68,68,.15);color:#b91c1c;box-shadow:inset 0 0 0 1px rgba(239,68,68,.3)}
+        .dark .tu-st-cancelled{color:#fca5a5}
+        .tu-st-completed{background:rgba(14,165,233,.15);color:#0369a1;box-shadow:inset 0 0 0 1px rgba(14,165,233,.3)}
+        .dark .tu-st-completed{color:#7dd3fc}
+    </style>
+
     @php
         $weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         $statusClasses = [
-            'published' => 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/30',
-            'full'      => 'bg-amber-500/15 text-amber-700 dark:text-amber-300 ring-1 ring-amber-500/30',
-            'draft'     => 'bg-gray-500/15 text-gray-600 dark:text-gray-300 ring-1 ring-gray-500/30',
-            'cancelled' => 'bg-red-500/15 text-red-700 dark:text-red-300 ring-1 ring-red-500/30',
-            'completed' => 'bg-sky-500/15 text-sky-700 dark:text-sky-300 ring-1 ring-sky-500/30',
+            'published' => 'tu-st-published',
+            'full'      => 'tu-st-full',
+            'draft'     => 'tu-st-draft',
+            'cancelled' => 'tu-st-cancelled',
+            'completed' => 'tu-st-completed',
         ];
     @endphp
 
-    <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
+    <div class="tu-cal-bar">
+        <div class="grp">
             <x-filament::button color="gray" size="sm" icon="heroicon-m-chevron-left" wire:click="previousMonth">
                 Prev
             </x-filament::button>
@@ -23,48 +80,42 @@
             </x-filament::button>
         </div>
 
-        <h2 class="text-xl font-semibold text-gray-950 dark:text-white">{{ $this->monthLabel }}</h2>
+        <h2 class="tu-cal-title">{{ $this->monthLabel }}</h2>
 
         <x-filament::button tag="a" href="{{ $this->createUrl() }}" size="sm" icon="heroicon-m-plus">
             New event
         </x-filament::button>
     </div>
 
-    <div class="mt-4 overflow-hidden rounded-xl ring-1 ring-gray-950/5 dark:ring-white/10">
+    <div class="tu-cal">
         {{-- Weekday header --}}
-        <div class="grid grid-cols-7 bg-gray-50 dark:bg-white/5">
+        <div class="tu-cal-week">
             @foreach ($weekdays as $day)
-                <div class="px-2 py-2 text-center text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                    {{ $day }}
-                </div>
+                <div class="wd">{{ $day }}</div>
             @endforeach
         </div>
 
         {{-- Day cells --}}
-        <div class="grid grid-cols-7">
+        <div class="tu-cal-grid">
             @foreach ($this->weeks as $week)
                 @foreach ($week as $cell)
-                    <div @class([
-                        'min-h-28 border-t border-l border-gray-950/5 dark:border-white/10 p-1.5 first:border-l-0',
-                        'bg-white dark:bg-gray-900' => $cell['inMonth'],
-                        'bg-gray-50/70 dark:bg-white/5' => ! $cell['inMonth'],
-                    ])>
+                    <div class="tu-cal-cell {{ $cell['inMonth'] ? 'is-in' : 'is-out' }}">
                         <div @class([
-                            'mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs',
-                            'font-semibold text-gray-950 dark:text-white' => $cell['inMonth'],
-                            'text-gray-400 dark:text-gray-600' => ! $cell['inMonth'],
-                            'bg-primary-500 text-white dark:text-white' => $cell['isToday'],
+                            'tu-cal-day',
+                            'is-in' => $cell['inMonth'],
+                            'is-out' => ! $cell['inMonth'],
+                            'is-today' => $cell['isToday'],
                         ])>
                             {{ $cell['date']->format('j') }}
                         </div>
 
-                        <div class="space-y-1">
+                        <div class="tu-cal-events">
                             @foreach ($cell['events'] as $event)
                                 <a href="{{ $this->eventUrl($event->id) }}"
-                                   class="block truncate rounded-md px-1.5 py-1 text-xs {{ $statusClasses[$event->status->value] ?? $statusClasses['draft'] }}"
+                                   class="tu-cal-event {{ $statusClasses[$event->status->value] ?? $statusClasses['draft'] }}"
                                    title="{{ $event->courseTemplate?->title }} — {{ $event->seatsLeft() }}/{{ $event->capacity }} seats left ({{ $event->status->getLabel() }})">
                                     {{ $event->courseTemplate?->title ?? 'Event' }}
-                                    <span class="opacity-70">· {{ $event->seatsLeft() }}/{{ $event->capacity }}</span>
+                                    <span class="cap">· {{ $event->seatsLeft() }}/{{ $event->capacity }}</span>
                                 </a>
                             @endforeach
                         </div>
@@ -74,7 +125,7 @@
         </div>
     </div>
 
-    <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-        Click an event to edit it, or use <span class="font-medium">New event</span> to schedule a date.
+    <p class="tu-cal-note">
+        Click an event to edit it, or use <span style="font-weight:500">New event</span> to schedule a date.
     </p>
 </x-filament::page>
