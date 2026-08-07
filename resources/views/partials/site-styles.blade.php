@@ -96,7 +96,7 @@
   .hero-data .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gray);text-transform:uppercase}
   .hero-data .v{font-family:var(--disp);font-weight:700;font-size:20px;color:var(--charcoal);margin-top:3px}
   .hero-badge{position:relative;display:grid;place-items:center}
-  .hero-badge img{width:min(100%,460px);filter:drop-shadow(0 30px 50px rgba(31,44,57,.28))}
+  .hero-badge img{width:min(100%,440px);height:auto;filter:drop-shadow(0 18px 34px rgba(31,44,57,.22))}
   .hero-badge .ret{position:absolute;inset:0;pointer-events:none}
   .hero-badge .ret .h,.hero-badge .ret .v{position:absolute;background:var(--line)}
   .hero-badge .ret .h{left:-4%;right:-4%;top:50%;height:1px}
@@ -139,7 +139,7 @@
   .spec .row .v{font-family:var(--mono);font-size:13px;color:var(--charcoal);font-weight:500;text-align:right}
   .course .price{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}
   .course .price b{font-family:var(--disp);font-weight:800;font-size:36px;color:var(--charcoal);line-height:1}
-  .course .price s{font-family:var(--mono);font-size:12px;color:var(--gray)}
+  .course .price s{font-family:var(--mono);font-size:12px;color:var(--gray);text-decoration:none}
   .course .btn{width:100%;justify-content:center;margin-top:auto}
   .course .fully{width:100%;justify-content:center;margin-top:auto;background:var(--base-2);color:var(--muted);border:1px solid var(--line);cursor:not-allowed}
   /* training-type filter chips */
@@ -161,12 +161,13 @@
   .private p{color:rgba(255,255,255,.72);margin:0;font-size:15px}
   .private .p2{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
   .private .p2 .amt{font-family:var(--disp);font-weight:800;font-size:32px;color:#fff}
-  .private .p2 .amt s{font-family:var(--mono);font-weight:400;font-size:12px;color:var(--gray);display:block;letter-spacing:.1em}
+  .private .p2 .amt s{font-family:var(--mono);font-weight:400;font-size:12px;color:var(--gray);display:block;letter-spacing:.1em;text-decoration:none}
 
   /* ---------- about ---------- */
   .about-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:44px;align-items:center}
   .about-photo{position:relative;border-radius:16px;overflow:hidden;background:var(--charcoal);aspect-ratio:4/5;border:1px solid var(--line);display:grid;place-items:center}
   .about-photo .silh{color:rgba(255,255,255,.14);width:66%}
+  .about-photo .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%}
   .about-photo .cap{position:absolute;left:16px;bottom:16px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.55);text-transform:uppercase}
   .about-photo .frame{position:absolute;inset:14px;border:1px solid rgba(255,255,255,.16);border-radius:8px;pointer-events:none}
   .about-photo .frame::before,.about-photo .frame::after{content:"";position:absolute;background:var(--copper)}

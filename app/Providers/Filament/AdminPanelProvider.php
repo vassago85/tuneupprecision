@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('Tune Up')
+            ->favicon(asset('favicon.svg'))
             ->colors([
                 // Precision Copper reserved for primary actions & high-value emphasis.
                 'primary' => Color::hex('#D45B2E'),

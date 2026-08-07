@@ -7,7 +7,7 @@
       <div class="hero-copy reveal">
         <span class="eyebrow">Precision rifle instruction · South Africa</span>
         <h1>Dial in<br>your <span class="cop">distance.</span></h1>
-        <p class="lead">Small-squad long range coaching that turns guesswork into a repeatable process — from your first zero to reading wind on steel at distance.</p>
+        <p class="lead">Small-squad precision coaching — long range shooting and handloading — that turns guesswork into a repeatable process, from your first zero to a load and wind call you can trust.</p>
         <div class="hero-cta">
           <a href="{{ url('/#courses') }}" class="btn btn-primary">Book a course
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -16,23 +16,11 @@
         </div>
         <div class="hero-data">
           <div class="cell"><div class="k">Discipline</div><div class="v">PRS · ELR</div></div>
-          <div class="cell"><div class="k">Range</div><div class="v">100–1400 m</div></div>
           <div class="cell"><div class="k">Squad size</div><div class="v">Max 6</div></div>
-          <div class="cell"><div class="k">Rifle</div><div class="v">Bring yours</div></div>
         </div>
       </div>
       <div class="hero-badge reveal">
-        <div class="ret"><span class="h"></span><span class="v"></span><span class="fdot"></span></div>
-        {{-- Brand reticle badge (logo asset drops in later). --}}
-        <svg viewBox="0 0 200 200" width="420" aria-hidden="true" style="filter:drop-shadow(0 30px 50px rgba(31,44,57,.28))">
-          <circle cx="100" cy="100" r="92" fill="#F8F8F4" stroke="#2C3E50" stroke-width="4"/>
-          <circle cx="100" cy="100" r="70" fill="none" stroke="#D45B2E" stroke-width="2" opacity=".5"/>
-          <line x1="100" y1="14" x2="100" y2="66" stroke="#2C3E50" stroke-width="4"/>
-          <line x1="100" y1="134" x2="100" y2="186" stroke="#2C3E50" stroke-width="4"/>
-          <line x1="14" y1="100" x2="66" y2="100" stroke="#2C3E50" stroke-width="4"/>
-          <line x1="134" y1="100" x2="186" y2="100" stroke="#2C3E50" stroke-width="4"/>
-          <circle cx="100" cy="100" r="8" fill="#D45B2E"/>
-        </svg>
+        <img class="brand-emblem" src="{{ asset('images/logo.png') }}" alt="Tune Up — Long Range Precision Shooting" width="460" height="460">
       </div>
     </div>
   </section>
@@ -45,7 +33,7 @@
       <div class="sec-head reveal">
         <span class="eyebrow">Why train here</span>
         <h2>Fundamentals first. Data always.</h2>
-        <p>No magic, no gimmicks — just the process good shooters actually run, taught in a size where every round gets watched and called.</p>
+        <p>No magic, no gimmicks — just the process good shooters and reloaders actually run, taught in a squad size where every round and every step gets watched and called.</p>
       </div>
       <div class="values">
         <div class="val reveal">
@@ -78,7 +66,7 @@
       <div class="sec-head reveal">
         <span class="eyebrow">Upcoming course dates</span>
         <h2>Pick a date. Book your seat.</h2>
-        <p>Each date is a full range day at a private facility. Ammunition, targets and use of the ballistic kit are included — seats are limited to six.</p>
+        <p>Each date is a full day at a private facility — on the line or at the bench, depending on the course. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included, and seats are limited to six.</p>
       </div>
 
       @if ($trainingTypes->isNotEmpty())
@@ -117,10 +105,10 @@
       <div class="private reveal">
         <div class="txt">
           <h3>One-on-one coaching</h3>
-          <p>A full day built entirely around you and your rifle — load development, a problem you can't crack, or match prep for a specific stage.</p>
+          <p>A full day built entirely around you and your rifle — load development, a problem you can't crack, or match prep for a specific stage. Quoted individually depending on what's required.</p>
         </div>
         <div class="p2">
-          <div class="amt">R5 600 <s>Per day · by arrangement</s></div>
+          <div class="amt">On request <s>Quoted per day · scoped to what you need</s></div>
           <a href="{{ url('/#courses') }}" class="btn btn-primary book" data-course="One-on-one coaching">Enquire</a>
         </div>
       </div>
@@ -131,19 +119,18 @@
   <section id="about">
     <div class="wrap about-grid">
       <div class="about-photo reveal">
-        <svg class="silh" viewBox="0 0 100 130" aria-hidden="true"><path fill="currentColor" d="M50 8a18 18 0 1 0 0 36 18 18 0 0 0 0-36zM20 130c0-22 13-38 30-38s30 16 30 38z"/></svg>
+        <img class="photo" src="{{ asset('images/dirk.png') }}" alt="Dirk shooting long range prone off a rest" loading="lazy">
         <div class="frame"></div>
-        <div class="cap">// Replace with photo of Dirk</div>
       </div>
       <div class="about-copy reveal">
         <span class="eyebrow">Your instructor</span>
         <h2>Meet Dirk.</h2>
-        <p>Tune Up runs on one idea: long range shooting is a process you can learn, not a talent you're born with. Dirk has spent years on the line as a competitor and a reloader, and he coaches the way he shoots — methodically, with the data to back every call.</p>
-        <p>Courses stay small on purpose. You'll leave with a rifle you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
+        <p>Tune Up runs on one idea: long range precision — shooting and reloading alike — is a process you can learn, not a talent you're born with. Dirk has spent years on the line as a competitor and at the bench as a reloader, and he coaches the way he works — methodically, with the data to back every call.</p>
+        <p>Courses stay small on purpose. You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
         <div class="creds">
           <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>
           <div class="cred"><div class="n">6</div><div class="l">Shooters per course</div></div>
-          <div class="cred"><div class="n">1400m</div><div class="l">Trained to distance</div></div>
+          <div class="cred"><div class="n">Sub-MOA</div><div class="l">Loads built to</div></div>
         </div>
       </div>
     </div>
@@ -155,7 +142,7 @@
       <div class="sec-head reveal">
         <span class="eyebrow">How a range day runs</span>
         <h2>Five stations. One process.</h2>
-        <p>Every course follows the same sequence a good shooter runs under their own steam. By the end it's muscle memory.</p>
+        <p>This is how a shooting day runs — the same sequence a good shooter follows under their own steam. Reloading days follow their own bench process; every course is built around a repeatable method.</p>
       </div>
       <div class="steps">
         <div class="step reveal"><div class="no">01</div><h4>Zero &amp; confirm</h4><p>Set a true zero and confirm your rifle and ammo are honest before anything else.</p></div>

@@ -37,7 +37,7 @@
 
   <x-site.dope-card :rows="$specs" />
 
-  <div class="price"><b>{{ Money::format($event->effectivePriceCents(), false) }}</b><s>per shooter · incl. ammo</s></div>
+  <div class="price"><b>{{ Money::format($event->effectivePriceCents(), false) }}</b><s>per shooter</s></div>
 
   @if ($isFull)
     <button class="btn fully" type="button" disabled aria-disabled="true">Fully booked</button>

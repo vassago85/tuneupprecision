@@ -12,7 +12,7 @@
           </svg>
           <span class="wm"><b>TUNE UP</b><span>LONG RANGE PRECISION</span></span>
         </a>
-        <p>Small-squad long range precision instruction and gear. Gauteng, South Africa.</p>
+        <p>Small-squad long range precision instruction — shooting and reloading — and gear. Gauteng, South Africa.</p>
         <div class="socials">
           <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
           <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M15 3h-3a4 4 0 0 0-4 4v3H5v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© {{ date('Y') }} Tune Up Long Range Precision Shooting</span>
+      <span>© {{ date('Y') }} Tune Up Long Range Precision Training</span>
       <span>Shoot safe · Know your target and beyond</span>
     </div>
   </div>

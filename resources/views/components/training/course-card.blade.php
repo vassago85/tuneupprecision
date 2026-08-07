@@ -4,7 +4,7 @@
     'desc' => '',
     'specs' => [],          // associative array label => value
     'price' => null,        // display string, e.g. "R1 850"
-    'priceNote' => 'per shooter · incl. ammo',
+    'priceNote' => 'per shooter',
     'featured' => false,
     'tag' => null,          // e.g. "Most booked"
     'fullyBooked' => false, // fully-booked events DO display, as "Fully booked"
