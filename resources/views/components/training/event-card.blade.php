@@ -26,8 +26,11 @@
     <span class="tag">Most booked</span>
   @endif
   <div class="evt-date">{{ $dateLabel }}</div>
-  @if ($template?->level)
-    <div class="lvl">{{ $template->level }}</div>
+  @php
+    $meta = array_filter([$template?->trainingType?->name, $template?->level]);
+  @endphp
+  @if ($meta)
+    <div class="lvl">{{ implode(' · ', $meta) }}</div>
   @endif
   <h3>{{ $template?->title }}</h3>
   <div class="desc">{{ $template?->blurb }}</div>

@@ -142,6 +142,11 @@
   .course .price s{font-family:var(--mono);font-size:12px;color:var(--gray)}
   .course .btn{width:100%;justify-content:center;margin-top:auto}
   .course .fully{width:100%;justify-content:center;margin-top:auto;background:var(--base-2);color:var(--muted);border:1px solid var(--line);cursor:not-allowed}
+  /* training-type filter chips */
+  .type-filter{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 30px}
+  .type-filter a{font-family:var(--disp);text-transform:uppercase;letter-spacing:.03em;font-weight:600;font-size:14px;color:var(--charcoal);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 16px 8px;transition:.16s}
+  .type-filter a:hover{border-color:var(--charcoal)}
+  .type-filter a.active{background:var(--copper);color:#fff;border-color:var(--copper);box-shadow:0 8px 20px -12px rgba(212,91,46,.75)}
   /* dated event agenda */
   .course .evt-date{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--copper);display:flex;align-items:center;gap:9px;margin-bottom:4px}
   .course .evt-date::before{content:"";width:16px;height:1px;background:var(--copper);opacity:.7}

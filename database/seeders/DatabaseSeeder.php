@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Enums\TrainingEventStatus;
 use App\Models\CourseTemplate;
 use App\Models\Product;
+use App\Models\TrainingType;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -44,92 +45,151 @@ class DatabaseSeeder extends Seeder
 
     protected function seedCourses(): void
     {
-        $templates = [
+        // Admin-managed training disciplines. Each course template belongs to one.
+        $types = [
             [
-                'title' => 'Zero to First Steel',
-                'level' => 'Level 01 · Foundation',
-                'blurb' => 'For new precision shooters. Rifle setup, a true 100 m zero and your first hits on distant steel.',
-                'base_price_cents' => 185000,
-                'specs' => [
-                    'Duration' => '1 day · 08:00–16:00',
-                    'Prerequisite' => 'None',
-                    'Max distance' => '600 m',
-                    'Squad' => '6 shooters',
+                'name' => 'Long Range Prone',
+                'slug' => 'long-range-prone',
+                'blurb' => 'Prone precision — zero, ballistics and wind out past a kilometre.',
+                'icon' => 'heroicon-o-viewfinder-circle',
+                'sort_order' => 1,
+                'templates' => [
+                    [
+                        'title' => 'Zero to First Steel',
+                        'level' => 'Level 01 · Foundation',
+                        'blurb' => 'For new precision shooters. Rifle setup, a true 100 m zero and your first hits on distant steel.',
+                        'base_price_cents' => 185000,
+                        'specs' => [
+                            'Duration' => '1 day · 08:00–16:00',
+                            'Prerequisite' => 'None',
+                            'Max distance' => '600 m',
+                            'Squad' => '6 shooters',
+                        ],
+                    ],
+                    [
+                        'title' => 'Applied Long Range',
+                        'level' => 'Level 02 · Applied',
+                        'blurb' => 'Build and true your ballistic solution, read wind properly, and stretch out past a kilometre with confidence.',
+                        'base_price_cents' => 340000,
+                        'specs' => [
+                            'Duration' => '2 days · weekend',
+                            'Prerequisite' => 'Solid zero',
+                            'Max distance' => '1200 m',
+                            'Squad' => '6 shooters',
+                        ],
+                    ],
                 ],
             ],
             [
-                'title' => 'Applied Long Range',
-                'level' => 'Level 02 · Applied',
-                'blurb' => 'Build and true your ballistic solution, read wind properly, and stretch out past a kilometre with confidence.',
-                'base_price_cents' => 340000,
-                'specs' => [
-                    'Duration' => '2 days · weekend',
-                    'Prerequisite' => 'Solid zero',
-                    'Max distance' => '1200 m',
-                    'Squad' => '6 shooters',
+                'name' => 'PRS',
+                'slug' => 'prs',
+                'blurb' => 'Precision Rifle Series — positional stages against the clock.',
+                'icon' => 'heroicon-o-clock',
+                'sort_order' => 2,
+                'templates' => [
+                    [
+                        'title' => 'PRS Match Skills',
+                        'level' => 'Competition',
+                        'blurb' => 'Positional stages under a clock. Barricades, tank traps and transitions — the skills that score on match day.',
+                        'base_price_cents' => 420000,
+                        'specs' => [
+                            'Duration' => '1 day · intensive',
+                            'Prerequisite' => 'Solid zero',
+                            'Max distance' => '1000 m positional',
+                            'Squad' => '6 shooters',
+                        ],
+                    ],
                 ],
             ],
             [
-                'title' => 'Match-Ready',
-                'level' => 'Level 03 · Competition',
-                'blurb' => 'Positional stages under a clock. Barricades, tank traps and transitions — the skills that score on match day.',
-                'base_price_cents' => 420000,
-                'specs' => [
-                    'Duration' => '1 day · intensive',
-                    'Prerequisite' => 'Level 02 or PRS',
-                    'Max distance' => '1000 m positional',
-                    'Squad' => '6 shooters',
+                'name' => 'Reloading',
+                'slug' => 'reloading',
+                'blurb' => 'Handloading for precision — brass prep, load development and truing.',
+                'icon' => 'heroicon-o-beaker',
+                'sort_order' => 3,
+                'templates' => [
+                    [
+                        'title' => 'Precision Reloading',
+                        'level' => 'Handloading',
+                        'blurb' => 'Brass prep, powder and seating-depth development, and how to build a repeatable, accurate load for your rifle.',
+                        'base_price_cents' => 265000,
+                        'specs' => [
+                            'Duration' => '1 day · bench',
+                            'Prerequisite' => 'None',
+                            'Focus' => 'Load development',
+                            'Squad' => '6 shooters',
+                        ],
+                    ],
                 ],
             ],
         ];
 
-        foreach ($templates as $index => $data) {
-            $template = CourseTemplate::updateOrCreate(
-                ['slug' => Str::slug($data['title'])],
+        $eventOffset = 0;
+
+        foreach ($types as $typeData) {
+            $type = TrainingType::updateOrCreate(
+                ['slug' => $typeData['slug']],
                 [
-                    'title' => $data['title'],
-                    'level' => $data['level'],
-                    'blurb' => $data['blurb'],
-                    'specs' => $data['specs'],
-                    'base_price_cents' => $data['base_price_cents'],
-                    'default_capacity' => 6,
+                    'name' => $typeData['name'],
+                    'blurb' => $typeData['blurb'],
+                    'icon' => $typeData['icon'],
+                    'sort_order' => $typeData['sort_order'],
                     'is_active' => true,
                 ],
             );
 
-            // Two published future events per template.
-            $template->trainingEvents()->updateOrCreate(
-                ['starts_on' => now()->addWeeks(3 + $index)->toDateString()],
-                [
-                    'venue' => 'Private range · Gauteng',
-                    'capacity' => 6,
-                    'seats_taken' => 2,
-                    'status' => TrainingEventStatus::Published,
-                ],
-            );
+            foreach ($typeData['templates'] as $data) {
+                $template = CourseTemplate::updateOrCreate(
+                    ['slug' => Str::slug($data['title'])],
+                    [
+                        'training_type_id' => $type->id,
+                        'title' => $data['title'],
+                        'level' => $data['level'],
+                        'blurb' => $data['blurb'],
+                        'specs' => $data['specs'],
+                        'base_price_cents' => $data['base_price_cents'],
+                        'default_capacity' => 6,
+                        'is_active' => true,
+                    ],
+                );
 
-            $template->trainingEvents()->updateOrCreate(
-                ['starts_on' => now()->addWeeks(9 + $index)->toDateString()],
-                [
-                    'venue' => 'Private range · Gauteng',
-                    'capacity' => 6,
-                    'seats_taken' => 0,
-                    'status' => TrainingEventStatus::Published,
-                ],
-            );
-
-            // Give the Applied course one deliberately full event to exercise
-            // the public "Fully booked" state (which DOES display).
-            if ($template->slug === 'applied-long-range') {
+                // Two published future events per template, staggered so the
+                // agenda spreads across months.
                 $template->trainingEvents()->updateOrCreate(
-                    ['starts_on' => now()->addWeeks(2)->toDateString()],
+                    ['starts_on' => now()->addWeeks(3 + $eventOffset)->toDateString()],
                     [
                         'venue' => 'Private range · Gauteng',
                         'capacity' => 6,
-                        'seats_taken' => 6,
-                        'status' => TrainingEventStatus::Full,
+                        'seats_taken' => 2,
+                        'status' => TrainingEventStatus::Published,
                     ],
                 );
+
+                $template->trainingEvents()->updateOrCreate(
+                    ['starts_on' => now()->addWeeks(9 + $eventOffset)->toDateString()],
+                    [
+                        'venue' => 'Private range · Gauteng',
+                        'capacity' => 6,
+                        'seats_taken' => 0,
+                        'status' => TrainingEventStatus::Published,
+                    ],
+                );
+
+                // Give the Applied course one deliberately full event to exercise
+                // the public "Fully booked" state (which DOES display).
+                if ($template->slug === 'applied-long-range') {
+                    $template->trainingEvents()->updateOrCreate(
+                        ['starts_on' => now()->addWeeks(2)->toDateString()],
+                        [
+                            'venue' => 'Private range · Gauteng',
+                            'capacity' => 6,
+                            'seats_taken' => 6,
+                            'status' => TrainingEventStatus::Full,
+                        ],
+                    );
+                }
+
+                $eventOffset++;
             }
         }
     }

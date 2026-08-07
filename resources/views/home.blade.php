@@ -81,6 +81,15 @@
         <p>Each date is a full range day at a private facility. Ammunition, targets and use of the ballistic kit are included — seats are limited to six.</p>
       </div>
 
+      @if ($trainingTypes->isNotEmpty())
+        <div class="type-filter reveal">
+          <a href="{{ url('/') }}#courses" class="{{ $selectedType ? '' : 'active' }}">All training</a>
+          @foreach ($trainingTypes as $type)
+            <a href="{{ url('/?type='.$type->slug) }}#courses" class="{{ $selectedType === $type->slug ? 'active' : '' }}">{{ $type->name }}</a>
+          @endforeach
+        </div>
+      @endif
+
       @forelse ($eventsByMonth as $month => $events)
         <div class="month-head reveal">
           <h3>{{ $month }}</h3>
@@ -96,7 +105,11 @@
         </div>
       @empty
         <div class="schedule-empty reveal">
-          New dates are being scheduled — message Dirk to be first on the list.
+          @if ($selectedType)
+            No upcoming {{ optional($trainingTypes->firstWhere('slug', $selectedType))->name ?? 'dates for this discipline' }} dates right now — <a href="{{ url('/') }}#courses">see all training</a> or message Dirk to be first on the list.
+          @else
+            New dates are being scheduled — message Dirk to be first on the list.
+          @endif
         </div>
       @endforelse
 

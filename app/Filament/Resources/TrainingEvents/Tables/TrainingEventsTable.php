@@ -6,6 +6,7 @@ namespace App\Filament\Resources\TrainingEvents\Tables;
 
 use App\Enums\TrainingEventStatus;
 use App\Models\TrainingEvent;
+use App\Models\TrainingType;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -24,6 +25,10 @@ class TrainingEventsTable
                     ->label('Course')
                     ->searchable()
                     ->weight('bold'),
+                TextColumn::make('courseTemplate.trainingType.name')
+                    ->label('Type')
+                    ->badge()
+                    ->placeholder('—'),
                 TextColumn::make('starts_on')
                     ->label('Starts')
                     ->date('d M Y')
@@ -43,6 +48,12 @@ class TrainingEventsTable
             ->filters([
                 SelectFilter::make('status')
                     ->options(TrainingEventStatus::class),
+                SelectFilter::make('training_type')
+                    ->label('Training type')
+                    ->options(fn (): array => TrainingType::query()->orderBy('name')->pluck('name', 'id')->all())
+                    ->query(fn ($query, array $data) => filled($data['value'] ?? null)
+                        ? $query->whereHas('courseTemplate', fn ($q) => $q->where('training_type_id', $data['value']))
+                        : $query),
             ])
             ->recordActions([
                 EditAction::make(),

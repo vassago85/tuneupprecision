@@ -8,6 +8,7 @@ use App\Support\Money;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CourseTemplate extends Model
@@ -16,6 +17,7 @@ class CourseTemplate extends Model
     use HasFactory;
 
     protected $fillable = [
+        'training_type_id',
         'title',
         'slug',
         'level',
@@ -34,6 +36,14 @@ class CourseTemplate extends Model
             'default_capacity' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * @return BelongsTo<TrainingType, $this>
+     */
+    public function trainingType(): BelongsTo
+    {
+        return $this->belongsTo(TrainingType::class);
     }
 
     /**

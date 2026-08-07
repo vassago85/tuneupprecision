@@ -22,8 +22,23 @@ class SmokeTest extends TestCase
             ->assertSee('Zero to First Steel')
             ->assertSee('Book this date')   // dated agenda rendered
             ->assertSee('Fully booked')     // the deliberately-full event still displays
+            ->assertSee('Reloading')        // training-type filter chip
+            ->assertSee('PRS')
             ->assertSee('Tune Up Trucker Cap')
             ->assertDontSee('Mini IPSC Gong'); // out of stock => hidden by available()
+    }
+
+    public function test_training_type_filter_scopes_the_agenda(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+
+        // Filtering to Reloading shows the reloading course but not the
+        // long-range or PRS courses.
+        $this->get('/?type=reloading')
+            ->assertOk()
+            ->assertSee('Precision Reloading')
+            ->assertDontSee('Zero to First Steel')
+            ->assertDontSee('PRS Match Skills');
     }
 
     public function test_admin_dashboard_renders_with_widgets(): void
@@ -40,6 +55,7 @@ class SmokeTest extends TestCase
         $admin = User::factory()->create();
 
         $pages = [
+            '/admin/training-types',
             '/admin/course-templates',
             '/admin/training-events',
             '/admin/events-calendar',

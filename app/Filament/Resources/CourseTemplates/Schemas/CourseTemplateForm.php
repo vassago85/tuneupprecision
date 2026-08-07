@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\CourseTemplates\Schemas;
 
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -17,6 +18,19 @@ class CourseTemplateForm
     {
         return $schema
             ->components([
+                Select::make('training_type_id')
+                    ->label('Training type')
+                    ->relationship('trainingType', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug((string) $state))),
+                        TextInput::make('slug')->required(),
+                    ])
+                    ->helperText('e.g. Reloading, PRS, Long Range Prone.'),
                 TextInput::make('title')
                     ->required()
                     ->live(onBlur: true)

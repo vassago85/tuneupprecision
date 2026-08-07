@@ -10,16 +10,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('course_templates', function (Blueprint $table): void {
+        Schema::create('training_types', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('training_type_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('title');
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->string('level')->nullable();
             $table->text('blurb')->nullable();
-            $table->json('specs')->nullable();
-            $table->unsignedInteger('base_price_cents')->default(0);
-            $table->unsignedInteger('default_capacity')->default(6);
+            $table->string('icon')->nullable();
+            $table->unsignedInteger('sort_order')->default(0);
             $table->boolean('is_active')->default(true)->index();
             $table->timestamps();
         });
@@ -27,6 +24,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('course_templates');
+        Schema::dropIfExists('training_types');
     }
 };

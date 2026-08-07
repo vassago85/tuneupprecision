@@ -21,9 +21,9 @@
       </div>
       <div class="foot-col">
         <h5>Training</h5>
-        <a href="{{ url('/#courses') }}">Zero to First Steel</a>
-        <a href="{{ url('/#courses') }}">Applied Long Range</a>
-        <a href="{{ url('/#courses') }}">Match-Ready</a>
+        @foreach (\App\Models\TrainingType::query()->activeOrdered()->get() as $type)
+          <a href="{{ url('/?type='.$type->slug) }}#courses">{{ $type->name }}</a>
+        @endforeach
         <a href="{{ url('/#courses') }}">One-on-one</a>
       </div>
       <div class="foot-col">

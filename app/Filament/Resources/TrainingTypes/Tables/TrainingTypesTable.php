@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\CourseTemplates\Tables;
+namespace App\Filament\Resources\TrainingTypes\Tables;
 
-use App\Support\Money;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -12,32 +11,25 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class CourseTemplatesTable
+class TrainingTypesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('sort_order')
+            ->reorderable('sort_order')
             ->columns([
-                TextColumn::make('title')
+                TextColumn::make('name')
                     ->searchable()
                     ->weight('bold'),
-                TextColumn::make('trainingType.name')
-                    ->label('Type')
-                    ->badge()
-                    ->placeholder('—'),
-                TextColumn::make('level')
-                    ->searchable()
+                TextColumn::make('slug')
                     ->color('gray'),
-                TextColumn::make('base_price_cents')
-                    ->label('Base price')
-                    ->formatStateUsing(fn (int $state): string => Money::format($state))
-                    ->sortable(),
-                TextColumn::make('training_events_count')
-                    ->label('Events')
-                    ->counts('trainingEvents')
+                TextColumn::make('course_templates_count')
+                    ->label('Courses')
+                    ->counts('courseTemplates')
                     ->badge(),
-                TextColumn::make('default_capacity')
-                    ->label('Capacity')
+                TextColumn::make('sort_order')
+                    ->label('Order')
                     ->numeric(),
                 IconColumn::make('is_active')
                     ->label('Active')
