@@ -91,6 +91,62 @@ Covers: public home render (and the out-of-stock hide), admin dashboard +
 resource pages render, and the `MarkPaid` money-flow (stock decrement, order
 paid, booking confirmed + hold cleared, idempotency) and reference formats.
 
+## Deploy (Docker)
+
+The stack is `app` (nginx + php-fpm), `db` (PostgreSQL 16), `redis`,
+`scheduler` (runs `bookings:release-holds` every 15 min) and `queue`
+(processes confirmation emails). A reverse proxy (Nginx Proxy Manager) with SSL
+sits in front, forwarding the domain to the app container's published port
+(`APP_PORT`, default `8093`).
+
+### First deploy (Ubuntu server, `/opt/tuneupprecision`)
+
+```bash
+sudo mkdir -p /opt/tuneupprecision && sudo chown "$USER" /opt/tuneupprecision
+git clone https://github.com/vassago85/tuneupprecision.git /opt/tuneupprecision
+cd /opt/tuneupprecision
+
+cp docker/env.template .env
+
+# Build the image first (needed to generate a key)
+docker compose build --no-cache app
+
+# Generate an APP_KEY and paste it into .env
+docker compose run --rm app php artisan key:generate --show
+
+# Edit .env: set APP_KEY, DB_PASSWORD, ADMIN_PASSWORD, and RUN_SEED=true (first time only)
+nano .env
+
+# Bring the stack up
+docker compose up -d --force-recreate app scheduler queue
+
+# Verify
+docker compose ps
+docker compose logs -f app
+
+# After the first successful boot, set RUN_SEED=false in .env
+```
+
+### Redeploys
+
+```bash
+cd /opt/tuneupprecision && git pull origin main \
+  && docker compose build --no-cache app \
+  && docker compose up -d --force-recreate app scheduler queue
+```
+
+The entrypoint auto-handles migrations, cache warming, Livewire + Filament
+assets, and the storage link on every boot.
+
+### Reverse proxy + DNS
+
+- Add a proxy host in Nginx Proxy Manager: `tuneupprecision.co.za` (and `www`)
+  → `http://127.0.0.1:8093`, enable SSL (Let's Encrypt), force HTTPS, and turn
+  on Websockets support (for Livewire).
+- DNS: the apex `@` A record already points at the app server. The `www`
+  record currently points elsewhere (mail/hosting IP) — repoint `www` to the
+  app server (A → same IP, or CNAME → apex) so `www` reaches the container.
+
 ## Next commit (not built yet)
 
 Public **shop listing + product detail** pages — a browsable grid of
