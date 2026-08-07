@@ -33,7 +33,7 @@
       <div class="sec-head reveal">
         <span class="eyebrow">Why train here</span>
         <h2>Fundamentals first. Data always.</h2>
-        <p>No magic, no gimmicks — just the process good shooters and reloaders actually run, taught in a squad size where every round and every step gets watched and called.</p>
+        <p>No magic, no gimmicks — just the disciplined process good shooters and reloaders actually run, taught step by step.</p>
       </div>
       <div class="values">
         <div class="val reveal">
@@ -66,7 +66,7 @@
       <div class="sec-head reveal">
         <span class="eyebrow">Upcoming course dates</span>
         <h2>Pick a date. Book your seat.</h2>
-        <p>Each date is a full day at a private facility — on the line or at the bench, depending on the course. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included, and seats are limited to six.</p>
+        <p>Each date is a full day at a private facility — on the line or at the bench, depending on the course. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included.</p>
       </div>
 
       @if ($trainingTypes->isNotEmpty())
@@ -126,7 +126,7 @@
         <span class="eyebrow">Your instructor</span>
         <h2>Meet Dirk.</h2>
         <p>Tune Up runs on one idea: long range precision — shooting and reloading alike — is a process you can learn, not a talent you're born with. Dirk has spent years on the line as a competitor and at the bench as a reloader, and he coaches the way he works — methodically, with the data to back every call.</p>
-        <p>Courses stay small on purpose. You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
+        <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
         <div class="creds">
           <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>
           <div class="cred"><div class="n">6</div><div class="l">Shooters per course</div></div>
