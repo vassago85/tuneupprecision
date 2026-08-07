@@ -22,7 +22,7 @@ class BookingResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Training';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'reference';
 

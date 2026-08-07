@@ -1,43 +1,37 @@
 <x-filament::page>
-    <x-filament::section>
-        <x-slot name="heading">EFT bank details</x-slot>
-        <x-slot name="description">Where guests pay for bookings and orders. Sourced from the environment for now.</x-slot>
+    <form wire:submit="save">
+        {{ $this->form }}
 
-        <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            @foreach ($this->getEft() as $key => $value)
-                <div>
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        {{ \Illuminate\Support\Str::headline($key) }}
-                    </dt>
-                    <dd class="mt-1 font-mono text-sm text-gray-950 dark:text-white">{{ $value }}</dd>
-                </div>
-            @endforeach
-        </dl>
-    </x-filament::section>
+        <div style="margin-top:1.5rem">
+            <x-filament::button type="submit">
+                Save changes
+            </x-filament::button>
+        </div>
+    </form>
 
     <x-filament::section>
         <x-slot name="heading">Reference formats</x-slot>
-        <x-slot name="description">Generated automatically on every booking and order.</x-slot>
+        <x-slot name="description">Read-only — generated automatically on every booking and order.</x-slot>
 
-        <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <style>
+            .tu-ref-list{display:flex;flex-direction:column}
+            .tu-ref-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem 0;border-top:1px solid var(--tu-border-soft,#ECEEF1)}
+            .tu-ref-row:first-child{border-top:0}
+            .tu-ref-label{font-size:.85rem;font-weight:500;color:var(--tu-text,#0B2239)}
+            .tu-ref-label .hint{display:block;font-size:.72rem;font-weight:400;color:var(--tu-text-2,#667085)}
+            .tu-ref-example{font-family:var(--tu-mono,ui-monospace,monospace);font-size:.8rem;color:var(--tu-text-2,#667085);background:var(--tu-surface-2,#F0EFEC);border:1px solid var(--tu-border,#E2E5E9);border-radius:6px;padding:.25rem .5rem;white-space:nowrap}
+        </style>
+
+        <div class="tu-ref-list">
             @foreach ($this->getReferences() as $key => $value)
-                <div>
-                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        {{ \Illuminate\Support\Str::headline($key) }}
-                    </dt>
-                    <dd class="mt-1 font-mono text-sm text-gray-950 dark:text-white">{{ $value }}</dd>
+                <div class="tu-ref-row">
+                    <div class="tu-ref-label">
+                        {{ \Illuminate\Support\Str::headline($key) }} reference
+                        <span class="hint">Pattern · # is a digit</span>
+                    </div>
+                    <code class="tu-ref-example">{{ $value }}</code>
                 </div>
             @endforeach
-        </dl>
-    </x-filament::section>
-
-    <x-filament::section>
-        <x-slot name="heading">Coming next</x-slot>
-        {{-- TODO: Make these editable + persisted in a later commit (settings store),
-             and surface the EFT block on the guest checkout screen. --}}
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-            This is a read-only stub. Editing &amp; persistence, plus showing these
-            details on the guest checkout screen, land in a later commit.
-        </p>
+        </div>
     </x-filament::section>
 </x-filament::page>

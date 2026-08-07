@@ -10,7 +10,8 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
+use Filament\Support\Enums\Width;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -29,15 +30,33 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('Tune Up')
             ->colors([
-                // Themed to the Tune Up palette so it doesn't look like a stock backend.
-                'primary' => Color::hex('#D45B2E'), // Precision Copper
-                'gray' => Color::hex('#2C3E50'),    // Tactical Charcoal
-                'danger' => Color::Red,
-                'success' => Color::Emerald,
-                'warning' => Color::Amber,
-                'info' => Color::Sky,
+                // Precision Copper reserved for primary actions & high-value emphasis.
+                'primary' => Color::hex('#D45B2E'),
+                // True neutral ramp — kills the pervasive pale-blue tint the old
+                // charcoal (slate-navy) gray caused across surfaces.
+                'gray' => Color::Zinc,
+                'info' => Color::hex('#2A78D6'),
+                'success' => Color::hex('#1BAF7A'),
+                'warning' => Color::hex('#B5790B'),
+                'danger' => Color::hex('#C9433F'),
             ])
-            ->font('IBM Plex Sans')
+            // Compact SaaS shell: narrower sidebar, capped content width.
+            ->sidebarWidth('14rem')
+            ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth(Width::SevenExtraLarge)
+            ->navigationGroups([
+                'Training',
+                'Commerce',
+                'System',
+            ])
+            // Inject the design-system stylesheet (semantic tokens + component
+            // overrides). Inlined so it always loads with no Vite/asset-URL step.
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): string => file_exists($path = public_path('css/admin-theme.css'))
+                    ? '<style>'.file_get_contents($path).'</style>'
+                    : '',
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -45,9 +64,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                \App\Filament\Widgets\PendingEftPaymentsWidget::class,
-                \App\Filament\Widgets\UpcomingEventsWidget::class,
+                \App\Filament\Widgets\KpiStatsWidget::class,
+                \App\Filament\Widgets\UpcomingTrainingWidget::class,
+                \App\Filament\Widgets\PaymentsAttentionWidget::class,
                 \App\Filament\Widgets\LowStockProductsWidget::class,
             ])
             ->middleware([

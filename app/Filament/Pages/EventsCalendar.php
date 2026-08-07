@@ -21,7 +21,7 @@ class EventsCalendar extends Page
 
     protected static string|UnitEnum|null $navigationGroup = 'Training';
 
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Calendar';
 
@@ -30,9 +30,17 @@ class EventsCalendar extends Page
     /** Current month as 'Y-m'. */
     public string $month = '';
 
+    /** Active view: 'month' grid or 'agenda' list. */
+    public string $calView = 'month';
+
     public function mount(): void
     {
         $this->month = now()->format('Y-m');
+    }
+
+    public function setCalView(string $view): void
+    {
+        $this->calView = in_array($view, ['month', 'agenda'], true) ? $view : 'month';
     }
 
     public function previousMonth(): void
@@ -96,6 +104,23 @@ class EventsCalendar extends Page
         }
 
         return $weeks;
+    }
+
+    /**
+     * The current month's events as a flat, date-ordered list for agenda view.
+     *
+     * @return Collection<int, TrainingEvent>
+     */
+    public function getAgendaProperty(): Collection
+    {
+        return TrainingEvent::query()
+            ->with('courseTemplate.trainingType')
+            ->whereBetween('starts_on', [
+                $this->cursor()->startOfMonth()->toDateString(),
+                $this->cursor()->endOfMonth()->toDateString(),
+            ])
+            ->orderBy('starts_on')
+            ->get();
     }
 
     public function eventUrl(int $eventId): string

@@ -1,0 +1,200 @@
+/* ==========================================================================
+   Tune Up admin design system
+   Injected into the Filament panel via PanelsRenderHook::HEAD_END.
+   Semantic tokens first; component overrides target stable .fi-* classes.
+   Unlayered rules intentionally win over Filament's layered Tailwind styles.
+   ========================================================================== */
+
+:root {
+    --tu-bg: #F7F7F5;
+    --tu-surface: #FFFFFF;
+    --tu-surface-2: #F0EFEC;
+    --tu-text: #0B2239;
+    --tu-text-2: #667085;
+    --tu-border: #E2E5E9;
+    --tu-border-soft: #ECEEF1;
+    --tu-blue: #2A78D6;
+    --tu-orange: #D45B2E;
+    --tu-orange-soft: rgba(212, 91, 46, .10);
+    --tu-success: #1BAF7A;
+    --tu-warning: #B5790B;
+    --tu-danger: #C9433F;
+    --tu-radius: 8px;
+    --tu-shadow: 0 1px 2px rgba(11, 34, 57, .04), 0 1px 3px rgba(11, 34, 57, .06);
+    --tu-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --tu-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.dark {
+    --tu-bg: #0E141B;
+    --tu-surface: #151D26;
+    --tu-surface-2: #1B242F;
+    --tu-text: #E6EAEF;
+    --tu-text-2: #93A1B0;
+    --tu-border: #26313D;
+    --tu-border-soft: #1F2833;
+    --tu-orange-soft: rgba(212, 91, 46, .16);
+    --tu-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 1px 3px rgba(0, 0, 0, .35);
+}
+
+/* ---------- shell background + typography ---------- */
+.fi-body,
+.fi-main,
+.fi-main-ctn {
+    background-color: var(--tu-bg);
+}
+
+.fi-body {
+    font-family: var(--tu-font);
+    color: var(--tu-text);
+}
+
+/* Cap dead space: tighten the top-level page padding a touch */
+.fi-main {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* ---------- sidebar ---------- */
+.fi-sidebar,
+.fi-sidebar-nav {
+    background-color: var(--tu-surface);
+}
+
+.fi-sidebar {
+    border-right: 1px solid var(--tu-border);
+}
+
+.fi-sidebar-header {
+    background-color: var(--tu-surface);
+    border-bottom: 1px solid var(--tu-border-soft);
+    box-shadow: none;
+}
+
+.fi-sidebar-group-label {
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--tu-text-2);
+}
+
+.fi-sidebar-item-btn {
+    border-radius: var(--tu-radius);
+    padding-top: .3rem;
+    padding-bottom: .3rem;
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--tu-text);
+}
+
+.fi-sidebar-item-btn:hover {
+    background-color: var(--tu-surface-2);
+}
+
+/* Active nav: restrained copper tint + accent, no heavy fill */
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
+.fi-sidebar-item-active > .fi-sidebar-item-btn,
+.fi-sidebar-item-btn[aria-current="page"] {
+    background-color: var(--tu-orange-soft);
+    color: var(--tu-orange);
+    font-weight: 600;
+    box-shadow: inset 2px 0 0 0 var(--tu-orange);
+}
+
+/* ---------- topbar ---------- */
+.fi-topbar,
+.fi-topbar > nav {
+    background-color: var(--tu-surface);
+    box-shadow: none;
+    border-bottom: 1px solid var(--tu-border);
+}
+
+.fi-topbar > nav {
+    min-height: 3.25rem;
+}
+
+/* ---------- sections / cards / widgets ---------- */
+.fi-section,
+.fi-wi-stats-overview-stat {
+    background-color: var(--tu-surface);
+    border: 1px solid var(--tu-border);
+    border-radius: var(--tu-radius);
+    box-shadow: var(--tu-shadow);
+}
+
+.fi-section-header-heading,
+.fi-header-heading,
+.fi-ta-header-heading {
+    color: var(--tu-text);
+}
+
+.fi-section-header-description,
+.fi-header-subheading {
+    color: var(--tu-text-2);
+}
+
+/* ---------- tables ---------- */
+.fi-ta-ctn {
+    background-color: var(--tu-surface);
+    border: 1px solid var(--tu-border);
+    border-radius: var(--tu-radius);
+    box-shadow: var(--tu-shadow);
+    overflow: hidden;
+}
+
+.fi-ta-header-cell,
+.fi-ta-header {
+    background-color: var(--tu-surface-2);
+}
+
+.fi-ta-header-cell {
+    color: var(--tu-text-2);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+/* Neutral row dividers — never bright blue */
+.fi-ta-row {
+    border-top: 1px solid var(--tu-border-soft);
+}
+
+.fi-ta-row:hover {
+    background-color: var(--tu-surface-2);
+}
+
+/* Compact rows */
+.fi-ta-cell {
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+/* Toolbar (search/filters) sits flush on the table surface */
+.fi-ta-header-ctn,
+.fi-ta-content-header {
+    background-color: var(--tu-surface);
+    border-bottom: 1px solid var(--tu-border-soft);
+}
+
+/* ---------- badges / buttons / inputs ---------- */
+.fi-badge {
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: .01em;
+}
+
+.fi-btn {
+    border-radius: var(--tu-radius);
+}
+
+.fi-input-wrp {
+    border-radius: var(--tu-radius);
+    border-color: var(--tu-border);
+}
+
+/* ---------- pagination ---------- */
+.fi-pagination {
+    color: var(--tu-text-2);
+}

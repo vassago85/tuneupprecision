@@ -20,9 +20,11 @@ class TrainingTypeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Training';
+    protected static string|\UnitEnum|null $navigationGroup = 'System';
 
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Training Types';
 
     protected static ?string $recordTitleAttribute = 'name';
 
