@@ -135,8 +135,6 @@
         <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
         <div class="creds">
           <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>
-          <div class="cred"><div class="n">6</div><div class="l">Shooters per course</div></div>
-          <div class="cred"><div class="n">Sub-MOA</div><div class="l">Loads built to</div></div>
         </div>
       </div>
     </div>
@@ -183,13 +181,13 @@
 
       {{-- Reloading --}}
       <div x-show="tab === 'reloading'" x-cloak>
-        <p class="proc-meta">Dedicated reloading room · bench work, no live fire</p>
+        <p class="proc-meta">Dedicated reloading room · class-based, all equipment provided</p>
         <div class="steps">
-          <div class="step"><div class="no">01</div><h4>Brass prep</h4><p>Sort, size, trim and prep your cases to one consistent baseline.</p></div>
-          <div class="step"><div class="no">02</div><h4>Load workup</h4><p>Work a charge ladder up methodically, recording every step as you go.</p></div>
-          <div class="step"><div class="no">03</div><h4>Chrono &amp; data</h4><p>Chronograph each load, read velocity and spread, and log the numbers.</p></div>
-          <div class="step"><div class="no">04</div><h4>Seating &amp; tune</h4><p>Tune seating depth and confirm the node on paper.</p></div>
-          <div class="step"><div class="no">05</div><h4>Build your recipe</h4><p>Leave with a documented load and the data that backs it.</p></div>
+          <div class="step"><div class="no">01</div><h4>Deprime &amp; anneal</h4><p>Punch primers first — so cleaning reaches the primer pockets, and so no live primer is in the case when heat goes on. Annealing the neck and shoulder restores even neck tension and stretches case life.</p></div>
+          <div class="step"><div class="no">02</div><h4>Clean &amp; case prep</h4><p>Clean, then size, trim to length and chamfer. Uniform, correctly-trimmed brass is what keeps chambering, neck tension and pressure consistent shot to shot.</p></div>
+          <div class="step"><div class="no">03</div><h4>Prime</h4><p>Small vs large rifle, standard vs magnum — matching the primer to the job, then seating it fully and consistently below flush. High or inconsistent primers mean misfires and safety risk.</p></div>
+          <div class="step"><div class="no">04</div><h4>Powder</h4><p>Matching powder type and burn rate to the cartridge — and why the wrong powder is dangerous, since a fast powder in a rifle case can spike pressure catastrophically. Charges weighed for consistent speed.</p></div>
+          <div class="step"><div class="no">05</div><h4>Seat</h4><p>Seating depth and jump to the lands drive both speed and consistency. Too long jams the lands and raises pressure; too short adds jump — we find and tune the sweet spot.</p></div>
         </div>
       </div>
     </div>
