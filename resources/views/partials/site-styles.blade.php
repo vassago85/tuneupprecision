@@ -195,6 +195,12 @@
   .step .no::before{content:"";position:absolute;top:-1px;left:0;width:40px;height:2px;background:var(--copper)}
   .step h4{font-size:22px;color:#fff;margin:16px 0 8px}
   .step p{font-size:13.5px;color:rgba(255,255,255,.6);margin:0}
+  .proc-tabbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+  .proc-tabbar button{font-family:var(--disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:15px;color:rgba(255,255,255,.62);background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:9px 20px;cursor:pointer;transition:color .16s ease, background .18s ease, border-color .18s ease}
+  .proc-tabbar button:hover{color:#fff;border-color:rgba(255,255,255,.34)}
+  .proc-tabbar button.active{color:#fff;background:var(--copper);border-color:var(--copper)}
+  .proc-meta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#E9825C;margin:0 0 18px}
+  [x-cloak]{display:none!important}
 
   /* ---------- shop ---------- */
   .shop-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:34px}

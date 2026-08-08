@@ -126,7 +126,7 @@
         <span class="eyebrow">Your instructor</span>
         <h2>Meet Dirk.</h2>
         <div class="cred-line">
-          <span>Founder &amp; first Chair, Pretoria Precision Rifle Club</span>
+          <span>Founder &amp; first Chairperson, Pretoria Precision Rifle Club</span>
           <span>Co-founder, Royal Flush Steel Challenge</span>
           <span>SAPRF board</span>
           <span>Match director</span>
@@ -144,18 +144,53 @@
 
   {{-- ============ PROCESS ============ --}}
   <section id="process">
-    <div class="wrap">
+    <div class="wrap" x-data="{ tab: 'prs' }">
       <div class="sec-head reveal">
-        <span class="eyebrow">How a range day runs</span>
-        <h2>Five stations. One process.</h2>
-        <p>This is how a shooting day runs — the same sequence a good shooter follows under their own steam. Reloading days follow their own bench process; every course is built around a repeatable method.</p>
+        <span class="eyebrow">How a day runs</span>
+        <h2>One method. Every discipline.</h2>
+        <p>Every Tune Up day runs on a repeatable process — on the line or at the bench. Pick a discipline to see how the day is built.</p>
       </div>
-      <div class="steps">
-        <div class="step reveal"><div class="no">01</div><h4>Zero &amp; confirm</h4><p>Set a true zero and confirm your rifle and ammo are honest before anything else.</p></div>
-        <div class="step reveal"><div class="no">02</div><h4>Build data</h4><p>Chrono, solver and a live truing pass so your dope matches the real world.</p></div>
-        <div class="step reveal"><div class="no">03</div><h4>Read wind</h4><p>Learn to see, bracket and call the wind — the skill that separates hits from misses.</p></div>
-        <div class="step reveal"><div class="no">04</div><h4>Engage steel</h4><p>Apply the solution on distant plates, then add position and time pressure.</p></div>
-        <div class="step reveal"><div class="no">05</div><h4>Debrief</h4><p>Every shooter leaves with written data and the three things to work on next.</p></div>
+
+      <div class="proc-tabbar reveal" role="tablist">
+        <button type="button" role="tab" :class="{ active: tab === 'prs' }" @click="tab = 'prs'">PRS</button>
+        <button type="button" role="tab" :class="{ active: tab === 'elr' }" @click="tab = 'elr'">ELR</button>
+        <button type="button" role="tab" :class="{ active: tab === 'reloading' }" @click="tab = 'reloading'">Reloading</button>
+      </div>
+
+      {{-- PRS --}}
+      <div x-show="tab === 'prs'" x-cloak>
+        <p class="proc-meta">Private range · positional stages against the clock</p>
+        <div class="steps">
+          <div class="step"><div class="no">01</div><h4>Zero &amp; gear check</h4><p>Confirm zero and set the rifle, bag and bipod up for positional work.</p></div>
+          <div class="step"><div class="no">02</div><h4>Build positions</h4><p>Get stable off barricades, tank traps and improvised support.</p></div>
+          <div class="step"><div class="no">03</div><h4>Plan the stage</h4><p>Read a stage, build a plan and sequence your targets before the beep.</p></div>
+          <div class="step"><div class="no">04</div><h4>Run the clock</h4><p>Engage multiple targets under time, transitioning between positions.</p></div>
+          <div class="step"><div class="no">05</div><h4>Debrief</h4><p>Review each run and the fixes that buy back the most points.</p></div>
+        </div>
+      </div>
+
+      {{-- ELR --}}
+      <div x-show="tab === 'elr'" x-cloak>
+        <p class="proc-meta">Private range · known distance out to the far steel</p>
+        <div class="steps">
+          <div class="step"><div class="no">01</div><h4>Zero &amp; confirm</h4><p>Set a true zero and confirm your rifle and ammo are honest before anything else.</p></div>
+          <div class="step"><div class="no">02</div><h4>Build data</h4><p>Chrono, solver and a live truing pass so your DOPE matches the real world.</p></div>
+          <div class="step"><div class="no">03</div><h4>Read wind</h4><p>Learn to see, bracket and call the wind — the skill that separates hits from misses.</p></div>
+          <div class="step"><div class="no">04</div><h4>Engage steel</h4><p>Apply the solution on distant plates, stretching out to the far targets.</p></div>
+          <div class="step"><div class="no">05</div><h4>Debrief</h4><p>Leave with written data and the three things to work on next.</p></div>
+        </div>
+      </div>
+
+      {{-- Reloading --}}
+      <div x-show="tab === 'reloading'" x-cloak>
+        <p class="proc-meta">Dedicated reloading room · bench work, no live fire</p>
+        <div class="steps">
+          <div class="step"><div class="no">01</div><h4>Brass prep</h4><p>Sort, size, trim and prep your cases to one consistent baseline.</p></div>
+          <div class="step"><div class="no">02</div><h4>Load workup</h4><p>Work a charge ladder up methodically, recording every step as you go.</p></div>
+          <div class="step"><div class="no">03</div><h4>Chrono &amp; data</h4><p>Chronograph each load, read velocity and spread, and log the numbers.</p></div>
+          <div class="step"><div class="no">04</div><h4>Seating &amp; tune</h4><p>Tune seating depth and confirm the node on paper.</p></div>
+          <div class="step"><div class="no">05</div><h4>Build your recipe</h4><p>Leave with a documented load and the data that backs it.</p></div>
+        </div>
       </div>
     </div>
   </section>
