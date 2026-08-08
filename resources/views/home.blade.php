@@ -15,7 +15,7 @@
           <a href="{{ url('/#shop') }}" class="btn btn-ghost">Browse the shop</a>
         </div>
         <div class="hero-data">
-          <div class="cell"><div class="k">Discipline</div><div class="v">PRS · ELR</div></div>
+          <div class="cell"><div class="k">We teach</div><div class="v">PRS · ELR · Reloading</div></div>
           <div class="cell"><div class="k">Squad size</div><div class="v">Max 6</div></div>
         </div>
       </div>
@@ -125,7 +125,13 @@
       <div class="about-copy reveal">
         <span class="eyebrow">Your instructor</span>
         <h2>Meet Dirk.</h2>
-        <p>Tune Up runs on one idea: long range precision — shooting and reloading alike — is a process you can learn, not a talent you're born with. Dirk has spent years on the line as a competitor and at the bench as a reloader, and he coaches the way he works — methodically, with the data to back every call.</p>
+        <div class="cred-line">
+          <span>Founder &amp; first Chair, Pretoria Precision Rifle Club</span>
+          <span>Co-founder, Royal Flush Steel Challenge</span>
+          <span>SAPRF board</span>
+          <span>Match director</span>
+        </div>
+        <p>Tune Up runs on one idea: long range precision — shooting and reloading alike — is a process you can learn, not a talent you're born with. Dirk coaches from the same process he runs on the line and at the bench: methodically, with the data to back every call.</p>
         <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
         <div class="creds">
           <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>

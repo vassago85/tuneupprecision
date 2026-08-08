@@ -175,6 +175,8 @@
   .about-photo .frame::after{left:50%;top:-1px;bottom:-1px;width:1px;opacity:.5}
   .about-copy h2{font-size:clamp(30px,4vw,46px);color:var(--charcoal);margin:14px 0 18px;font-weight:800}
   .about-copy p{color:var(--muted);margin:0 0 16px}
+  .cred-line{display:flex;flex-wrap:wrap;align-items:center;margin:0 0 20px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--gray);line-height:1.7}
+  .cred-line span:not(:first-child)::before{content:"·";color:var(--copper);margin:0 12px;font-weight:700}
   .creds{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
   .cred{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px;min-width:140px}
   .cred .n{font-family:var(--disp);font-weight:800;font-size:30px;color:var(--copper);line-height:1}
