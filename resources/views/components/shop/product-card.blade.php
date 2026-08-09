@@ -18,7 +18,7 @@
   </div>
   <div class="body">
     <span class="cat">{{ $product->category }}</span>
-    <h4>{{ $product->name }}</h4>
+    <h3>{{ $product->name }}</h3>
     <div class="foot">
       <span class="pr">{{ \App\Support\Money::format((int) $product->price_cents, false) }}</span>
       <button class="add" type="button" data-name="{{ $product->name }}">

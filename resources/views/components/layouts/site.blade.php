@@ -20,7 +20,9 @@
 <body>
     <x-site.nav />
 
-    {{ $slot }}
+    <main>
+        {{ $slot }}
+    </main>
 
     <x-site.footer />
     <x-site.toast />

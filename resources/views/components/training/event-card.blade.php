@@ -22,7 +22,7 @@
         ->all();
 @endphp
 <div class="course {{ $featured ? 'feat' : '' }} reveal">
-  @if ($featured)
+  @if ($featured && ! $isFull)
     <span class="tag">Most booked</span>
   @endif
   <div class="evt-date">{{ $dateLabel }}</div>

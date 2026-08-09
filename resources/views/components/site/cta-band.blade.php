@@ -1,7 +1,7 @@
 @props([
     'eyebrow' => 'Next intake filling up',
     'heading' => 'Book your seat on the line.',
-    'text' => "Six seats per course, and they go fast. Reserve now and we'll confirm your date and kit list by WhatsApp.",
+    'text' => "Dates fill quickly. Reserve now and we'll confirm your seat and kit list by email.",
     'ctaLabel' => 'Reserve a seat',
     'ctaHref' => null,
     'note' => 'or message Dirk directly →',
@@ -25,7 +25,7 @@
         <a href="{{ $ctaHref ?? url('/#courses') }}" class="btn btn-primary">{{ $ctaLabel }}
           <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <span class="note">{{ $note }}</span>
+        <a class="note" href="mailto:hello@tuneupprecision.co.za?subject=Tune%20Up%20enquiry">{{ $note }}</a>
       </div>
     </div>
   </div>

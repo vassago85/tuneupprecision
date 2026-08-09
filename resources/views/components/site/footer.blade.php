@@ -20,23 +20,23 @@
         </div>
       </div>
       <div class="foot-col">
-        <h5>Training</h5>
+        <h3>Training</h3>
         @foreach (\App\Models\TrainingType::query()->activeOrdered()->get() as $type)
           <a href="{{ url('/?type='.$type->slug) }}#courses">{{ $type->name }}</a>
         @endforeach
         <a href="{{ url('/#courses') }}">One-on-one</a>
       </div>
       <div class="foot-col">
-        <h5>Explore</h5>
+        <h3>Explore</h3>
         <a href="{{ url('/#about') }}">About Dirk</a>
         <a href="{{ url('/#process') }}">How a day runs</a>
         <a href="{{ url('/#shop') }}">The shop</a>
         <a href="{{ url('/#courses') }}">Course calendar</a>
       </div>
       <div class="foot-col">
-        <h5>Contact</h5>
-        <p>hello@tuneupprecision.co.za</p>
-        <p>WhatsApp: 0XX XXX XXXX</p>
+        <h3>Contact</h3>
+        <a href="mailto:hello@tuneupprecision.co.za">hello@tuneupprecision.co.za</a>
+        {{-- WhatsApp: add real number here as a wa.me link once available. --}}
         <p>Gauteng · by arrangement</p>
       </div>
     </div>

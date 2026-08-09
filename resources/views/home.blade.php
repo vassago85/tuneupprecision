@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="hero-badge reveal">
-        <img class="brand-emblem" src="{{ asset('images/logo.png') }}" alt="Tune Up — Long Range Precision Shooting" width="460" height="460">
+        <img class="brand-emblem" src="{{ asset('images/logo.png') }}" alt="Tune Up — Long Range Precision Training" width="460" height="460">
       </div>
     </div>
   </section>
@@ -159,11 +159,11 @@
       <div x-show="tab === 'prs'" x-cloak>
         <p class="proc-meta">Private range · positional stages against the clock</p>
         <div class="steps">
-          <div class="step"><div class="no">01</div><h4>Zero &amp; gear check</h4><p>Confirm zero and set the rifle, bag and bipod up for positional work.</p></div>
-          <div class="step"><div class="no">02</div><h4>Build positions</h4><p>Get stable off barricades, tank traps and improvised support.</p></div>
-          <div class="step"><div class="no">03</div><h4>Plan the stage</h4><p>Read a stage, build a plan and sequence your targets before the beep.</p></div>
-          <div class="step"><div class="no">04</div><h4>Run the clock</h4><p>Engage multiple targets under time, transitioning between positions.</p></div>
-          <div class="step"><div class="no">05</div><h4>Debrief</h4><p>Review each run and the fixes that buy back the most points.</p></div>
+          <div class="step"><div class="no">01</div><h3>Zero &amp; gear check</h3><p>Confirm zero and set the rifle, bag and bipod up for positional work.</p></div>
+          <div class="step"><div class="no">02</div><h3>Build positions</h3><p>Get stable off barricades, tank traps and improvised support.</p></div>
+          <div class="step"><div class="no">03</div><h3>Plan the stage</h3><p>Read a stage, build a plan and sequence your targets before the beep.</p></div>
+          <div class="step"><div class="no">04</div><h3>Run the clock</h3><p>Engage multiple targets under time, transitioning between positions.</p></div>
+          <div class="step"><div class="no">05</div><h3>Debrief</h3><p>Review each run and the fixes that buy back the most points.</p></div>
         </div>
       </div>
 
@@ -171,11 +171,11 @@
       <div x-show="tab === 'elr'" x-cloak>
         <p class="proc-meta">Private range · known distance out to the far steel</p>
         <div class="steps">
-          <div class="step"><div class="no">01</div><h4>Zero &amp; confirm</h4><p>Set a true zero and confirm your rifle and ammo are honest before anything else.</p></div>
-          <div class="step"><div class="no">02</div><h4>Build data</h4><p>Chrono, solver and a live truing pass so your DOPE matches the real world.</p></div>
-          <div class="step"><div class="no">03</div><h4>Read wind</h4><p>Learn to see, bracket and call the wind — the skill that separates hits from misses.</p></div>
-          <div class="step"><div class="no">04</div><h4>Engage steel</h4><p>Apply the solution on distant plates, stretching out to the far targets.</p></div>
-          <div class="step"><div class="no">05</div><h4>Debrief</h4><p>Leave with written data and the three things to work on next.</p></div>
+          <div class="step"><div class="no">01</div><h3>Zero &amp; confirm</h3><p>Set a true zero and confirm your rifle and ammo are honest before anything else.</p></div>
+          <div class="step"><div class="no">02</div><h3>Build data</h3><p>Chrono, solver and a live truing pass so your DOPE matches the real world.</p></div>
+          <div class="step"><div class="no">03</div><h3>Read wind</h3><p>Learn to see, bracket and call the wind — the skill that separates hits from misses.</p></div>
+          <div class="step"><div class="no">04</div><h3>Engage steel</h3><p>Apply the solution on distant plates, stretching out to the far targets.</p></div>
+          <div class="step"><div class="no">05</div><h3>Debrief</h3><p>Leave with written data and the three things to work on next.</p></div>
         </div>
       </div>
 
@@ -183,11 +183,11 @@
       <div x-show="tab === 'reloading'" x-cloak>
         <p class="proc-meta">Dedicated reloading room · class-based, all equipment provided</p>
         <div class="steps">
-          <div class="step"><div class="no">01</div><h4>Deprime &amp; anneal</h4><p>Punch primers first — so cleaning reaches the primer pockets, and so no live primer is in the case when heat goes on. Annealing the neck and shoulder restores even neck tension and stretches case life.</p></div>
-          <div class="step"><div class="no">02</div><h4>Clean &amp; case prep</h4><p>Clean, then size, trim to length and chamfer. Uniform, correctly-trimmed brass is what keeps chambering, neck tension and pressure consistent shot to shot.</p></div>
-          <div class="step"><div class="no">03</div><h4>Prime</h4><p>Small vs large rifle, standard vs magnum — matching the primer to the job, then seating it fully and consistently below flush. High or inconsistent primers mean misfires and safety risk.</p></div>
-          <div class="step"><div class="no">04</div><h4>Powder</h4><p>Matching powder type and burn rate to the cartridge — and why the wrong powder is dangerous, since a fast powder in a rifle case can spike pressure catastrophically. Charges weighed for consistent speed.</p></div>
-          <div class="step"><div class="no">05</div><h4>Seat</h4><p>Seating depth and jump to the lands drive both speed and consistency. Too long jams the lands and raises pressure; too short adds jump — we find and tune the sweet spot.</p></div>
+          <div class="step"><div class="no">01</div><h3>Deprime &amp; anneal</h3><p>Punch primers first — so cleaning reaches the primer pockets, and so no live primer is in the case when heat goes on. Annealing the neck and shoulder restores even neck tension and stretches case life.</p></div>
+          <div class="step"><div class="no">02</div><h3>Clean &amp; case prep</h3><p>Clean, then size, trim to length and chamfer. Uniform, correctly-trimmed brass is what keeps chambering, neck tension and pressure consistent shot to shot.</p></div>
+          <div class="step"><div class="no">03</div><h3>Prime</h3><p>Small vs large rifle, standard vs magnum — matching the primer to the job, then seating it fully and consistently below flush. High or inconsistent primers mean misfires and safety risk.</p></div>
+          <div class="step"><div class="no">04</div><h3>Powder</h3><p>Matching powder type and burn rate to the cartridge — and why the wrong powder is dangerous, since a fast powder in a rifle case can spike pressure catastrophically. Charges weighed for consistent speed.</p></div>
+          <div class="step"><div class="no">05</div><h3>Seat</h3><p>Seating depth and jump to the lands drive both speed and consistency. Too long jams the lands and raises pressure; too short adds jump — we find and tune the sweet spot.</p></div>
         </div>
       </div>
     </div>
