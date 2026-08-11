@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="hero-badge reveal">
-        <img class="brand-emblem" src="{{ asset('images/logo.png') }}" alt="Tune Up — Long Range Precision Training" width="460" height="460">
+        <img class="brand-emblem" src="{{ asset('images/logo.png') }}?v={{ @filemtime(public_path('images/logo.png')) ?: '2' }}" alt="Tune Up — Long Range Precision Training" width="658" height="557">
       </div>
     </div>
   </section>
