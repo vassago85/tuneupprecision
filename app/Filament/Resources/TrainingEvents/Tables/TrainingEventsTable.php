@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\TrainingEvents\Tables;
 
 use App\Enums\TrainingEventStatus;
+use App\Filament\Resources\TrainingEvents\Actions\NotifyAttendeesAction;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
 use Filament\Actions\BulkActionGroup;
@@ -56,6 +57,7 @@ class TrainingEventsTable
                         : $query),
             ])
             ->recordActions([
+                NotifyAttendeesAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

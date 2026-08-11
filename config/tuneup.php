@@ -37,4 +37,26 @@ return [
         'order' => 'TU-S-######',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Mail defaults
+    |--------------------------------------------------------------------------
+    |
+    | Fallback values for outgoing mail. Anything saved on the admin Email
+    | settings page (settings table, mail.* keys) takes precedence over these
+    | env-based defaults — see App\Support\MailSettings. Secrets should still
+    | live in .env in production; the admin UI simply lets Dirk switch mailer,
+    | tweak the from address, or drop in Mailgun credentials without a deploy.
+    |
+    */
+
+    'mail' => [
+        'mailer' => env('MAIL_MAILER', 'log'),
+        'from_address' => env('MAIL_FROM_ADDRESS', 'hello@tuneupprecision.co.za'),
+        'from_name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Tune Up Precision')),
+        'mailgun_domain' => env('MAILGUN_DOMAIN'),
+        'mailgun_secret' => env('MAILGUN_SECRET'),
+        'mailgun_endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+    ],
+
 ];
