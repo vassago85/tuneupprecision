@@ -1,6 +1,29 @@
 {{-- Footer, extracted from the approved mockup. --}}
 <footer>
   <div class="wrap">
+    <div class="nl" id="newsletter">
+      <div class="nl-copy">
+        <h3>Monthly newsletter</h3>
+        <p>Upcoming course dates, competition invites and range notes — once a month. No spam, unsubscribe any time.</p>
+      </div>
+      <form class="nl-form" method="POST" action="{{ route('newsletter.subscribe') }}">
+        @csrf
+        {{-- Honeypot: hidden from people, bots tend to fill it. --}}
+        <div class="nl-hp" aria-hidden="true">
+          <label>Company (leave blank)
+            <input type="text" name="company" tabindex="-1" autocomplete="off">
+          </label>
+        </div>
+        <input type="hidden" name="ts" value="{{ time() }}">
+        <input type="email" name="email" required placeholder="you@email.com" aria-label="Email address" value="{{ old('email') }}">
+        <button type="submit" class="btn btn-primary">Subscribe</button>
+      </form>
+      @if (session('newsletter_status') === 'success')
+        <p class="nl-msg nl-ok">Thanks — you're on the list. Look out for the monthly note.</p>
+      @elseif ($errors->has('email'))
+        <p class="nl-msg nl-err">{{ $errors->first('email') }}</p>
+      @endif
+    </div>
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="{{ url('/') }}" aria-label="Tune Up home">

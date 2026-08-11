@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\EventKind;
+use App\Http\Controllers\NewsletterController;
 use App\Models\Product;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
@@ -17,6 +19,9 @@ Route::get('/', function (Request $request) {
     // month for the agenda. Fully-booked dates DO display (as "Fully booked").
     $eventsByMonth = TrainingEvent::query()
         ->with('courseTemplate.trainingType')
+        // Competition/guest events aren't shown on the public agenda yet (public
+        // join lands with the booking flow) — only training dates render here.
+        ->where('kind', EventKind::Training->value)
         ->publiclyVisible()
         ->upcoming()
         ->when($selectedType, fn ($query, $slug) => $query->whereHas(
@@ -36,5 +41,12 @@ Route::get('/', function (Request $request) {
         'products' => $products,
     ]);
 })->name('home');
+
+// Newsletter subscribe (public form) + one-click unsubscribe.
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->middleware('throttle:10,1')
+    ->name('newsletter.subscribe');
+Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])
+    ->name('newsletter.unsubscribe');
 
 // Public shop listing + product detail land in the next commit.

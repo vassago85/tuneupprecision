@@ -55,7 +55,10 @@ services:
       - EFT_BRANCH_CODE=${EFT_BRANCH_CODE:-250655}
     volumes:
       - app-logs:/var/www/html/storage/logs
-      - app-storage:/var/www/html/storage/app/public
+      # Uploaded media (product/course images) lives on the big data disk
+      # (/dev/sdc1 mounted at /mnt/data), NOT the small root filesystem.
+      # Served via the existing /storage symlink, so public URLs are unchanged.
+      - ${MEDIA_HOST_PATH:-/mnt/data/tuneup/storage}:/var/www/html/storage/app/public
     ports:
       - "${APP_PORT:-8093}:80"
     networks:
@@ -168,6 +171,8 @@ services:
       - MAIL_FROM_NAME=${MAIL_FROM_NAME:-Tune Up}
     volumes:
       - app-logs:/var/www/html/storage/logs
+      # Same media disk as the app, so queued jobs can read/write uploads.
+      - ${MEDIA_HOST_PATH:-/mnt/data/tuneup/storage}:/var/www/html/storage/app/public
     networks:
       - tuneupprecision-network
     depends_on:
@@ -181,6 +186,5 @@ networks:
 
 volumes:
   app-logs:
-  app-storage:
   db-data:
   redis-data:

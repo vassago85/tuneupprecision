@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\TrainingEvents\Tables;
 
+use App\Enums\EventKind;
 use App\Enums\TrainingEventStatus;
 use App\Filament\Resources\TrainingEvents\Actions\NotifyAttendeesAction;
 use App\Models\TrainingEvent;
@@ -22,13 +23,17 @@ class TrainingEventsTable
         return $table
             ->defaultSort('starts_on')
             ->columns([
-                TextColumn::make('courseTemplate.title')
-                    ->label('Course')
-                    ->searchable()
-                    ->weight('bold'),
-                TextColumn::make('courseTemplate.trainingType.name')
+                TextColumn::make('kind')
                     ->label('Type')
+                    ->badge(),
+                TextColumn::make('display_title')
+                    ->label('Event')
+                    ->state(fn (TrainingEvent $record): string => $record->displayTitle())
+                    ->weight('bold'),
+                TextColumn::make('discipline')
+                    ->label('Discipline')
                     ->badge()
+                    ->state(fn (TrainingEvent $record): ?string => $record->disciplineName())
                     ->placeholder('—'),
                 TextColumn::make('starts_on')
                     ->label('Starts')
@@ -47,13 +52,18 @@ class TrainingEventsTable
                     ->badge(),
             ])
             ->filters([
+                SelectFilter::make('kind')
+                    ->label('Event type')
+                    ->options(EventKind::class),
                 SelectFilter::make('status')
                     ->options(TrainingEventStatus::class),
                 SelectFilter::make('training_type')
-                    ->label('Training type')
+                    ->label('Discipline')
                     ->options(fn (): array => TrainingType::query()->orderBy('name')->pluck('name', 'id')->all())
                     ->query(fn ($query, array $data) => filled($data['value'] ?? null)
-                        ? $query->whereHas('courseTemplate', fn ($q) => $q->where('training_type_id', $data['value']))
+                        ? $query->where(fn ($q) => $q
+                            ->where('training_type_id', $data['value'])
+                            ->orWhereHas('courseTemplate', fn ($c) => $c->where('training_type_id', $data['value'])))
                         : $query),
             ])
             ->recordActions([

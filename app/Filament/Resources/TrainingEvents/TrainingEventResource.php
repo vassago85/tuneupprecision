@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TrainingEvents;
 use App\Filament\Resources\TrainingEvents\Pages\CreateTrainingEvent;
 use App\Filament\Resources\TrainingEvents\Pages\EditTrainingEvent;
 use App\Filament\Resources\TrainingEvents\Pages\ListTrainingEvents;
+use App\Filament\Resources\TrainingEvents\RelationManagers\RsvpsRelationManager;
 use App\Filament\Resources\TrainingEvents\Schemas\TrainingEventForm;
 use App\Filament\Resources\TrainingEvents\Tables\TrainingEventsTable;
 use App\Models\TrainingEvent;
@@ -39,7 +40,7 @@ class TrainingEventResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RsvpsRelationManager::class,
         ];
     }
 

@@ -246,6 +246,23 @@
   .foot-col a:hover{color:var(--copper)}
   .foot-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:22px;font-family:var(--mono);font-size:11.5px;color:var(--gray);letter-spacing:.04em}
 
+  /* ---------- newsletter ---------- */
+  .nl{display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;padding-bottom:34px;margin-bottom:36px;border-bottom:1px solid var(--line)}
+  .nl-copy h3{font-family:var(--disp);text-transform:uppercase;font-size:22px;letter-spacing:.05em;color:var(--charcoal);margin:0 0 6px}
+  .nl-copy p{color:var(--muted);font-size:14.5px;margin:0;max-width:46ch}
+  .nl-form{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .nl-form input[type=email]{font-family:var(--body);font-size:15px;padding:12px 15px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);min-width:250px}
+  .nl-form input[type=email]:focus{outline:none;border-color:var(--copper-deep);box-shadow:0 0 0 3px rgba(180,71,31,.14)}
+  .nl-hp{position:absolute!important;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+  .nl-msg{width:100%;font-size:13.5px;margin:12px 0 0;font-family:var(--mono);letter-spacing:.02em}
+  .nl-ok{color:var(--copper-deeper)}
+  .nl-err{color:#C9433F}
+  @media (max-width:720px){
+    .nl{flex-direction:column;align-items:flex-start}
+    .nl-form{width:100%}
+    .nl-form input[type=email]{flex:1;min-width:0}
+  }
+
   /* ---------- toast ---------- */
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(140%);background:var(--charcoal);color:#fff;padding:13px 20px;border-radius:12px;font-family:var(--mono);font-size:13px;letter-spacing:.03em;z-index:200;box-shadow:var(--shadow-lg);transition:transform .3s cubic-bezier(.2,1.2,.4,1);display:flex;align-items:center;gap:10px}
   .toast.show{transform:translateX(-50%) translateY(0)}

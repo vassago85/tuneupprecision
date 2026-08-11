@@ -6,7 +6,6 @@ namespace App\Filament\Resources\TrainingEvents\Actions;
 
 use App\Enums\BookingStatus;
 use App\Mail\TrainingEventNotification;
-use App\Models\Booking;
 use App\Models\TrainingEvent;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
@@ -19,8 +18,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
 /**
- * Compose and send an email to just the people booked on one training event.
- * Reused as a table row action and on the event edit page header.
+ * Compose and send an email to just the people signed up for one event.
+ * Training events pull from paid bookings; competition/guest events pull from
+ * the free RSVP list. Reused as a table row action and on the event edit page.
  */
 class NotifyAttendeesAction
 {
@@ -30,11 +30,11 @@ class NotifyAttendeesAction
             ->label('Notify attendees')
             ->icon(Heroicon::OutlinedEnvelope)
             ->color('primary')
-            ->modalHeading('Email the people booked on this event')
+            ->modalHeading('Email the people signed up for this event')
             ->modalSubmitActionLabel('Send emails')
             ->fillForm(fn (TrainingEvent $record): array => [
                 'audience' => 'active',
-                'subject' => 'Update · '.(optional($record->courseTemplate)->title ?? 'your training'),
+                'subject' => 'Update · '.$record->displayTitle(),
             ])
             ->schema([
                 Placeholder::make('recipients_count')
@@ -48,7 +48,9 @@ class NotifyAttendeesAction
                     ])
                     ->default('active')
                     ->required()
-                    ->live(),
+                    ->live()
+                    // Competition RSVPs are a single list — no status to filter by.
+                    ->visible(fn (TrainingEvent $record): bool => ! $record->isCompetition()),
                 TextInput::make('subject')
                     ->label('Subject')
                     ->required()
@@ -60,66 +62,65 @@ class NotifyAttendeesAction
                     ->helperText('Plain text. The event date and venue are added automatically at the bottom.'),
             ])
             ->action(function (array $data, TrainingEvent $record): void {
-                $recipients = self::recipients($record, $data['audience'])
+                $recipients = self::recipients($record, $data['audience'] ?? 'active')
+                    ->filter(fn (array $r): bool => filled($r['email']))
                     ->unique('email')
-                    ->filter(fn ($booking): bool => filled($booking->email));
+                    ->values();
 
                 if ($recipients->isEmpty()) {
                     Notification::make()
                         ->title('No one to email')
-                        ->body('There are no matching bookings with an email address for this event.')
+                        ->body('There is no one signed up with an email address for this event yet.')
                         ->warning()
                         ->send();
 
                     return;
                 }
 
-                foreach ($recipients as $booking) {
-                    Mail::to($booking->email)->queue(new TrainingEventNotification(
+                foreach ($recipients as $recipient) {
+                    Mail::to($recipient['email'])->queue(new TrainingEventNotification(
                         event: $record,
                         subjectLine: $data['subject'],
                         body: $data['message'],
-                        recipientName: (string) $booking->customer_name,
+                        recipientName: (string) $recipient['name'],
                     ));
                 }
 
                 Notification::make()
                     ->title('Emails queued')
-                    ->body("Queued {$recipients->count()} email(s) to attendees of this event.")
+                    ->body("Queued {$recipients->count()} email(s) to the people signed up for this event.")
                     ->success()
                     ->send();
             });
     }
 
     /**
-     * Booking statuses included for the chosen audience.
+     * Normalised recipient list ([name, email]) for the event.
      *
-     * @return array<int, BookingStatus>
+     * @return Collection<int, array{name: string, email: ?string}>
      */
-    private static function statusesFor(string $audience): array
+    private static function recipients(TrainingEvent $event, string $audience): Collection
     {
-        return $audience === 'confirmed'
+        if ($event->isCompetition()) {
+            return $event->rsvps()
+                ->get(['id', 'name', 'email'])
+                ->map(fn ($rsvp): array => ['name' => (string) $rsvp->name, 'email' => $rsvp->email]);
+        }
+
+        $statuses = $audience === 'confirmed'
             ? [BookingStatus::Confirmed]
             : [BookingStatus::Confirmed, BookingStatus::Pending];
-    }
 
-    /**
-     * @return Collection<int, Booking>
-     */
-    private static function recipients(TrainingEvent $event, string $audience)
-    {
         return $event->bookings()
-            ->whereIn('status', array_map(
-                fn (BookingStatus $s): string => $s->value,
-                self::statusesFor($audience),
-            ))
-            ->get(['id', 'customer_name', 'email']);
+            ->whereIn('status', array_map(fn (BookingStatus $s): string => $s->value, $statuses))
+            ->get(['id', 'customer_name', 'email'])
+            ->map(fn ($booking): array => ['name' => (string) $booking->customer_name, 'email' => $booking->email]);
     }
 
     private static function describeAudience(TrainingEvent $event, string $audience): string
     {
         $count = self::recipients($event, $audience)
-            ->filter(fn ($booking): bool => filled($booking->email))
+            ->filter(fn (array $r): bool => filled($r['email']))
             ->unique('email')
             ->count();
 

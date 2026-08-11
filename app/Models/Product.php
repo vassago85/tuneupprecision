@@ -5,18 +5,21 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Support\Money;
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Product extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\ProductFactory> */
+    /** @use HasFactory<ProductFactory> */
     use HasFactory;
+
     use InteractsWithMedia;
 
     protected $fillable = [
@@ -48,6 +51,13 @@ class Product extends Model implements HasMedia
         $this->addMediaConversion('thumb')
             ->width(400)
             ->height(400)
+            ->optimize()
+            ->nonQueued();
+
+        // Compressed, web-sized image for detail views (never serve the original).
+        $this->addMediaConversion('web')
+            ->fit(Fit::Max, 1600, 1600)
+            ->optimize()
             ->nonQueued();
     }
 

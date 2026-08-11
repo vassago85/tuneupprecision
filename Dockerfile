@@ -24,7 +24,13 @@ RUN apk add --no-cache \
     nodejs \
     npm \
     ca-certificates \
-    tzdata
+    tzdata \
+    # Image optimizer binaries used by spatie/laravel-medialibrary ->optimize()
+    jpegoptim \
+    optipng \
+    pngquant \
+    gifsicle \
+    libwebp-tools
 
 # Timezone
 ENV TZ=Africa/Johannesburg

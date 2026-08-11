@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\CourseTemplates\Schemas;
 
+use App\Models\CourseTemplate;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -65,6 +67,32 @@ class CourseTemplateForm
                 Toggle::make('is_active')
                     ->default(true)
                     ->helperText('Inactive templates are hidden from the public site.'),
+                SpatieMediaLibraryFileUpload::make('thumbnail')
+                    ->label('Featured thumbnail')
+                    ->collection('thumbnail')
+                    ->image()
+                    ->imageEditor()
+                    ->imageResizeMode('contain')
+                    ->imageResizeUpscale(false)
+                    ->imageResizeTargetWidth('2000')
+                    ->imageResizeTargetHeight('2000')
+                    ->helperText('The main image used as the course thumbnail. Falls back to the first gallery image if left empty.')
+                    ->columnSpanFull(),
+                SpatieMediaLibraryFileUpload::make('images')
+                    ->label('Gallery images')
+                    ->collection('images')
+                    ->image()
+                    ->multiple()
+                    ->reorderable()
+                    ->appendFiles()
+                    ->maxFiles(CourseTemplate::MAX_GALLERY_IMAGES)
+                    // Compress before storing: cap the original at 2000px.
+                    ->imageResizeMode('contain')
+                    ->imageResizeUpscale(false)
+                    ->imageResizeTargetWidth('2000')
+                    ->imageResizeTargetHeight('2000')
+                    ->helperText('Up to '.CourseTemplate::MAX_GALLERY_IMAGES.' images. Drag to reorder.')
+                    ->columnSpanFull(),
             ]);
     }
 }

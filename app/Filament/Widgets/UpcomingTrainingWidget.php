@@ -22,7 +22,7 @@ class UpcomingTrainingWidget extends BaseWidget
         return $table
             ->query(
                 TrainingEvent::query()
-                    ->with('courseTemplate.trainingType')
+                    ->with(['courseTemplate.trainingType', 'trainingType'])
                     ->upcoming()
                     ->limit(6)
             )
@@ -31,9 +31,10 @@ class UpcomingTrainingWidget extends BaseWidget
                     ->label('Date')
                     ->date('D d M')
                     ->weight('semibold'),
-                TextColumn::make('courseTemplate.title')
-                    ->label('Course')
-                    ->description(fn (TrainingEvent $record): ?string => $record->courseTemplate?->trainingType?->name)
+                TextColumn::make('display_title')
+                    ->label('Event')
+                    ->state(fn (TrainingEvent $record): string => $record->displayTitle())
+                    ->description(fn (TrainingEvent $record): ?string => $record->disciplineName())
                     ->weight('bold'),
                 TextColumn::make('venue')
                     ->label('Venue')

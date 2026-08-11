@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\EventKind;
 use App\Enums\TrainingEventStatus;
 use App\Support\Money;
+use Database\Factories\TrainingEventFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,11 +17,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TrainingEvent extends Model
 {
-    /** @use HasFactory<\Database\Factories\TrainingEventFactory> */
+    /** @use HasFactory<TrainingEventFactory> */
     use HasFactory;
 
     protected $fillable = [
+        'kind',
         'course_template_id',
+        'title',
+        'training_type_id',
+        'dirk_role',
+        'external_url',
+        'entry_fee_cents',
         'starts_on',
         'ends_on',
         'venue',
@@ -32,11 +40,13 @@ class TrainingEvent extends Model
     protected function casts(): array
     {
         return [
+            'kind' => EventKind::class,
             'starts_on' => 'date',
             'ends_on' => 'date',
             'capacity' => 'integer',
             'seats_taken' => 'integer',
             'price_cents' => 'integer',
+            'entry_fee_cents' => 'integer',
             'status' => TrainingEventStatus::class,
         ];
     }
@@ -50,11 +60,58 @@ class TrainingEvent extends Model
     }
 
     /**
+     * Discipline for a competition event (training events derive it from the
+     * course template instead).
+     *
+     * @return BelongsTo<TrainingType, $this>
+     */
+    public function trainingType(): BelongsTo
+    {
+        return $this->belongsTo(TrainingType::class);
+    }
+
+    /**
      * @return HasMany<Booking, $this>
      */
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
+    }
+
+    /**
+     * Guest RSVPs (competition/guest events).
+     *
+     * @return HasMany<EventRsvp, $this>
+     */
+    public function rsvps(): HasMany
+    {
+        return $this->hasMany(EventRsvp::class);
+    }
+
+    public function isCompetition(): bool
+    {
+        return $this->kind === EventKind::Competition;
+    }
+
+    /**
+     * Human title: competition name for competitions, else the course title.
+     */
+    public function displayTitle(): string
+    {
+        if ($this->isCompetition()) {
+            return $this->title ?: 'Competition';
+        }
+
+        return $this->courseTemplate?->title ?? 'Training';
+    }
+
+    /**
+     * Discipline name: the directly-linked type (competitions) or the one from
+     * the course template (training).
+     */
+    public function disciplineName(): ?string
+    {
+        return $this->trainingType?->name ?? $this->courseTemplate?->trainingType?->name;
     }
 
     public function seatsLeft(): int

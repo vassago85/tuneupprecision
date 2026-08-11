@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -51,6 +51,11 @@ class ProductForm
                     ->image()
                     ->multiple()
                     ->reorderable()
+                    // Compress before storing: cap the original at 2000px.
+                    ->imageResizeMode('contain')
+                    ->imageResizeUpscale(false)
+                    ->imageResizeTargetWidth('2000')
+                    ->imageResizeTargetHeight('2000')
                     ->columnSpanFull(),
             ]);
     }
