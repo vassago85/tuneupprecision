@@ -286,7 +286,7 @@
   .cal-cell.today{background:#fff}
   .cal-cell.today .cal-date{color:var(--copper);font-weight:700}
   .cal-date{font-family:var(--mono);font-size:12px;color:var(--gray);letter-spacing:.04em}
-  .cal-evt{display:block;padding:5px 8px;border-radius:6px;background:var(--charcoal);color:#fff;font-family:var(--disp);font-size:12px;font-weight:600;line-height:1.15;letter-spacing:.02em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .15s ease}
+  .cal-evt{display:block;width:100%;padding:5px 8px;border-radius:6px;border:0;background:var(--charcoal);color:#fff;font-family:var(--disp);font-size:12px;font-weight:600;line-height:1.15;letter-spacing:.02em;text-transform:uppercase;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;transition:background .15s ease}
   .cal-evt:hover{background:var(--copper-deep)}
   .cal-evt.comp{background:var(--copper);color:#fff}
   .cal-evt.comp:hover{background:var(--copper-deep)}
@@ -295,6 +295,20 @@
   .cal-legend .sw{width:12px;height:12px;border-radius:3px;background:var(--charcoal);display:inline-block}
   .cal-legend .sw.comp{background:var(--copper)}
   .cal-foot{margin-top:22px;display:flex;justify-content:center}
+
+  /* ---------- event modal ---------- */
+  .modal-back{position:fixed;inset:0;background:rgba(28,40,52,.72);z-index:80;display:grid;place-items:center;padding:20px;backdrop-filter:blur(4px)}
+  .modal{background:var(--paper);border-radius:14px;max-width:520px;width:100%;padding:34px 32px;position:relative;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+  .modal .eyebrow{color:var(--copper-deeper)}
+  .modal h3{font-family:var(--disp);font-size:30px;color:var(--charcoal);margin:8px 0 20px;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;font-weight:800}
+  .modal-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--gray);cursor:pointer;font-size:22px;line-height:1;display:grid;place-items:center;transition:border-color .15s,color .15s}
+  .modal-close:hover{border-color:var(--charcoal);color:var(--charcoal)}
+  .modal-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;background:var(--base);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 18px}
+  .modal-meta > div{display:flex;flex-direction:column;gap:2px}
+  .modal-meta span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gray);text-transform:uppercase}
+  .modal-meta b{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--charcoal)}
+  .modal p{color:var(--muted);margin:0 0 22px;font-size:15px;line-height:1.55}
+  .modal .btn{width:100%;justify-content:center}
 
   /* ---------- mobile ---------- */
   .mobile-menu{display:none}
@@ -329,6 +343,9 @@
     .cal-dow{padding:8px 2px;font-size:10px;letter-spacing:.08em}
     .cal-date{font-size:11px}
     .cal-evt{font-size:10px;padding:3px 5px;border-radius:4px}
+    .modal{padding:26px 20px}
+    .modal h3{font-size:24px}
+    .modal-meta{grid-template-columns:1fr}
   }
   @media (max-width:520px){
     .values,.shop,.foot-grid{grid-template-columns:1fr}

@@ -106,11 +106,64 @@ Route::get('/calendar', function (Request $request) {
         ];
     }
 
+    // Compact payload for the click-to-open modal — one entry per event, keyed
+    // by id so the chip click can just pass its id.
+    $eventsPayload = [];
+    foreach ($events as $event) {
+        $isComp = $event->isCompetition();
+        $start = $event->starts_on;
+        $end = $event->ends_on;
+        $dateLabel = ($end && $end->ne($start))
+            ? $start->format('D d M').' – '.$end->format('D d M Y')
+            : $start->format('D d M Y');
+
+        $priceCents = $isComp
+            ? (int) ($event->entry_fee_cents ?? 0)
+            : $event->effectivePriceCents();
+
+        $blurb = $isComp
+            ? ($event->dirk_role
+                ? "Dirk is at this match — {$event->dirk_role}."
+                : 'Dirk is attending this match — join him on the line.')
+            : $event->courseTemplate?->blurb;
+
+        if ($isComp) {
+            $actionLabel = $event->external_url ? 'Match info' : 'Contact Dirk';
+            $actionHref = $event->external_url
+                ?? 'mailto:hello@tuneupprecision.co.za?subject='.rawurlencode($event->displayTitle());
+            $actionExternal = (bool) $event->external_url;
+        } else {
+            $actionLabel = $event->isFull() ? 'Join the waitlist' : 'Book this date';
+            $actionHref = route('courses');
+            $actionExternal = false;
+        }
+
+        $eventsPayload[$event->id] = [
+            'kind' => $isComp ? 'competition' : 'training',
+            'title' => $isComp ? $event->displayTitle() : ($event->courseTemplate?->title ?? 'Training'),
+            'discipline' => $event->disciplineName(),
+            'level' => $event->courseTemplate?->level,
+            'date_label' => $dateLabel,
+            'venue' => $event->venue,
+            'price' => $priceCents > 0 ? \App\Support\Money::format($priceCents, false) : null,
+            'price_note' => $isComp ? 'Entry fee' : 'Per shooter',
+            'seats_note' => $isComp
+                ? null
+                : ($event->isFull() ? 'Fully booked' : $event->seatsLeft().' of '.$event->capacity.' seats left'),
+            'dirk_role' => $event->dirk_role,
+            'blurb' => $blurb,
+            'action_label' => $actionLabel,
+            'action_href' => $actionHref,
+            'action_external' => $actionExternal,
+        ];
+    }
+
     return view('calendar', [
         'month' => $month,
         'prevMonth' => $month->copy()->subMonth()->format('Y-m'),
         'nextMonth' => $month->copy()->addMonth()->format('Y-m'),
         'days' => $days,
+        'eventsPayload' => $eventsPayload,
     ]);
 })->name('calendar');
 

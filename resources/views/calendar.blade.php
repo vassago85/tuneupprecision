@@ -1,12 +1,25 @@
 <x-layouts.site title="Calendar">
 
   {{-- ============ MONTH CALENDAR ============ --}}
-  <section>
+  <section
+    x-data="{
+      payload: {{ Illuminate\Support\Js::from($eventsPayload) }},
+      current: null,
+      open(id) {
+        this.current = this.payload[id] || null;
+        if (this.current) document.body.style.overflow = 'hidden';
+      },
+      close() {
+        this.current = null;
+        document.body.style.overflow = '';
+      },
+    }"
+  >
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">Event calendar</span>
         <h2>Every training day, one grid.</h2>
-        <p>Browse upcoming training dates month-by-month. Click a date to jump to the course list, or use the arrows to move between months.</p>
+        <p>Browse upcoming dates month-by-month. Click any event chip for the details.</p>
       </div>
 
       <div class="cal-head reveal">
@@ -40,17 +53,14 @@
                 $isComp = $event->isCompetition();
                 $title = $event->displayTitle();
                 $discipline = $event->disciplineName();
-                $href = $isComp
-                  ? ($event->external_url ?? route('calendar'))
-                  : route('courses');
                 $tooltip = trim($title.($discipline ? ' · '.$discipline : '').($isComp && $event->dirk_role ? ' · '.$event->dirk_role : ''));
               @endphp
-              <a class="cal-evt {{ $isComp ? 'comp' : '' }}"
-                 href="{{ $href }}"
-                 @if ($isComp && $event->external_url) target="_blank" rel="noopener noreferrer" @endif
-                 title="{{ $tooltip }}">
+              <button type="button"
+                      class="cal-evt {{ $isComp ? 'comp' : '' }}"
+                      @click="open({{ $event->id }})"
+                      title="{{ $tooltip }}">
                 {{ $title }}
-              </a>
+              </button>
             @endforeach
           </div>
         @endforeach
@@ -65,6 +75,48 @@
         <a href="{{ route('courses') }}" class="btn btn-ghost">See all upcoming dates
           <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
+      </div>
+    </div>
+
+    {{-- ============ EVENT MODAL ============ --}}
+    <div class="modal-back"
+         x-show="current"
+         x-cloak
+         x-transition.opacity
+         @click.self="close()"
+         @keydown.escape.window="close()"
+         role="dialog"
+         aria-modal="true">
+      <div class="modal" x-show="current" x-transition>
+        <button type="button" class="modal-close" @click="close()" aria-label="Close">&times;</button>
+        <template x-if="current">
+          <div>
+            <span class="eyebrow"
+                  x-text="current.kind === 'competition'
+                    ? ('Competition' + (current.dirk_role ? ' · ' + current.dirk_role : ''))
+                    : ((current.discipline ? current.discipline + ' · ' : '') + (current.level || 'Training'))"></span>
+            <h3 x-text="current.title"></h3>
+
+            <div class="modal-meta">
+              <div><span>Date</span><b x-text="current.date_label"></b></div>
+              <div><span>Venue</span><b x-text="current.venue"></b></div>
+              <template x-if="current.price">
+                <div><span x-text="current.price_note"></span><b x-text="current.price"></b></div>
+              </template>
+              <template x-if="current.seats_note">
+                <div><span>Seats</span><b x-text="current.seats_note"></b></div>
+              </template>
+            </div>
+
+            <p x-show="current.blurb" x-text="current.blurb"></p>
+
+            <a class="btn btn-primary"
+               :href="current.action_href"
+               :target="current.action_external ? '_blank' : null"
+               :rel="current.action_external ? 'noopener noreferrer' : null"
+               x-text="current.action_label"></a>
+          </div>
+        </template>
       </div>
     </div>
   </section>
