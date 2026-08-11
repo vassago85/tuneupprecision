@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Enums\EventKind;
 use App\Http\Controllers\NewsletterController;
-use App\Models\CourseTemplate;
 use App\Models\Product;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,9 +26,10 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/calendar', function (Request $request) {
-    // Full dated agenda, grouped by month, with the discipline filter chips
-    // (previously the "Upcoming course dates" section on the landing page).
+Route::get('/courses', function (Request $request) {
+    // Public agenda: every upcoming training date, month-grouped, with a
+    // discipline filter (Reloading, PRS, ELR, ...). Fully-booked dates DO show
+    // (as "Fully booked" on the card).
     $trainingTypes = TrainingType::query()->activeOrdered()->get();
     $selectedType = $request->query('type');
 
@@ -44,25 +45,75 @@ Route::get('/calendar', function (Request $request) {
         ->get()
         ->groupBy(fn (TrainingEvent $event): string => $event->starts_on->format('F Y'));
 
-    return view('calendar', [
+    return view('courses', [
         'trainingTypes' => $trainingTypes,
         'selectedType' => $selectedType,
         'eventsByMonth' => $eventsByMonth,
     ]);
-})->name('calendar');
+})->name('courses');
 
-Route::get('/courses', function () {
-    // Public course offerings — one card per active CourseTemplate.
-    $courses = CourseTemplate::query()
-        ->with('trainingType')
-        ->where('is_active', true)
-        ->orderBy('title')
+Route::get('/calendar', function (Request $request) {
+    // Visual month grid. `?month=YYYY-MM` picks the month; default is the
+    // current month. The grid always spans full weeks (Mon–Sun) so partial
+    // weeks at either end are filled with adjacent-month days (dimmed).
+    $monthParam = (string) $request->query('month', '');
+    try {
+        $month = $monthParam !== ''
+            ? Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
+            : Carbon::now()->startOfMonth();
+    } catch (\Throwable) {
+        $month = Carbon::now()->startOfMonth();
+    }
+
+    $gridStart = $month->copy()->startOfWeek(Carbon::MONDAY);
+    $gridEnd = $month->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
+
+    // Only training events are publicly listed for now (matches the /courses
+    // agenda). Widen this if competition/guest events become public.
+    $events = TrainingEvent::query()
+        ->with('courseTemplate.trainingType')
+        ->where('kind', EventKind::Training->value)
+        ->publiclyVisible()
+        ->where(function ($q) use ($gridStart, $gridEnd) {
+            $q->whereBetween('starts_on', [$gridStart->toDateString(), $gridEnd->toDateString()])
+                ->orWhereBetween('ends_on', [$gridStart->toDateString(), $gridEnd->toDateString()])
+                ->orWhere(function ($qq) use ($gridStart, $gridEnd) {
+                    $qq->where('starts_on', '<=', $gridStart->toDateString())
+                        ->where('ends_on', '>=', $gridEnd->toDateString());
+                });
+        })
+        ->orderBy('starts_on')
         ->get();
 
-    return view('courses', [
-        'courses' => $courses,
+    // Index events onto every day they cover within the visible grid.
+    $eventsByDay = [];
+    foreach ($events as $event) {
+        $start = $event->starts_on->copy();
+        $end = ($event->ends_on ?? $event->starts_on)->copy();
+        for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+            $key = $d->toDateString();
+            $eventsByDay[$key] ??= [];
+            $eventsByDay[$key][] = $event;
+        }
+    }
+
+    $days = [];
+    for ($d = $gridStart->copy(); $d->lte($gridEnd); $d->addDay()) {
+        $days[] = [
+            'date' => $d->copy(),
+            'inMonth' => $d->month === $month->month,
+            'isToday' => $d->isToday(),
+            'events' => $eventsByDay[$d->toDateString()] ?? [],
+        ];
+    }
+
+    return view('calendar', [
+        'month' => $month,
+        'prevMonth' => $month->copy()->subMonth()->format('Y-m'),
+        'nextMonth' => $month->copy()->addMonth()->format('Y-m'),
+        'days' => $days,
     ]);
-})->name('courses');
+})->name('calendar');
 
 Route::get('/shop', function () {
     // Full product listing (out-of-stock / inactive items simply don't show).

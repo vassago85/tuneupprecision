@@ -42,7 +42,7 @@
   @if ($isFull)
     <button class="btn fully" type="button" disabled aria-disabled="true">Fully booked</button>
   @else
-    <a href="{{ route('calendar') }}"
+    <a href="{{ route('courses') }}"
        class="btn {{ $featured ? 'btn-primary' : 'btn-dark' }} book"
        data-course="{{ $template?->title }} · {{ $event->starts_on?->format('d M Y') }}">Book this date</a>
   @endif

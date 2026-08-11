@@ -45,7 +45,7 @@
       <div class="foot-col">
         <h3>Training</h3>
         @foreach (\App\Models\TrainingType::query()->activeOrdered()->get() as $type)
-          <a href="{{ route('calendar', ['type' => $type->slug]) }}">{{ $type->name }}</a>
+          <a href="{{ route('courses', ['type' => $type->slug]) }}">{{ $type->name }}</a>
         @endforeach
         <a href="{{ route('courses') }}">One-on-one</a>
       </div>

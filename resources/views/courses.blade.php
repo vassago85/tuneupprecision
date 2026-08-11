@@ -1,38 +1,45 @@
 <x-layouts.site title="Courses">
 
-  {{-- ============ COURSE OFFERINGS ============ --}}
+  {{-- ============ COURSE AGENDA ============ --}}
   <section>
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="eyebrow">Course offerings</span>
-        <h2>Pick the course. Book the date.</h2>
-        <p>Every course is a full day, small squad, private facility. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included. Check the calendar for the next date for each.</p>
+        <span class="eyebrow">Upcoming course dates</span>
+        <h2>Pick a date. Book your seat.</h2>
+        <p>Each date is a full day at a private facility — on the line or at the bench, depending on the course. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included.</p>
       </div>
 
-      <div class="courses">
-        @forelse ($courses as $course)
-          @php
-            $meta = array_filter([$course->trainingType?->name, $course->level]);
-            $bookHref = $course->trainingType
-              ? route('calendar', ['type' => $course->trainingType->slug])
-              : route('calendar');
-            $featured = $course->slug === 'applied-long-range';
-          @endphp
-          <x-training.course-card
-            :level="$meta ? implode(' · ', $meta) : null"
-            :title="$course->title"
-            :desc="$course->blurb"
-            :specs="$course->specs ?? []"
-            :price="\App\Support\Money::format((int) $course->base_price_cents, false)"
-            priceNote="per shooter"
-            :featured="$featured"
-            :tag="$featured ? 'Signature' : null"
-            :bookHref="$bookHref"
-          />
-        @empty
-          <p class="mono" style="color:var(--muted)">New courses are being finalised — check back soon.</p>
-        @endforelse
-      </div>
+      @if ($trainingTypes->isNotEmpty())
+        <div class="type-filter reveal">
+          <a href="{{ route('courses') }}" class="{{ $selectedType ? '' : 'active' }}">All training</a>
+          @foreach ($trainingTypes as $type)
+            <a href="{{ route('courses', ['type' => $type->slug]) }}" class="{{ $selectedType === $type->slug ? 'active' : '' }}">{{ $type->name }}</a>
+          @endforeach
+        </div>
+      @endif
+
+      @forelse ($eventsByMonth as $month => $events)
+        <div class="month-head reveal">
+          <h3>{{ $month }}</h3>
+          <span class="rule"></span>
+        </div>
+        <div class="courses">
+          @foreach ($events as $event)
+            <x-training.event-card
+              :event="$event"
+              :featured="$event->courseTemplate?->slug === 'applied-long-range'"
+            />
+          @endforeach
+        </div>
+      @empty
+        <div class="schedule-empty reveal">
+          @if ($selectedType)
+            No upcoming {{ optional($trainingTypes->firstWhere('slug', $selectedType))->name ?? 'dates for this discipline' }} dates right now — <a href="{{ route('courses') }}">see all training</a> or message Dirk to be first on the list.
+          @else
+            New dates are being scheduled — message Dirk to be first on the list.
+          @endif
+        </div>
+      @endforelse
 
       {{-- One-on-one coaching --}}
       <div class="private reveal">

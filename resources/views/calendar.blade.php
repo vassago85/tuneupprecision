@@ -1,45 +1,58 @@
 <x-layouts.site title="Calendar">
 
-  {{-- ============ HEADER ============ --}}
+  {{-- ============ MONTH CALENDAR ============ --}}
   <section>
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="eyebrow">Course calendar</span>
-        <h2>Every date on the line.</h2>
-        <p>Each date is a full day at a private facility — on the line or at the bench, depending on the course. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included.</p>
+        <span class="eyebrow">Event calendar</span>
+        <h2>Every training day, one grid.</h2>
+        <p>Browse upcoming training dates month-by-month. Click a date to jump to the course list, or use the arrows to move between months.</p>
       </div>
 
-      @if ($trainingTypes->isNotEmpty())
-        <div class="type-filter reveal">
-          <a href="{{ route('calendar') }}" class="{{ $selectedType ? '' : 'active' }}">All training</a>
-          @foreach ($trainingTypes as $type)
-            <a href="{{ route('calendar', ['type' => $type->slug]) }}" class="{{ $selectedType === $type->slug ? 'active' : '' }}">{{ $type->name }}</a>
-          @endforeach
+      <div class="cal-head reveal">
+        <div class="cal-nav">
+          <a class="cal-arrow" href="{{ route('calendar', ['month' => $prevMonth]) }}" aria-label="Previous month">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            <span>Prev</span>
+          </a>
+          <h2>{{ $month->format('F Y') }}</h2>
+          <a class="cal-arrow" href="{{ route('calendar', ['month' => $nextMonth]) }}" aria-label="Next month">
+            <span>Next</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </a>
         </div>
-      @endif
+      </div>
 
-      @forelse ($eventsByMonth as $month => $events)
-        <div class="month-head reveal">
-          <h3>{{ $month }}</h3>
-          <span class="rule"></span>
-        </div>
-        <div class="courses">
-          @foreach ($events as $event)
-            <x-training.event-card
-              :event="$event"
-              :featured="$event->courseTemplate?->slug === 'applied-long-range'"
-            />
-          @endforeach
-        </div>
-      @empty
-        <div class="schedule-empty reveal">
-          @if ($selectedType)
-            No upcoming {{ optional($trainingTypes->firstWhere('slug', $selectedType))->name ?? 'dates for this discipline' }} dates right now — <a href="{{ route('calendar') }}">see all training</a> or message Dirk to be first on the list.
-          @else
-            New dates are being scheduled — message Dirk to be first on the list.
-          @endif
-        </div>
-      @endforelse
+      <div class="cal-grid reveal">
+        <div class="cal-dow">Mon</div>
+        <div class="cal-dow">Tue</div>
+        <div class="cal-dow">Wed</div>
+        <div class="cal-dow">Thu</div>
+        <div class="cal-dow">Fri</div>
+        <div class="cal-dow">Sat</div>
+        <div class="cal-dow">Sun</div>
+
+        @foreach ($days as $day)
+          <div class="cal-cell {{ $day['inMonth'] ? '' : 'out' }} {{ $day['isToday'] ? 'today' : '' }}">
+            <div class="cal-date">{{ $day['date']->format('j') }}</div>
+            @foreach ($day['events'] as $event)
+              @php
+                $title = $event->courseTemplate?->title ?? $event->displayTitle();
+                $discipline = $event->disciplineName();
+              @endphp
+              <a class="cal-evt" href="{{ route('courses') }}" title="{{ $title }}{{ $discipline ? ' · '.$discipline : '' }}">
+                {{ $title }}
+              </a>
+            @endforeach
+          </div>
+        @endforeach
+      </div>
+
+      <div class="cal-foot reveal">
+        <a href="{{ route('courses') }}" class="btn btn-ghost">See all upcoming dates
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
     </div>
   </section>
 
