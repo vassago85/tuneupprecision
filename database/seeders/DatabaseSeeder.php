@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->seedAdmin();
         $this->seedCourses();
         $this->seedProducts();
+        $this->call(CompetitionEventSeeder::class);
     }
 
     protected function seedAdmin(): void
