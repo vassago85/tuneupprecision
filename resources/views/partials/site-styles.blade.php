@@ -287,7 +287,13 @@
   .cal-cell.today .cal-date{color:var(--copper);font-weight:700}
   .cal-date{font-family:var(--mono);font-size:12px;color:var(--gray);letter-spacing:.04em}
   .cal-evt{display:block;padding:5px 8px;border-radius:6px;background:var(--charcoal);color:#fff;font-family:var(--disp);font-size:12px;font-weight:600;line-height:1.15;letter-spacing:.02em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .15s ease}
-  .cal-evt:hover{background:var(--copper)}
+  .cal-evt:hover{background:var(--copper-deep)}
+  .cal-evt.comp{background:var(--copper);color:#fff}
+  .cal-evt.comp:hover{background:var(--copper-deep)}
+  .cal-legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:14px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray)}
+  .cal-legend .k{display:inline-flex;align-items:center;gap:7px}
+  .cal-legend .sw{width:12px;height:12px;border-radius:3px;background:var(--charcoal);display:inline-block}
+  .cal-legend .sw.comp{background:var(--copper)}
   .cal-foot{margin-top:22px;display:flex;justify-content:center}
 
   /* ---------- mobile ---------- */

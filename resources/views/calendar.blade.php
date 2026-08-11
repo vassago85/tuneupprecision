@@ -37,15 +37,28 @@
             <div class="cal-date">{{ $day['date']->format('j') }}</div>
             @foreach ($day['events'] as $event)
               @php
-                $title = $event->courseTemplate?->title ?? $event->displayTitle();
+                $isComp = $event->isCompetition();
+                $title = $event->displayTitle();
                 $discipline = $event->disciplineName();
+                $href = $isComp
+                  ? ($event->external_url ?? route('calendar'))
+                  : route('courses');
+                $tooltip = trim($title.($discipline ? ' · '.$discipline : '').($isComp && $event->dirk_role ? ' · '.$event->dirk_role : ''));
               @endphp
-              <a class="cal-evt" href="{{ route('courses') }}" title="{{ $title }}{{ $discipline ? ' · '.$discipline : '' }}">
+              <a class="cal-evt {{ $isComp ? 'comp' : '' }}"
+                 href="{{ $href }}"
+                 @if ($isComp && $event->external_url) target="_blank" rel="noopener noreferrer" @endif
+                 title="{{ $tooltip }}">
                 {{ $title }}
               </a>
             @endforeach
           </div>
         @endforeach
+      </div>
+
+      <div class="cal-legend reveal">
+        <span class="k"><span class="sw"></span>Training</span>
+        <span class="k"><span class="sw comp"></span>Competition · Dirk attending</span>
       </div>
 
       <div class="cal-foot reveal">

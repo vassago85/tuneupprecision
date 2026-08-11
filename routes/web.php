@@ -68,11 +68,10 @@ Route::get('/calendar', function (Request $request) {
     $gridStart = $month->copy()->startOfWeek(Carbon::MONDAY);
     $gridEnd = $month->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
 
-    // Only training events are publicly listed for now (matches the /courses
-    // agenda). Widen this if competition/guest events become public.
+    // The calendar shows both training dates and competitions Dirk is
+    // attending — /courses stays training-only (that's where you book a seat).
     $events = TrainingEvent::query()
-        ->with('courseTemplate.trainingType')
-        ->where('kind', EventKind::Training->value)
+        ->with('courseTemplate.trainingType', 'trainingType')
         ->publiclyVisible()
         ->where(function ($q) use ($gridStart, $gridEnd) {
             $q->whereBetween('starts_on', [$gridStart->toDateString(), $gridEnd->toDateString()])
