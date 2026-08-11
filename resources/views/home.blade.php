@@ -9,10 +9,10 @@
         <h1>Dial in<br>your <span class="cop">distance.</span></h1>
         <p class="lead">Small-squad precision coaching — long range shooting and handloading — that turns guesswork into a repeatable process, from your first zero to a load and wind call you can trust.</p>
         <div class="hero-cta">
-          <a href="{{ url('/#courses') }}" class="btn btn-primary">Book a course
+          <a href="{{ route('courses') }}" class="btn btn-primary">Book a course
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
-          <a href="{{ url('/#shop') }}" class="btn btn-ghost">Browse the shop</a>
+          <a href="{{ route('shop') }}" class="btn btn-ghost">Browse the shop</a>
         </div>
         <div class="hero-data">
           <div class="cell"><div class="k">We teach</div><div class="v">PRS · ELR · Reloading</div></div>
@@ -60,58 +60,29 @@
     </div>
   </section>
 
-  {{-- ============ COURSE DATES (agenda) ============ --}}
-  <section id="courses">
+  {{-- ============ NEXT EVENT ============ --}}
+  <section id="next-event">
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="eyebrow">Upcoming course dates</span>
-        <h2>Pick a date. Book your seat.</h2>
-        <p>Each date is a full day at a private facility — on the line or at the bench, depending on the course. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included.</p>
+        <span class="eyebrow">Next event</span>
+        <h2>The next date on the line.</h2>
+        <p>Here's the next scheduled training day. Full schedule of every upcoming date lives on the calendar.</p>
       </div>
 
-      @if ($trainingTypes->isNotEmpty())
-        <div class="type-filter reveal">
-          <a href="{{ url('/') }}#courses" class="{{ $selectedType ? '' : 'active' }}">All training</a>
-          @foreach ($trainingTypes as $type)
-            <a href="{{ url('/?type='.$type->slug) }}#courses" class="{{ $selectedType === $type->slug ? 'active' : '' }}">{{ $type->name }}</a>
-          @endforeach
+      @if ($nextEvent)
+        <div class="courses">
+          <x-training.event-card :event="$nextEvent" :featured="true" />
+        </div>
+        <div class="reveal" style="margin-top:22px">
+          <a href="{{ route('calendar') }}" class="btn btn-ghost">View full calendar
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      @else
+        <div class="schedule-empty reveal">
+          New dates are being scheduled — message Dirk to be first on the list.
         </div>
       @endif
-
-      @forelse ($eventsByMonth as $month => $events)
-        <div class="month-head reveal">
-          <h3>{{ $month }}</h3>
-          <span class="rule"></span>
-        </div>
-        <div class="courses">
-          @foreach ($events as $event)
-            <x-training.event-card
-              :event="$event"
-              :featured="$event->courseTemplate?->slug === 'applied-long-range'"
-            />
-          @endforeach
-        </div>
-      @empty
-        <div class="schedule-empty reveal">
-          @if ($selectedType)
-            No upcoming {{ optional($trainingTypes->firstWhere('slug', $selectedType))->name ?? 'dates for this discipline' }} dates right now — <a href="{{ url('/') }}#courses">see all training</a> or message Dirk to be first on the list.
-          @else
-            New dates are being scheduled — message Dirk to be first on the list.
-          @endif
-        </div>
-      @endforelse
-
-      {{-- One-on-one coaching --}}
-      <div class="private reveal">
-        <div class="txt">
-          <h3>One-on-one coaching</h3>
-          <p>A full day built entirely around you and your rifle — load development, a problem you can't crack, or match prep for a specific stage. Quoted individually depending on what's required.</p>
-        </div>
-        <div class="p2">
-          <div class="amt">On request <s>Quoted per day · scoped to what you need</s></div>
-          <a href="{{ url('/#courses') }}" class="btn btn-primary book" data-course="One-on-one coaching">Enquire</a>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -189,29 +160,6 @@
           <div class="step"><div class="no">04</div><h3>Powder</h3><p>Matching powder type and burn rate to the cartridge — and why the wrong powder is dangerous, since a fast powder in a rifle case can spike pressure catastrophically. Charges weighed for consistent speed.</p></div>
           <div class="step"><div class="no">05</div><h3>Seat</h3><p>Seating depth and jump to the lands drive both speed and consistency. Too long jams the lands and raises pressure; too short adds jump — we find and tune the sweet spot.</p></div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  {{-- ============ SHOP ============ --}}
-  <section id="shop">
-    <div class="wrap">
-      <div class="shop-top">
-        <div class="sec-head reveal">
-          <span class="eyebrow">The kit shop</span>
-          <h2>Gear that earns its place.</h2>
-          <p>Merch and range essentials, shipped countrywide. More stock added between intakes.</p>
-        </div>
-        <a href="{{ url('/#shop') }}" class="btn btn-ghost reveal">View full shop
-          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-      </div>
-      <div class="shop">
-        @forelse ($products as $product)
-          <x-shop.product-card :product="$product" />
-        @empty
-          <p class="mono" style="color:var(--muted)">New stock lands between intakes — check back soon.</p>
-        @endforelse
       </div>
     </div>
   </section>

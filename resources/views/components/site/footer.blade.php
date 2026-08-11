@@ -45,16 +45,16 @@
       <div class="foot-col">
         <h3>Training</h3>
         @foreach (\App\Models\TrainingType::query()->activeOrdered()->get() as $type)
-          <a href="{{ url('/?type='.$type->slug) }}#courses">{{ $type->name }}</a>
+          <a href="{{ route('calendar', ['type' => $type->slug]) }}">{{ $type->name }}</a>
         @endforeach
-        <a href="{{ url('/#courses') }}">One-on-one</a>
+        <a href="{{ route('courses') }}">One-on-one</a>
       </div>
       <div class="foot-col">
         <h3>Explore</h3>
         <a href="{{ url('/#about') }}">About Dirk</a>
         <a href="{{ url('/#process') }}">How a day runs</a>
-        <a href="{{ url('/#shop') }}">The shop</a>
-        <a href="{{ url('/#courses') }}">Course calendar</a>
+        <a href="{{ route('shop') }}">The shop</a>
+        <a href="{{ route('calendar') }}">Course calendar</a>
       </div>
       <div class="foot-col">
         <h3>Contact</h3>

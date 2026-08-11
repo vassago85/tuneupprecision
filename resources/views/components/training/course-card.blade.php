@@ -28,7 +28,7 @@
   @if ($fullyBooked)
     <button class="btn fully" type="button" disabled aria-disabled="true">Fully booked</button>
   @else
-    <a href="{{ $bookHref ?? url('/#courses') }}"
+    <a href="{{ $bookHref ?? route('calendar') }}"
        class="btn {{ $featured ? 'btn-primary' : 'btn-dark' }} book"
        data-course="{{ $title }}">Book this course</a>
   @endif
