@@ -72,6 +72,64 @@
         },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
         els.forEach(function(e){io.observe(e);});
       }
+
+      // ambient loop bands (e.g. the merch strip on the landing page): only
+      // play the <video> when it scrolls into view, and only if the browser
+      // actually lets us autoplay (iOS Low Power Mode / older Safari can
+      // refuse; in that case we just leave the poster showing).
+      var reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelectorAll('[data-loop]').forEach(function(frame){
+        var video=frame.querySelector('video.loop-video');
+        if(!video||reducedMotion) return;
+        var attempted=false;
+        function tryPlay(){
+          if(attempted) return; attempted=true;
+          var p=video.play();
+          if(p&&typeof p.then==='function'){
+            p.then(function(){video.classList.add('playing');})
+             .catch(function(){/* keep the poster, no console noise */});
+          }else{
+            video.classList.add('playing');
+          }
+        }
+        if('IntersectionObserver'in window){
+          var vo=new IntersectionObserver(function(es){
+            es.forEach(function(en){
+              if(en.isIntersecting){tryPlay();}
+              else if(!video.paused){try{video.pause();}catch(e){}}
+            });
+          },{threshold:.25});
+          vo.observe(frame);
+        }else{
+          tryPlay();
+        }
+      });
+
+      // video facade: replace the thumbnail with the real player only on click,
+      // so 20 embedded iframes/<video> tags don't slam the page on load.
+      document.querySelectorAll('.video-facade[data-embed]').forEach(function(btn){
+        btn.addEventListener('click',function(e){
+          var url=btn.getAttribute('data-embed');
+          if(!url) return;
+          e.preventDefault();
+          var native=btn.getAttribute('data-native')==='1';
+          var el;
+          if(native){
+            el=document.createElement('video');
+            el.src=url; el.controls=true; el.autoplay=true; el.setAttribute('playsinline','');
+            el.style.width='100%'; el.style.height='100%'; el.style.display='block';
+          }else{
+            el=document.createElement('iframe');
+            el.src=url;
+            el.setAttribute('title', btn.getAttribute('aria-label')||'Video');
+            el.setAttribute('frameborder','0');
+            el.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+            el.setAttribute('allowfullscreen','');
+            el.style.width='100%'; el.style.height='100%'; el.style.display='block'; el.style.border='0';
+          }
+          btn.replaceWith(el);
+        });
+      });
     })();
     </script>
 </body>

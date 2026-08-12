@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Enums\TrainingEventStatus;
+use App\Enums\UserRole;
 use App\Models\CourseTemplate;
 use App\Models\Product;
 use App\Models\TrainingType;
@@ -34,6 +35,8 @@ class DatabaseSeeder extends Seeder
                 'name' => (string) env('ADMIN_NAME', 'Dirk'),
                 'password' => Hash::make($password),
                 'email_verified_at' => now(),
+                'role' => UserRole::Admin,
+                'is_verified_member' => true,
             ],
         );
 

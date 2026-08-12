@@ -5,9 +5,9 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy reveal">
-        <span class="eyebrow">Precision rifle instruction · South Africa</span>
+        <span class="eyebrow">Aiming for consistent long range impacts.</span>
         <h1>Dial in<br>your <span class="cop">distance.</span></h1>
-        <p class="lead">Small-squad precision coaching — long range shooting and handloading — that turns guesswork into a repeatable process, from your first zero to a load and wind call you can trust.</p>
+        <p class="lead">From precision handloading to consistent impacts at extended distances, Tune Up covers every step of the process. Our small group, one-on-one, and squad training days are all structured around a single objective — repeatable, consistent performance.</p>
         <div class="hero-cta">
           <a href="{{ route('courses') }}" class="btn btn-primary">Book a course
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -15,8 +15,9 @@
           <a href="{{ route('shop') }}" class="btn btn-ghost">Browse the shop</a>
         </div>
         <div class="hero-data">
-          <div class="cell"><div class="k">We teach</div><div class="v">PRS · ELR · Reloading</div></div>
-          <div class="cell"><div class="k">Squad size</div><div class="v">Max 6</div></div>
+          <div class="cell"><div class="k">Precision hand loading</div><div class="v">Bench to barrel.</div></div>
+          <div class="cell"><div class="k">PRS "positional"</div><div class="v">On the clock.</div></div>
+          <div class="cell"><div class="k">Long range precision</div><div class="v">Far steel, called.</div></div>
         </div>
       </div>
       <div class="hero-badge reveal">
@@ -32,7 +33,7 @@
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">Why train here</span>
-        <h2>Fundamentals first. Data always.</h2>
+        <h2>Fundamentals and data driven.</h2>
         <p>No magic, no gimmicks — just the disciplined process good shooters and reloaders actually run, taught step by step.</p>
       </div>
       <div class="values">
@@ -122,7 +123,7 @@
 
       <div class="proc-tabbar reveal" role="tablist">
         <button type="button" role="tab" :class="{ active: tab === 'prs' }" @click="tab = 'prs'">PRS</button>
-        <button type="button" role="tab" :class="{ active: tab === 'elr' }" @click="tab = 'elr'">ELR</button>
+        <button type="button" role="tab" :class="{ active: tab === 'elr' }" @click="tab = 'elr'">Precision Long Range</button>
         <button type="button" role="tab" :class="{ active: tab === 'reloading' }" @click="tab = 'reloading'">Reloading</button>
       </div>
 
@@ -138,7 +139,7 @@
         </div>
       </div>
 
-      {{-- ELR --}}
+      {{-- Precision Long Range --}}
       <div x-show="tab === 'elr'" x-cloak>
         <p class="proc-meta">Private range · known distance out to the far steel</p>
         <div class="steps">
@@ -163,6 +164,9 @@
       </div>
     </div>
   </section>
+
+  {{-- ============ THE KIT (looping merch band) ============ --}}
+  <x-site.loop-band />
 
   {{-- ============ FINAL CTA ============ --}}
   <x-site.cta-band />

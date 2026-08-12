@@ -3,10 +3,14 @@
 declare(strict_types=1);
 
 use App\Enums\EventKind;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\NewsletterController;
 use App\Models\Product;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
+use App\Models\Video;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +32,7 @@ Route::get('/', function () {
 
 Route::get('/courses', function (Request $request) {
     // Public agenda: every upcoming training date, month-grouped, with a
-    // discipline filter (Reloading, PRS, ELR, ...). Fully-booked dates DO show
+    // discipline filter (Reloading, PRS, Precision Long Range, ...). Fully-booked dates DO show
     // (as "Fully booked" on the card).
     $trainingTypes = TrainingType::query()->activeOrdered()->get();
     $selectedType = $request->query('type');
@@ -175,6 +179,56 @@ Route::get('/shop', function () {
         'products' => $products,
     ]);
 })->name('shop');
+
+Route::get('/the-range', function () {
+    // The video library. Videos are grouped by discipline (TrainingType); a
+    // single featured video (if any) renders at the top. Members-only videos
+    // are shown to guests as a locked placeholder and only actually play for
+    // Dirk-verified members.
+    $trainingTypes = TrainingType::query()->activeOrdered()->get();
+
+    $videos = Video::query()
+        ->with('trainingType')
+        ->where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('id')
+        ->get();
+
+    $featured = $videos->firstWhere('is_featured', true);
+
+    $videosByType = $videos->groupBy(fn (Video $v): string => $v->trainingType?->slug ?? 'other');
+
+    return view('the-range', [
+        'trainingTypes' => $trainingTypes,
+        'videos' => $videos,
+        'featured' => $featured,
+        'videosByType' => $videosByType,
+    ]);
+})->name('range');
+
+// Public authentication (member accounts). Admins (Dirk) also log in here —
+// they get redirected to /admin on success.
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'show'])->name('login');
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:6,1');
+
+    Route::get('/register', [RegisterController::class, 'show'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:6,1');
+
+    Route::get('/password/forgot', [PasswordController::class, 'showLinkRequest'])->name('password.request');
+    Route::post('/password/forgot', [PasswordController::class, 'sendResetLink'])
+        ->middleware('throttle:6,1')
+        ->name('password.email');
+
+    Route::get('/password/reset/{token}', [PasswordController::class, 'showReset'])->name('password.reset');
+    Route::post('/password/reset', [PasswordController::class, 'reset'])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
+});
+
+Route::post('/logout', [LoginController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
 
 // Newsletter subscribe (public form) + one-click unsubscribe.
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])

@@ -51,7 +51,7 @@ class TrainingEventForm
                             ->relationship('trainingType', 'name')
                             ->searchable()
                             ->preload()
-                            ->helperText('e.g. PRS, ELR.'),
+                            ->helperText('e.g. PRS, Precision Long Range.'),
                         TextInput::make('entry_fee_cents')
                             ->label('Entry fee')
                             ->prefix('R')

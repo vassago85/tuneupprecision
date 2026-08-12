@@ -71,7 +71,7 @@ class CompetitionEventSeeder extends Seeder
                 'capacity' => 35,
             ],
             [
-                'title' => 'ELR Invitational',
+                'title' => 'Precision Long Range Invitational',
                 'training_type_id' => null,
                 'dirk_role' => 'Guest coach',
                 'external_url' => null,

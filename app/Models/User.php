@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'role', 'is_verified_member'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -29,14 +29,34 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
+            'is_verified_member' => 'boolean',
         ];
     }
 
     /**
-     * Only the admin (Dirk) uses the panel — there are no customer accounts.
+     * Only admins (Dirk) reach the /admin Filament panel. Public members log
+     * in on the site itself and never see the panel.
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->role === UserRole::Admin;
+    }
+
+    /**
+     * True for members Dirk has verified — the gate for "members-only" videos
+     * on The Range. Admins always count as verified.
+     */
+    public function isVerifiedMember(): bool
+    {
+        return $this->role === UserRole::Admin || (bool) $this->is_verified_member;
+    }
+
+    /**
+     * First name for greeting the user in the nav.
+     */
+    public function firstName(): string
+    {
+        return trim(explode(' ', (string) $this->name)[0] ?? '');
     }
 }

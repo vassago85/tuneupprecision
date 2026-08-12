@@ -15,6 +15,7 @@
     <nav class="links">
       <a href="{{ route('courses') }}">Courses</a>
       <a href="{{ route('shop') }}">Shop</a>
+      <a href="{{ route('range') }}">The Range</a>
       <a href="{{ route('calendar') }}">Calendar</a>
       <a href="{{ url('/#about') }}">About</a>
     </nav>
@@ -23,6 +24,15 @@
         <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.2 12.2a1.5 1.5 0 0 0 1.5 1.3h8.4a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/></svg>
         <span class="cart-badge" id="cartBadge">0</span>
       </button>
+      @auth
+        <form method="POST" action="{{ route('logout') }}" class="nav-user">
+          @csrf
+          <span class="nav-user-name">Hi, {{ auth()->user()->firstName() }}</span>
+          <button type="submit" class="nav-user-out">Sign out</button>
+        </form>
+      @else
+        <a href="{{ route('login') }}" class="nav-user-in">Sign in</a>
+      @endauth
       <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
         <svg viewBox="0 0 24 24"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
       </button>
@@ -32,6 +42,17 @@
 <div class="mobile-menu" id="mobileMenu">
   <a href="{{ route('courses') }}">Courses</a>
   <a href="{{ route('shop') }}">Shop</a>
+  <a href="{{ route('range') }}">The Range</a>
   <a href="{{ route('calendar') }}">Calendar</a>
   <a href="{{ url('/#about') }}">About</a>
+  @auth
+    <form method="POST" action="{{ route('logout') }}" class="mobile-signout">
+      @csrf
+      <span class="mobile-hello">Signed in as {{ auth()->user()->firstName() }}</span>
+      <button type="submit" class="btn btn-ghost" style="width:100%;justify-content:center">Sign out</button>
+    </form>
+  @else
+    <a href="{{ route('login') }}">Sign in</a>
+    <a href="{{ route('register') }}" class="btn btn-primary" style="justify-content:center">Create account</a>
+  @endauth
 </div>
