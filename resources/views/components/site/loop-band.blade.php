@@ -1,9 +1,11 @@
 @props([
     'eyebrow' => 'The kit',
-    'title' => 'Wear the process.',
-    'copy' => "Range-tested apparel and essentials — merch that earns its place on the line.",
-    'ctaLabel' => 'Browse the shop',
-    'ctaHref' => null,
+    'title' => 'The kit we run.',
+    'copy' => "The apparel and outdoor gear you'll see on Tune Up range days — locally made and range-tested by Wildebees Outdoor.",
+    'ctaLabel' => 'Shop Wildebees',
+    // Default points to Wildebees Outdoor. Swap back to route('shop') once
+    // Dirk stocks his own apparel through the site.
+    'ctaHref' => 'https://wildebeesoutdoor.com/wildebees',
 ])
 
 @php
@@ -30,6 +32,12 @@
 
     $hasVideo = $hasMp4 || $hasWebm;
     $href = $ctaHref ?? route('shop');
+
+    // Treat any http(s) href that isn't ours as an external link so we can
+    // safely open in a new tab and add rel="noopener".
+    $isExternal = is_string($href)
+        && preg_match('~^https?://~i', $href) === 1
+        && ! str_starts_with($href, url('/'));
 @endphp
 
 <section class="loop-band">
@@ -38,8 +46,13 @@
       <span class="eyebrow">{{ $eyebrow }}</span>
       <h2>{{ $title }}</h2>
       <p>{{ $copy }}</p>
-      <a href="{{ $href }}" class="btn btn-primary">{{ $ctaLabel }}
-        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <a href="{{ $href }}" class="btn btn-primary"
+         @if ($isExternal) target="_blank" rel="noopener noreferrer" @endif>{{ $ctaLabel }}
+        @if ($isExternal)
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M10 5H5v14h14v-5"/></svg>
+        @else
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        @endif
       </a>
     </div>
 
