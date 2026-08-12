@@ -41,6 +41,12 @@
     $isExternal = is_string($href)
         && preg_match('~^https?://~i', $href) === 1
         && ! str_starts_with($href, url('/'));
+
+    // Precompute conditional attributes here so we never put Blade directives
+    // inside an HTML tag opener (Blade's compiler mangles @if/@endif in that
+    // position and PHP throws a parse error).
+    $ctaAttrs = $isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+    $videoPosterAttr = $hasPoster ? ' poster="'.e($posterUrl).'"' : '';
 @endphp
 
 <section class="loop-band">
@@ -49,8 +55,7 @@
       <span class="eyebrow">{{ $eyebrow }}</span>
       <h2>{{ $title }}</h2>
       <p>{{ $copy }}</p>
-      <a href="{{ $href }}" class="btn btn-primary"
-         @if ($isExternal) target="_blank" rel="noopener noreferrer" @endif>{{ $ctaLabel }}
+      <a href="{{ $href }}" class="btn btn-primary"{!! $ctaAttrs !!}>{{ $ctaLabel }}
         @if ($isExternal)
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M10 5H5v14h14v-5"/></svg>
         @else
@@ -84,8 +89,7 @@
       @if ($hasVideo)
         <video class="loop-video"
                muted loop playsinline
-               preload="metadata"
-               @if ($hasPoster) poster="{{ $posterUrl }}" @endif
+               preload="metadata"{!! $videoPosterAttr !!}
                aria-hidden="true">
           @if ($hasWebm)
             <source src="{{ $webmUrl }}" type="video/webm">
