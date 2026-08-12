@@ -3,11 +3,10 @@
     'title' => 'Wear the process.',
     'copy' => "Range-tested apparel and essentials — merch that earns its place on the line.",
     'ctaLabel' => 'Browse the shop',
-    // Defaults to Tune Up's own shop. To point the band at a third-party
-    // partner instead (e.g. an outdoor brand), pass a full URL from the view:
-    //   <x-site.loop-band ctaHref="https://partner.example.com" ctaLabel="Shop Partner" />
-    // The component auto-detects external URLs and adds target="_blank" +
-    // rel="noopener noreferrer" plus an external-link icon.
+    // Defaults to Tune Up's own shop. Pass a full http(s) URL as the ctaHref
+    // prop to point at a third-party partner instead. External URLs are
+    // auto-detected and get target="_blank", rel="noopener noreferrer" and
+    // an external-link icon.
     'ctaHref' => null,
 ])
 
