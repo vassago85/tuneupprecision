@@ -1,11 +1,14 @@
 @props([
     'eyebrow' => 'The kit',
-    'title' => 'The kit we run.',
-    'copy' => "The apparel and outdoor gear you'll see on Tune Up range days — locally made and range-tested by Wildebees Outdoor.",
-    'ctaLabel' => 'Shop Wildebees',
-    // Default points to Wildebees Outdoor. Swap back to route('shop') once
-    // Dirk stocks his own apparel through the site.
-    'ctaHref' => 'https://wildebeesoutdoor.com/wildebees',
+    'title' => 'Wear the process.',
+    'copy' => "Range-tested apparel and essentials — merch that earns its place on the line.",
+    'ctaLabel' => 'Browse the shop',
+    // Defaults to Tune Up's own shop. To point the band at a third-party
+    // partner instead (e.g. an outdoor brand), pass a full URL from the view:
+    //   <x-site.loop-band ctaHref="https://partner.example.com" ctaLabel="Shop Partner" />
+    // The component auto-detects external URLs and adds target="_blank" +
+    // rel="noopener noreferrer" plus an external-link icon.
+    'ctaHref' => null,
 ])
 
 @php
