@@ -7,11 +7,13 @@ namespace App\Actions;
 use App\Enums\BookingStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\QuoteStatus;
 use App\Enums\TrainingEventStatus;
 use App\Mail\PaymentConfirmation;
 use App\Models\Booking;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Quote;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -44,6 +46,7 @@ class MarkPaid
             match (true) {
                 $payable instanceof Order => $this->confirmOrder($payable),
                 $payable instanceof Booking => $this->confirmBooking($payable),
+                $payable instanceof Quote => $this->confirmQuote($payable),
                 default => null,
             };
 
@@ -99,5 +102,17 @@ class MarkPaid
         if ($event !== null && $event->isFull() && $event->status === TrainingEventStatus::Published) {
             $event->update(['status' => TrainingEventStatus::Full]);
         }
+    }
+
+    /**
+     * Deposit landed on a rifle-build quote: mark the quote converted.
+     */
+    protected function confirmQuote(Quote $quote): void
+    {
+        if ($quote->status === QuoteStatus::Converted) {
+            return;
+        }
+
+        $quote->update(['status' => QuoteStatus::Converted]);
     }
 }

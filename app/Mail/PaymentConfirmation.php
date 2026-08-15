@@ -6,6 +6,7 @@ namespace App\Mail;
 
 use App\Models\Booking;
 use App\Models\Order;
+use App\Models\Quote;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -30,11 +31,12 @@ class PaymentConfirmation extends Mailable implements ShouldQueue
     {
         $reference = $this->payable->reference ?? '';
 
-        $subject = $this->payable instanceof Booking
-            ? "Booking confirmed · {$reference}"
-            : ($this->payable instanceof Order
-                ? "Order confirmed · {$reference}"
-                : 'Payment confirmed');
+        $subject = match (true) {
+            $this->payable instanceof Booking => "Booking confirmed · {$reference}",
+            $this->payable instanceof Order => "Order confirmed · {$reference}",
+            $this->payable instanceof Quote => "Deposit received · {$reference}",
+            default => 'Payment confirmed',
+        };
 
         return new Envelope(subject: $subject);
     }
@@ -47,6 +49,7 @@ class PaymentConfirmation extends Mailable implements ShouldQueue
                 'payable' => $this->payable,
                 'isBooking' => $this->payable instanceof Booking,
                 'isOrder' => $this->payable instanceof Order,
+                'isQuote' => $this->payable instanceof Quote,
             ],
         );
     }

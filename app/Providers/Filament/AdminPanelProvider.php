@@ -2,6 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\KpiStatsWidget;
+use App\Filament\Widgets\LowStockProductsWidget;
+use App\Filament\Widgets\PaymentsAttentionWidget;
+use App\Filament\Widgets\QuotesOverviewWidget;
+use App\Filament\Widgets\UpcomingTrainingWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -48,6 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 'Training',
                 'Commerce',
+                'Rifle Builder',
                 'System',
             ])
             // Inject the design-system stylesheet (semantic tokens + component
@@ -65,10 +71,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                \App\Filament\Widgets\KpiStatsWidget::class,
-                \App\Filament\Widgets\UpcomingTrainingWidget::class,
-                \App\Filament\Widgets\PaymentsAttentionWidget::class,
-                \App\Filament\Widgets\LowStockProductsWidget::class,
+                KpiStatsWidget::class,
+                QuotesOverviewWidget::class,
+                UpcomingTrainingWidget::class,
+                PaymentsAttentionWidget::class,
+                LowStockProductsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

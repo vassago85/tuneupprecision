@@ -15,6 +15,12 @@ Your order is being prepared.
 
 - **Reference:** {{ $payable->reference }}
 - **Total:** {{ $payable->subtotal }}
+@elseif ($isQuote)
+We've received the deposit on your rifle build.
+
+- **Reference:** {{ $payable->reference }}
+- **Deposit:** {{ $payable->payment?->amount }}
+- **Build total:** {{ $payable->total }}
 @endif
 
 We'll be in touch by WhatsApp with the details.

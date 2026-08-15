@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use App\Support\BusinessDetails;
 use App\Support\Eft;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
@@ -37,7 +38,10 @@ class ManageEftSettings extends Page
     public function mount(): void
     {
         // Load the currently-effective EFT details (saved values, else env defaults).
-        $this->form->fill(Eft::details());
+        $this->form->fill([
+            ...Eft::details(),
+            ...BusinessDetails::details(),
+        ]);
     }
 
     public function form(Schema $schema): Schema
@@ -65,6 +69,24 @@ class ManageEftSettings extends Page
                             ->required()
                             ->maxLength(255),
                     ]),
+                Section::make('Business details')
+                    ->description('Letterhead on rifle-build quotations. Editable without a deploy.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('tel')
+                            ->label('Telephone')
+                            ->maxLength(255),
+                        TextInput::make('email')
+                            ->label('Quote email')
+                            ->email()
+                            ->maxLength(255),
+                        TextInput::make('vat_number')
+                            ->label('VAT number')
+                            ->maxLength(255),
+                        TextInput::make('dealer_number')
+                            ->label('Dealer number')
+                            ->maxLength(255),
+                    ]),
             ])
             ->statePath('data');
     }
@@ -75,6 +97,10 @@ class ManageEftSettings extends Page
 
         foreach (Eft::keys() as $key) {
             Setting::put("eft.{$key}", $data[$key] ?? null);
+        }
+
+        foreach (BusinessDetails::keys() as $key) {
+            Setting::put("business.{$key}", $data[$key] ?? null);
         }
 
         Notification::make()

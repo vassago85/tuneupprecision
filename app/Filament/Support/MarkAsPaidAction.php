@@ -9,9 +9,11 @@ use App\Enums\BookingStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Enums\QuoteStatus;
 use App\Models\Booking;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Quote;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +52,8 @@ class MarkAsPaidAction
     {
         return $record instanceof Payment
             || $record instanceof Booking
-            || $record instanceof Order;
+            || $record instanceof Order
+            || $record instanceof Quote;
     }
 
     protected static function alreadyPaid(Model $record): bool
@@ -59,6 +62,7 @@ class MarkAsPaidAction
             $record instanceof Payment => $record->status === PaymentStatus::Paid,
             $record instanceof Booking => $record->status === BookingStatus::Confirmed,
             $record instanceof Order => in_array($record->status, [OrderStatus::Paid, OrderStatus::Fulfilled], true),
+            $record instanceof Quote => $record->status === QuoteStatus::Converted,
             default => true,
         };
     }
@@ -70,9 +74,11 @@ class MarkAsPaidAction
         }
 
         // Booking or Order: create the EFT payment shell on first confirmation.
-        $amountCents = $record instanceof Booking
-            ? (int) $record->amount_cents
-            : (int) $record->subtotal_cents;
+        $amountCents = match (true) {
+            $record instanceof Booking => (int) $record->amount_cents,
+            $record instanceof Quote => $record->depositCents(),
+            default => (int) $record->subtotal_cents,
+        };
 
         return $record->payment()->firstOrCreate([], [
             'method' => PaymentMethod::Eft->value,

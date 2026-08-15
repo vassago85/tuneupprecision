@@ -1,0 +1,1 @@
+<svg viewBox="0 0 200 60" fill="none" stroke="currentColor" stroke-width="2.2" {{ $attributes }}><path d="M96 18 h94 v13 h-94z"/><path d="M96 18 h-52 v22 h20"/><path d="M44 40 l-14 6 v8 h34 l6 -14"/><path d="M64 40 l-6 16"/><path d="M10 26 h34 v14 h-34z"/><path d="M110 21 h8 M126 21 h8 M142 21 h8 M158 21 h8"/></svg>

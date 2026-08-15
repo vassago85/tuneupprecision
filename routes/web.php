@@ -7,10 +7,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\NewsletterController;
+use App\Livewire\RifleBuilder;
 use App\Models\Product;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
 use App\Models\Video;
+use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +67,7 @@ Route::get('/calendar', function (Request $request) {
         $month = $monthParam !== ''
             ? Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
             : Carbon::now()->startOfMonth();
-    } catch (\Throwable) {
+    } catch (Throwable) {
         $month = Carbon::now()->startOfMonth();
     }
 
@@ -149,7 +151,7 @@ Route::get('/calendar', function (Request $request) {
             'level' => $event->courseTemplate?->level,
             'date_label' => $dateLabel,
             'venue' => $event->venue,
-            'price' => $priceCents > 0 ? \App\Support\Money::format($priceCents, false) : null,
+            'price' => $priceCents > 0 ? Money::format($priceCents, false) : null,
             'price_note' => $isComp ? 'Entry fee' : 'Per shooter',
             'seats_note' => $isComp
                 ? null
@@ -170,6 +172,9 @@ Route::get('/calendar', function (Request $request) {
         'eventsPayload' => $eventsPayload,
     ]);
 })->name('calendar');
+
+Route::get('/rifle-builder', RifleBuilder::class)->name('rifle-builder');
+Route::get('/rifle-builder/{code}', RifleBuilder::class)->name('rifle-builder.share');
 
 Route::get('/shop', function () {
     // Full product listing (out-of-stock / inactive items simply don't show).

@@ -63,6 +63,9 @@ class SmokeTest extends TestCase
             '/admin/products',
             '/admin/orders',
             '/admin/payments',
+            '/admin/component-categories',
+            '/admin/components',
+            '/admin/quotes',
             '/admin/manage-eft-settings',
         ];
 

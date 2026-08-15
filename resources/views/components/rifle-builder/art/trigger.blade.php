@@ -1,0 +1,1 @@
+<svg viewBox="0 0 200 60" fill="none" stroke="currentColor" stroke-width="2.2" {{ $attributes }}><rect x="58" y="12" width="84" height="20" rx="2"/><path d="M92 32 c0 10 -3 14 -6 17 c-4 4 -10 2 -10 -4 c0 -6 6 -8 8 -13"/><path d="M64 32 v6 M136 32 v6"/><circle cx="70" cy="22" r="2.6"/><circle cx="130" cy="22" r="2.6"/></svg>
