@@ -8,8 +8,10 @@ use App\Enums\QuoteStatus;
 use App\Filament\Resources\Quotes\QuoteResource;
 use App\RifleBuilder\BuildSelection;
 use App\Services\RifleBuildService;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 
 class CreateQuote extends CreateRecord
@@ -36,7 +38,22 @@ class CreateQuote extends CreateRecord
             'deposit_percent' => $data['deposit_percent'] ?? 50,
         ]);
 
-        return app(RifleBuildService::class)->persistQuote($selection, [
+        $service = app(RifleBuildService::class);
+        $result = $service->evaluate($selection);
+
+        if ($result->needsTriggerChoice) {
+            Notification::make()
+                ->title('Aftermarket trigger required')
+                ->body('This action or barrelled action requires an aftermarket trigger. Pick one before saving the quote.')
+                ->danger()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'data.platform' => 'This action requires an aftermarket trigger.',
+            ]);
+        }
+
+        return $service->persistQuote($selection, [
             'status' => QuoteStatus::Draft,
             'customer_name' => $data['customer_name'],
             'customer_email' => $data['customer_email'],

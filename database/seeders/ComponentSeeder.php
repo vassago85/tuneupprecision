@@ -46,6 +46,8 @@ class ComponentSeeder extends Seeder
                         'is_active' => true,
                         'is_automatic' => $item['is_automatic'] ?? false,
                         'allows_quantity' => $item['allows_quantity'] ?? false,
+                        'requires_aftermarket_trigger' => $item['requires_aftermarket_trigger'] ?? false,
+                        'is_factory_option' => $item['is_factory_option'] ?? false,
                         'sort_order' => $itemIndex + 1,
                     ],
                 );
@@ -139,7 +141,7 @@ class ComponentSeeder extends Seeder
                 'allows_quantity' => false,
                 'is_hidden' => false,
                 'items' => [
-                    $this->item('Factory', 'Keep Factory Trigger', 0, 0, ['No change', 'Adjust in-house', 'R0']),
+                    $this->item('Factory', 'Keep Factory Trigger', 0, 0, ['No change', 'Adjust in-house', 'R0'], isFactoryOption: true),
                     $this->item('TriggerTech', 'Special Single-Stage', 4600, 3600, ['1.5–4 lb', 'FRT technology', 'Best value upgrade']),
                     $this->item('Timney', 'Calvin Elite', 6900, 5500, ['8 oz – 2 lb', 'Interchangeable shoes', 'Crisp break']),
                     $this->item('TriggerTech', 'Diamond Single-Stage', 7400, 5900, ['4 oz – 2 lb', 'Zero creep', 'Comp standard']),
@@ -333,6 +335,8 @@ class ComponentSeeder extends Seeder
         ?string $tubeDiameter = null,
         ?array $fitsTubes = null,
         bool $allowsQuantity = false,
+        bool $requiresAftermarketTrigger = false,
+        bool $isFactoryOption = false,
     ): array {
         return [
             'slug' => Str::slug($brand.' '.$name),
@@ -346,6 +350,8 @@ class ComponentSeeder extends Seeder
             'tube_diameter' => $tubeDiameter,
             'fits_tube_diameters' => $fitsTubes,
             'allows_quantity' => $allowsQuantity,
+            'requires_aftermarket_trigger' => $requiresAftermarketTrigger,
+            'is_factory_option' => $isFactoryOption,
         ];
     }
 }

@@ -16,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -53,7 +54,21 @@ class EditQuote extends EditRecord
             'deposit_percent' => $data['deposit_percent'] ?? $record->deposit_percent,
         ]);
 
-        $record = app(RifleBuildService::class)->syncQuote($record, $selection);
+        $service = app(RifleBuildService::class);
+
+        if ($service->evaluate($selection)->needsTriggerChoice) {
+            Notification::make()
+                ->title('Aftermarket trigger required')
+                ->body('This action or barrelled action requires an aftermarket trigger. Pick one before saving.')
+                ->danger()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'data.platform' => 'This action requires an aftermarket trigger.',
+            ]);
+        }
+
+        $record = $service->syncQuote($record, $selection);
 
         $record->update([
             'customer_name' => $data['customer_name'],

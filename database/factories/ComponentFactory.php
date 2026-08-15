@@ -37,6 +37,8 @@ class ComponentFactory extends Factory
             'is_active' => true,
             'is_automatic' => false,
             'allows_quantity' => false,
+            'requires_aftermarket_trigger' => false,
+            'is_factory_option' => false,
             'sort_order' => 0,
         ];
     }

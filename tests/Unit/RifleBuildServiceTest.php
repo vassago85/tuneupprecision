@@ -208,6 +208,70 @@ class RifleBuildServiceTest extends TestCase
         $this->assertFalse($this->service->loadAvailable()->contains('id', $hidden->id));
     }
 
+    public function test_action_flagged_requires_aftermarket_trigger_disables_factory_and_needs_choice(): void
+    {
+        $action = $this->catalogueItem('bergara-b-14-action');
+        $action->update(['requires_aftermarket_trigger' => true]);
+
+        $factoryTrigger = $this->catalogueItem('factory-keep-factory-trigger');
+        $aftermarket = $this->catalogueItem('triggertech-special-single-stage');
+
+        $noTrigger = $this->service->evaluate(new BuildSelection(
+            platform: RiflePlatform::Separate,
+            singles: ['action' => $action->id],
+        ));
+        $this->assertTrue($noTrigger->requiresAftermarketTrigger);
+        $this->assertTrue($noTrigger->needsTriggerChoice);
+        $this->assertSame(
+            'This action requires an aftermarket trigger',
+            $noTrigger->disabledReasons[$factoryTrigger->id] ?? null,
+        );
+
+        $selectingFactory = $this->service->evaluate(new BuildSelection(
+            platform: RiflePlatform::Separate,
+            singles: ['action' => $action->id, 'trigger' => $factoryTrigger->id],
+        ));
+        $this->assertArrayNotHasKey('trigger', $selectingFactory->selection->singles);
+        $this->assertTrue($selectingFactory->needsTriggerChoice);
+
+        $withAftermarket = $this->service->evaluate(new BuildSelection(
+            platform: RiflePlatform::Separate,
+            singles: ['action' => $action->id, 'trigger' => $aftermarket->id],
+        ));
+        $this->assertFalse($withAftermarket->needsTriggerChoice);
+        $this->assertArrayNotHasKey($aftermarket->id, $withAftermarket->disabledReasons);
+    }
+
+    public function test_flag_also_applies_to_barrelled_actions(): void
+    {
+        $barrelled = $this->catalogueItem('bergara-b-14-hmr-barrelled-action');
+        $barrelled->update(['requires_aftermarket_trigger' => true]);
+
+        $result = $this->service->evaluate(new BuildSelection(
+            platform: RiflePlatform::Barrelled,
+            singles: ['barrelled' => $barrelled->id],
+        ));
+
+        $this->assertTrue($result->requiresAftermarketTrigger);
+        $this->assertTrue($result->needsTriggerChoice);
+    }
+
+    public function test_unflagged_actions_still_allow_the_factory_trigger_option(): void
+    {
+        $action = $this->catalogueItem('bergara-b-14-action');
+        $factory = $this->catalogueItem('factory-keep-factory-trigger');
+
+        $result = $this->service->evaluate(new BuildSelection(
+            platform: RiflePlatform::Separate,
+            singles: ['action' => $action->id, 'trigger' => $factory->id],
+        ));
+
+        $this->assertFalse($result->requiresAftermarketTrigger);
+        $this->assertFalse($result->needsTriggerChoice);
+        $this->assertSame($factory->id, $result->selection->singles['trigger'] ?? null);
+        $this->assertArrayNotHasKey($factory->id, $result->disabledReasons);
+    }
+
     public function test_persisting_a_quote_snapshots_lines_so_catalogue_edits_do_not_change_it(): void
     {
         $barrelled = $this->catalogueItem('bergara-b-14-hmr-barrelled-action');

@@ -34,6 +34,8 @@ class Component extends Model
         'is_active',
         'is_automatic',
         'allows_quantity',
+        'requires_aftermarket_trigger',
+        'is_factory_option',
         'sort_order',
     ];
 
@@ -49,6 +51,8 @@ class Component extends Model
             'is_active' => 'boolean',
             'is_automatic' => 'boolean',
             'allows_quantity' => 'boolean',
+            'requires_aftermarket_trigger' => 'boolean',
+            'is_factory_option' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

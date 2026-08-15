@@ -24,7 +24,9 @@ class RifleBuildService
 
         $footprint = $this->footprint($selection, $components);
         $opticTube = $this->opticTube($selection, $components);
-        $disabledReasons = $this->disabledReasons($components, $footprint, $opticTube);
+        $triggerRequired = $this->requiresAftermarketTrigger($selection, $components);
+        $disabledReasons = $this->disabledReasons($components, $footprint, $opticTube, $triggerRequired);
+        $needsTriggerChoice = $triggerRequired && ! $this->hasAftermarketTrigger($selection, $components);
 
         $lines = $this->buildLines($selection, $components);
         $lines = $this->appendLabour($selection, $components, $lines);
@@ -56,6 +58,8 @@ class RifleBuildService
             footprint: $footprint,
             opticTube: $opticTube,
             disabledReasons: $disabledReasons,
+            requiresAftermarketTrigger: $triggerRequired,
+            needsTriggerChoice: $needsTriggerChoice,
         );
     }
 
@@ -231,7 +235,57 @@ class RifleBuildService
             }
         }
 
-        return $selection->withSingles($singles);
+        $selection = $selection->withSingles($singles);
+
+        if ($this->requiresAftermarketTrigger($selection, $components)) {
+            $triggerId = $singles['trigger'] ?? null;
+            if ($triggerId) {
+                $trigger = $components->get((int) $triggerId);
+                if ($trigger && (bool) $trigger->is_factory_option) {
+                    unset($singles['trigger']);
+                    $selection = $selection->withSingles($singles);
+                }
+            }
+        }
+
+        return $selection;
+    }
+
+    /**
+     * Some actions and barrelled actions ship without a usable trigger.
+     * When flagged, the factory-keep option is not allowed and the trigger
+     * step must resolve to an aftermarket component.
+     *
+     * @param  Collection<int, Component>  $components
+     */
+    public function requiresAftermarketTrigger(BuildSelection $selection, ?Collection $components = null): bool
+    {
+        $components ??= $this->loadAvailable()->keyBy('id');
+
+        $id = $selection->platform === RiflePlatform::Barrelled
+            ? $selection->selectedId('barrelled')
+            : $selection->selectedId('action');
+
+        if ($id === null) {
+            return false;
+        }
+
+        return (bool) ($components->get($id)?->requires_aftermarket_trigger ?? false);
+    }
+
+    /**
+     * @param  Collection<int, Component>  $components
+     */
+    protected function hasAftermarketTrigger(BuildSelection $selection, Collection $components): bool
+    {
+        $id = $selection->selectedId('trigger');
+        if ($id === null) {
+            return false;
+        }
+
+        $trigger = $components->get($id);
+
+        return $trigger !== null && ! (bool) $trigger->is_factory_option;
     }
 
     /**
@@ -428,7 +482,7 @@ class RifleBuildService
      * @param  Collection<int, Component>  $components
      * @return array<int, string>
      */
-    protected function disabledReasons(Collection $components, ?string $footprint, ?string $tube): array
+    protected function disabledReasons(Collection $components, ?string $footprint, ?string $tube, bool $triggerRequired = false): array
     {
         $reasons = [];
 
@@ -437,6 +491,9 @@ class RifleBuildService
             $reason = match ($key) {
                 'chassis' => $footprint ? $this->footprintReason($component, $footprint) : null,
                 'mount' => $tube ? $this->tubeReason($component, $tube) : null,
+                'trigger' => $triggerRequired && (bool) $component->is_factory_option
+                    ? 'This action requires an aftermarket trigger'
+                    : null,
                 default => null,
             };
 

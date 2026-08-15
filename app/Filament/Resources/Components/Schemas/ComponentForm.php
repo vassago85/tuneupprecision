@@ -84,6 +84,14 @@ class ComponentForm
                     ->helperText('Hidden from the picker; inserted by the build service.'),
                 Toggle::make('allows_quantity')
                     ->label('Quantity stepper'),
+                Toggle::make('requires_aftermarket_trigger')
+                    ->label('Requires aftermarket trigger')
+                    ->helperText('Forces the customer to pick an aftermarket trigger — the factory-keep option is hidden.')
+                    ->visible(fn (Get $get): bool => in_array(self::categoryKey($get), ['action', 'barrelled'], true)),
+                Toggle::make('is_factory_option')
+                    ->label('Factory-keep option')
+                    ->helperText('Marks this row as "keep the factory setup" — hidden when the chosen action requires aftermarket.')
+                    ->visible(fn (Get $get): bool => self::categoryKey($get) === 'trigger'),
             ]);
     }
 

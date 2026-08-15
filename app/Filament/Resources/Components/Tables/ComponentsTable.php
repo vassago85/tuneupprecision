@@ -51,6 +51,14 @@ class ComponentsTable
                     ->boolean()
                     ->label('Labour')
                     ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('requires_aftermarket_trigger')
+                    ->boolean()
+                    ->label('Needs aftermarket trigger')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('is_factory_option')
+                    ->boolean()
+                    ->label('Factory-keep')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('component_category_id')

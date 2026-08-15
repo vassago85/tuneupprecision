@@ -72,7 +72,13 @@
                     </div>
                 @else
                     <div class="opts">
+                        @if ($step['id'] === 'trigger' && $result->needsTriggerChoice)
+                            <div class="fitwarn" role="alert">
+                                This action requires an aftermarket trigger. Pick one below to continue.
+                            </div>
+                        @endif
                         @foreach ($items as $item)
+                            @continue($step['id'] === 'trigger' && $result->requiresAftermarketTrigger && $item->is_factory_option)
                             @php
                                 $selected = $step['type'] === 'multi'
                                     ? in_array($item->id, $multis[$step['id']] ?? [], true)

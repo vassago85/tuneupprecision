@@ -79,7 +79,17 @@ class RifleBuilder extends Component
             'message' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        $quote = app(RifleBuildService::class)->persistQuote($this->currentSelection(), [
+        $selection = $this->currentSelection();
+        $result = app(RifleBuildService::class)->evaluate($selection);
+
+        if ($result->needsTriggerChoice) {
+            $this->showRequest = false;
+            $this->toast = 'Pick an aftermarket trigger before requesting this build.';
+
+            return;
+        }
+
+        $quote = app(RifleBuildService::class)->persistQuote($selection, [
             'customer_name' => $this->customerName,
             'customer_email' => $this->customerEmail,
             'customer_phone' => $this->customerPhone ?: null,

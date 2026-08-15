@@ -26,6 +26,8 @@ final readonly class BuildResult
         public ?string $footprint,
         public ?string $opticTube,
         public array $disabledReasons,
+        public bool $requiresAftermarketTrigger = false,
+        public bool $needsTriggerChoice = false,
     ) {}
 
     public function componentCount(): int
