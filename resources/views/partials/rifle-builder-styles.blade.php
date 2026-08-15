@@ -108,6 +108,7 @@
 .rb-page .costline{font-family:var(--mono);font-size:9.5px;color:var(--slate);letter-spacing:.06em}
 .rb-page .divider{display:flex;align-items:center;gap:14px;margin:36px 0 8px;color:var(--copper)}
 .rb-page .divider .ln{height:1px;background:var(--line);flex:1}
+.rb-page .divider svg{width:22px;height:22px;flex:0 0 22px}
 .rb-page footer.rb-foot{background:var(--charcoal);color:#9fb0bd;margin-top:40px;padding:34px 0 26px;font-size:13px}
 .rb-page footer.rb-foot .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:26px}
 .rb-page footer.rb-foot h5{font-family:var(--disp);text-transform:uppercase;color:#fff;font-size:15px;margin-bottom:8px}
