@@ -86,15 +86,18 @@
       @endif
 
       @if ($hasVideo)
+        {{-- autoplay+muted+playsinline are required for iOS/Android silent loops.
+             webkit-playsinline covers older iOS; JS also sets muted/playsInline. --}}
         <video class="loop-video"
-               muted loop playsinline
-               preload="metadata"{!! $videoPosterAttr !!}
+               autoplay muted loop playsinline webkit-playsinline
+               preload="auto"{!! $videoPosterAttr !!}
                aria-hidden="true">
-          @if ($hasWebm)
-            <source src="{{ $webmUrl }}" type="video/webm">
-          @endif
+          {{-- MP4 first: iOS has no WebM; listing it first avoids a failed probe. --}}
           @if ($hasMp4)
             <source src="{{ $mp4Url }}" type="video/mp4">
+          @endif
+          @if ($hasWebm)
+            <source src="{{ $webmUrl }}" type="video/webm">
           @endif
         </video>
       @endif

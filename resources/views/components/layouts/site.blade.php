@@ -1,4 +1,4 @@
-@props([
+﻿@props([
     'title' => null,
 ])
 <!doctype html>
@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ? $title.' · ' : '' }}Tune Up · Long Range Precision Training</title>
+    <title>{{ $title ? $title.' ┬╖ ' : '' }}Tune Up ┬╖ Long Range Precision Training</title>
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
@@ -41,7 +41,7 @@
         menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu);});
       }
 
-      // cart + toast (presentational for now — the interactive cart lands in a later commit)
+      // cart + toast (presentational for now ΓÇö the interactive cart lands in a later commit)
       var count=0, badge=document.getElementById('cartBadge');
       var toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg'), tTimer;
       function showToast(msg){
@@ -52,14 +52,14 @@
       function bump(){if(!badge) return; count++; badge.textContent=count; badge.classList.add('show');
         badge.style.animation='none'; void badge.offsetWidth; badge.style.animation='';}
       document.querySelectorAll('.add').forEach(function(b){
-        b.addEventListener('click',function(){bump(); showToast('Added · '+b.dataset.name);});
+        b.addEventListener('click',function(){bump(); showToast('Added ┬╖ '+b.dataset.name);});
       });
       document.querySelectorAll('.book').forEach(function(b){
-        b.addEventListener('click',function(){showToast('Seat request started · '+b.dataset.course);});
+        b.addEventListener('click',function(){showToast('Seat request started ┬╖ '+b.dataset.course);});
       });
       var cartBtn=document.getElementById('cartBtn');
       if(cartBtn){cartBtn.addEventListener('click',function(){
-        showToast(count?('Cart · '+count+' item'+(count>1?'s':'')):'Your cart is empty');
+        showToast(count?('Cart ┬╖ '+count+' item'+(count>1?'s':'')):'Your cart is empty');
       });}
 
       // reveal on scroll
@@ -73,32 +73,60 @@
         els.forEach(function(e){io.observe(e);});
       }
 
-      // ambient loop bands (e.g. the merch strip on the landing page): only
-      // play the <video> when it scrolls into view, and only if the browser
-      // actually lets us autoplay (iOS Low Power Mode / older Safari can
-      // refuse; in that case we just leave the poster showing).
+      // ambient loop bands (e.g. the merch strip on the landing page): play
+      // when in view, pause when out. Retry after canplay — mobile often
+      // rejects an early play() while only metadata is loaded. iOS also needs
+      // muted/playsInline set as properties, not only HTML attributes.
       var reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.querySelectorAll('[data-loop]').forEach(function(frame){
         var video=frame.querySelector('video.loop-video');
         if(!video||reducedMotion) return;
-        var attempted=false;
+
+        video.muted=true;
+        video.defaultMuted=true;
+        video.playsInline=true;
+        video.setAttribute('playsinline','');
+        video.setAttribute('webkit-playsinline','');
+
+        var wantPlay=false;
+        function markPlaying(){video.classList.add('playing');}
         function tryPlay(){
-          if(attempted) return; attempted=true;
+          wantPlay=true;
+          video.muted=true;
           var p=video.play();
           if(p&&typeof p.then==='function'){
-            p.then(function(){video.classList.add('playing');})
-             .catch(function(){/* keep the poster, no console noise */});
+            p.then(markPlaying).catch(function(){/* poster stays until a later retry */});
           }else{
-            video.classList.add('playing');
+            markPlaying();
           }
         }
+        function tryPause(){
+          wantPlay=false;
+          if(!video.paused){try{video.pause();}catch(e){}}
+        }
+
+        // Safari (and some Android WebViews) often ignore the loop attribute.
+        video.addEventListener('ended',function(){
+          if(!wantPlay) return;
+          try{video.currentTime=0;}catch(e){}
+          tryPlay();
+        });
+        video.addEventListener('canplay',function(){
+          if(wantPlay&&video.paused) tryPlay();
+        });
+        // iOS Low Power Mode / data saver can still block muted autoplay until
+        // a user gesture — tapping the frame is enough to unlock playback.
+        frame.addEventListener('click',function(){
+          if(video.paused) tryPlay();
+        });
+
         if('IntersectionObserver'in window){
           var vo=new IntersectionObserver(function(es){
             es.forEach(function(en){
-              if(en.isIntersecting){tryPlay();}
-              else if(!video.paused){try{video.pause();}catch(e){}}
+              if(en.isIntersecting) tryPlay();
+              else tryPause();
             });
-          },{threshold:.25});
+          },{threshold:.2});
           vo.observe(frame);
         }else{
           tryPlay();
