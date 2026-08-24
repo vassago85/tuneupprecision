@@ -88,38 +88,58 @@
         els.forEach(function(e){io.observe(e);});
       }
 
-      // ambient loop bands (e.g. the merch strip on the landing page): play
-      // when in view, pause when out. Retry after canplay — mobile often
-      // rejects an early play() while only metadata is loaded. iOS also needs
-      // muted/playsInline set as properties, not only HTML attributes.
+      // ambient loop bands (merch strip): keep the <video> visually opaque
+      // (Chrome Android pauses opacity:0 media). Fade the poster via
+      // .is-playing on the frame. Show a play cue when autoplay is blocked
+      // (Data Saver / Low Power Mode).
       var reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.querySelectorAll('[data-loop]').forEach(function(frame){
         var video=frame.querySelector('video.loop-video');
+        var cue=frame.querySelector('.loop-play-cue');
         if(!video||reducedMotion) return;
 
         video.muted=true;
         video.defaultMuted=true;
         video.playsInline=true;
+        video.setAttribute('muted','');
         video.setAttribute('playsinline','');
         video.setAttribute('webkit-playsinline','');
 
         var wantPlay=false;
-        function markPlaying(){video.classList.add('playing');}
+        function markPlaying(){
+          frame.classList.add('is-playing');
+          frame.classList.remove('needs-gesture');
+          video.classList.add('playing');
+        }
+        function markStopped(){
+          frame.classList.remove('is-playing');
+          video.classList.remove('playing');
+        }
+        function showGesture(){
+          frame.classList.add('needs-gesture');
+          markStopped();
+        }
         function tryPlay(){
           wantPlay=true;
           video.muted=true;
           var p=video.play();
           if(p&&typeof p.then==='function'){
-            p.then(markPlaying).catch(function(){/* poster stays until a later retry */});
-          }else{
+            p.then(markPlaying).catch(function(){showGesture();});
+          }else if(!video.paused){
             markPlaying();
           }
         }
         function tryPause(){
           wantPlay=false;
           if(!video.paused){try{video.pause();}catch(e){}}
+          markStopped();
         }
 
+        // HTML autoplay may start the video before our observer runs — sync UI.
+        video.addEventListener('playing',markPlaying);
+        video.addEventListener('pause',function(){
+          if(!wantPlay) markStopped();
+        });
         // Safari (and some Android WebViews) often ignore the loop attribute.
         video.addEventListener('ended',function(){
           if(!wantPlay) return;
@@ -129,11 +149,19 @@
         video.addEventListener('canplay',function(){
           if(wantPlay&&video.paused) tryPlay();
         });
-        // iOS Low Power Mode / data saver can still block muted autoplay until
-        // a user gesture — tapping the frame is enough to unlock playback.
-        frame.addEventListener('click',function(){
-          if(video.paused) tryPlay();
+
+        function unlock(e){
+          if(e) e.preventDefault();
+          frame.classList.remove('needs-gesture');
+          tryPlay();
+        }
+        if(cue) cue.addEventListener('click',unlock);
+        frame.addEventListener('click',function(e){
+          if(e.target.closest&&e.target.closest('a,button')) return;
+          if(video.paused||frame.classList.contains('needs-gesture')) unlock(e);
         });
+
+        if(!video.paused) markPlaying();
 
         if('IntersectionObserver'in window){
           var vo=new IntersectionObserver(function(es){
@@ -141,7 +169,7 @@
               if(en.isIntersecting) tryPlay();
               else tryPause();
             });
-          },{threshold:.2});
+          },{threshold:0.15, rootMargin:'40px 0px'});
           vo.observe(frame);
         }else{
           tryPlay();

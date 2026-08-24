@@ -86,13 +86,13 @@
       @endif
 
       @if ($hasVideo)
-        {{-- autoplay+muted+playsinline are required for iOS/Android silent loops.
-             webkit-playsinline covers older iOS; JS also sets muted/playsInline. --}}
+        {{-- muted+playsinline+autoplay in markup (not only JS) — Chrome Android
+             evaluates autoplay policy from attributes before script runs.
+             Video stays visible; poster fades via .is-playing on the frame. --}}
         <video class="loop-video"
                autoplay muted loop playsinline webkit-playsinline
                preload="auto"{!! $videoPosterAttr !!}
                aria-hidden="true">
-          {{-- MP4 first: iOS has no WebM; listing it first avoids a failed probe. --}}
           @if ($hasMp4)
             <source src="{{ $mp4Url }}" type="video/mp4">
           @endif
@@ -100,6 +100,9 @@
             <source src="{{ $webmUrl }}" type="video/webm">
           @endif
         </video>
+        <button type="button" class="loop-play-cue" aria-label="Play video">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+        </button>
       @endif
     </div>
   </div>

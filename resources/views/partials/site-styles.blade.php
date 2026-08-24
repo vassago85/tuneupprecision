@@ -337,15 +337,22 @@
   .loop-copy h2{font-family:var(--disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:44px;line-height:1.02;color:#fff;margin:8px 0 14px}
   .loop-copy p{color:rgba(255,255,255,.72);font-size:16px;line-height:1.55;margin:0 0 22px;max-width:44ch}
   .loop-frame{position:relative;aspect-ratio:16/9;width:100%;border-radius:14px;overflow:hidden;background:var(--charcoal);box-shadow:var(--shadow-lg)}
+  /* Video must stay opacity:1 — Chrome Android treats opacity:0 as "not visible"
+     and pauses muted autoplay. Poster sits on top and fades once playback starts. */
   .loop-poster,.loop-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-  .loop-video{opacity:0;transition:opacity .5s ease}
-  .loop-video.playing{opacity:1}
-  .loop-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(120% 80% at 50% 40%, #253544 0%, #17222E 60%, #0d1620 100%);color:rgba(255,255,255,.5)}
+  .loop-video{opacity:1;z-index:0}
+  .loop-poster{z-index:1;transition:opacity .45s ease;pointer-events:none}
+  .loop-frame.is-playing .loop-poster{opacity:0}
+  .loop-play-cue{position:absolute;inset:0;z-index:2;display:none;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff}
+  .loop-frame.needs-gesture .loop-play-cue{display:grid}
+  .loop-play-cue svg{width:64px;height:64px;filter:drop-shadow(0 4px 18px rgba(0,0,0,.55));background:rgba(212,91,46,.92);border-radius:999px;padding:14px}
+  .loop-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(120% 80% at 50% 40%, #253544 0%, #17222E 60%, #0d1620 100%);color:rgba(255,255,255,.5);z-index:1}
   .loop-placeholder .mark{width:78px;height:78px}
   .loop-placeholder-tag{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.55)}
 
   @media (prefers-reduced-motion: reduce){
-    .loop-video{display:none!important}
+    .loop-video,.loop-play-cue{display:none!important}
+    .loop-poster{opacity:1!important}
   }
 
   /* ---------- the range (video library) ---------- */
