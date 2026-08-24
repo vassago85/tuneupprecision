@@ -1,15 +1,30 @@
-﻿@props([
+@props([
     'title' => null,
+    'description' => null,
+    'canonical' => null,
+    'image' => null,
+    'type' => 'website',
+    'jsonLd' => null,
+    'robots' => 'index, follow',
 ])
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ? $title.' ┬╖ ' : '' }}Tune Up ┬╖ Long Range Precision Training</title>
+    <x-seo-meta
+        :title="$title"
+        :description="$description"
+        :canonical="$canonical"
+        :image="$image"
+        :type="$type"
+        :json-ld="$jsonLd"
+        :robots="$robots"
+    />
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="alternate" type="application/xml" title="Sitemap" href="{{ url('/sitemap.xml') }}">
     <meta name="theme-color" content="#17222E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,7 +56,7 @@
         menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu);});
       }
 
-      // cart + toast (presentational for now ΓÇö the interactive cart lands in a later commit)
+      // cart + toast (presentational for now — the interactive cart lands in a later commit)
       var count=0, badge=document.getElementById('cartBadge');
       var toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg'), tTimer;
       function showToast(msg){
@@ -52,14 +67,14 @@
       function bump(){if(!badge) return; count++; badge.textContent=count; badge.classList.add('show');
         badge.style.animation='none'; void badge.offsetWidth; badge.style.animation='';}
       document.querySelectorAll('.add').forEach(function(b){
-        b.addEventListener('click',function(){bump(); showToast('Added ┬╖ '+b.dataset.name);});
+        b.addEventListener('click',function(){bump(); showToast('Added · '+b.dataset.name);});
       });
       document.querySelectorAll('.book').forEach(function(b){
-        b.addEventListener('click',function(){showToast('Seat request started ┬╖ '+b.dataset.course);});
+        b.addEventListener('click',function(){showToast('Seat request started · '+b.dataset.course);});
       });
       var cartBtn=document.getElementById('cartBtn');
       if(cartBtn){cartBtn.addEventListener('click',function(){
-        showToast(count?('Cart ┬╖ '+count+' item'+(count>1?'s':'')):'Your cart is empty');
+        showToast(count?('Cart · '+count+' item'+(count>1?'s':'')):'Your cart is empty');
       });}
 
       // reveal on scroll

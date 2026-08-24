@@ -1,2 +1,20 @@
+# AI / LLM crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended,
+# OAI-SearchBot, CCBot, and others) are welcome on public pages. They use
+# this * group — a named Allow:/ group would replace these Disallows.
+# Curated map for language models: https://tuneupprecision.co.za/llms.txt
+# Fuller dump: https://tuneupprecision.co.za/llms-full.txt
+
 User-agent: *
-Disallow:
+Allow: /
+
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /password
+Disallow: /password/forgot
+Disallow: /password/reset
+Disallow: /newsletter/unsubscribe
+Disallow: /admin
+Disallow: /livewire
+
+Sitemap: https://tuneupprecision.co.za/sitemap.xml

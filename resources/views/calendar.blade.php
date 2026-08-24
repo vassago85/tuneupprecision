@@ -1,4 +1,7 @@
-<x-layouts.site title="Calendar">
+<x-layouts.site
+    title="Calendar"
+    description="Full month calendar of every upcoming Tune Up Precision training date and the competitions Dirk Charsley is attending across South Africa."
+>
 
   {{-- ============ MONTH CALENDAR ============ --}}
   <section

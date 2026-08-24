@@ -14,7 +14,7 @@
         @else
             <span class="eyebrow">Newsletter</span>
             <h1 style="font-size:44px;margin:14px 0 10px">Link not recognised</h1>
-            <p style="color:var(--muted);max-width:52ch">This unsubscribe link is invalid or has already been used. If you keep getting emails, contact <a href="mailto:hello@tuneupprecision.co.za" style="color:var(--copper-deep)">hello@tuneupprecision.co.za</a>.</p>
+            <p style="color:var(--muted);max-width:52ch">This unsubscribe link is invalid or has already been used. If you keep getting emails, <a href="{{ route('contact.create', ['subject' => 'Newsletter unsubscribe']) }}" style="color:var(--copper-deep)">message Dirk through the site</a>.</p>
         @endif
         <a href="{{ url('/') }}" class="btn btn-dark" style="margin-top:26px">Back to home</a>
     </section>

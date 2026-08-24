@@ -42,4 +42,12 @@ return [
         ],
     ],
 
+    // Google Search Console site-verification token — the string from the
+    // <meta name="google-site-verification" content="..."> tag. Setting this
+    // renders the meta tag from the SEO component; you can also (or instead)
+    // drop the googleXXXX.html file into /public/ for file-based verification.
+    'google' => [
+        'site_verification' => env('GOOGLE_SITE_VERIFICATION'),
+    ],
+
 ];

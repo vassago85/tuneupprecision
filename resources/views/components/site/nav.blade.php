@@ -19,6 +19,7 @@
       <a href="{{ route('range') }}">The Range</a>
       <a href="{{ route('calendar') }}">Calendar</a>
       <a href="{{ url('/#about') }}">About</a>
+      <a href="{{ route('contact.create') }}">Contact</a>
     </nav>
     <div class="nav-actions">
       <button class="cart-btn" id="cartBtn" aria-label="View cart">
@@ -47,6 +48,7 @@
   <a href="{{ route('range') }}">The Range</a>
   <a href="{{ route('calendar') }}">Calendar</a>
   <a href="{{ url('/#about') }}">About</a>
+  <a href="{{ route('contact.create') }}">Contact</a>
   @auth
     <form method="POST" action="{{ route('logout') }}" class="mobile-signout">
       @csrf

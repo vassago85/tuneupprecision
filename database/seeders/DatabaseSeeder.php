@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
         // Admin-managed training disciplines. Each course template belongs to one.
         $types = [
             [
-                'name' => 'Long Range Prone',
+                'name' => 'Precision Long Range',
                 'slug' => 'long-range-prone',
                 'blurb' => 'Prone precision — zero, ballistics and wind out past a kilometre.',
                 'icon' => 'heroicon-o-viewfinder-circle',
@@ -86,7 +86,7 @@ class DatabaseSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'PRS',
+                'name' => 'PRS Shooting',
                 'slug' => 'prs',
                 'blurb' => 'Precision Rifle Series — positional stages against the clock.',
                 'icon' => 'heroicon-o-clock',

@@ -39,15 +39,15 @@
         <div class="socials">
           <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
           <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M15 3h-3a4 4 0 0 0-4 4v3H5v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-          <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.2A8 8 0 1 1 12 20a8 8 0 0 1-4-1L3 21z"/><path d="M8.5 9c0 3 2.5 5.5 5.5 5.5M8.5 9c0-.6.4-1 1-1M14 14.5c.6 0 1-.4 1-1"/></svg></a>
+          <a href="{{ route('contact.create') }}" aria-label="Contact"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg></a>
         </div>
       </div>
       <div class="foot-col">
         <h3>Training</h3>
         @foreach (\App\Models\TrainingType::query()->activeOrdered()->get() as $type)
-          <a href="{{ route('courses', ['type' => $type->slug]) }}">{{ $type->name }}</a>
+          <a href="{{ route('courses') }}#{{ $type->slug }}">{{ $type->name }}</a>
         @endforeach
-        <a href="{{ route('courses') }}">One-on-one</a>
+        <a href="{{ route('contact.create', ['subject' => 'One-on-one coaching']) }}">One-on-one</a>
       </div>
       <div class="foot-col">
         <h3>Explore</h3>
@@ -58,8 +58,9 @@
       </div>
       <div class="foot-col">
         <h3>Contact</h3>
-        <a href="mailto:hello@tuneupprecision.co.za">hello@tuneupprecision.co.za</a>
-        {{-- WhatsApp: add real number here as a wa.me link once available. --}}
+        <a href="{{ route('contact.create') }}">Message Dirk</a>
+        <a href="{{ route('legal.privacy') }}">Privacy Policy</a>
+        <a href="{{ route('legal.terms') }}">Terms</a>
         <p>Gauteng · by arrangement</p>
       </div>
     </div>

@@ -1,4 +1,6 @@
-<x-layouts.site>
+<x-layouts.site
+    description="Long range rifle training with Dirk Charsley in South Africa. Reloading, PRS Shooting and Precision Long Range — small squads at a private facility, your own rifle."
+>
 
   {{-- ============ HERO ============ --}}
   <span id="top"></span>
@@ -67,21 +69,24 @@
       <div class="sec-head reveal">
         <span class="eyebrow">Next event</span>
         <h2>The next date on the line.</h2>
-        <p>Here's the next scheduled training day. Full schedule of every upcoming date lives on the calendar.</p>
+        <p>Here's the next scheduled training day. Every upcoming date for Reloading, PRS Shooting and Precision Long Range is on the courses page.</p>
       </div>
 
       @if ($nextEvent)
         <div class="courses">
           <x-training.event-card :event="$nextEvent" :featured="true" />
         </div>
-        <div class="reveal" style="margin-top:22px">
+        <div class="reveal" style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap">
+          <a href="{{ route('courses') }}" class="btn btn-primary">Book a seat
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
           <a href="{{ route('calendar') }}" class="btn btn-ghost">View full calendar
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
       @else
         <div class="schedule-empty reveal">
-          New dates are being scheduled — message Dirk to be first on the list.
+          New dates are being scheduled — <a href="{{ route('contact.create', ['subject' => 'Next training date']) }}">message Dirk</a> to be first on the list.
         </div>
       @endif
     </div>

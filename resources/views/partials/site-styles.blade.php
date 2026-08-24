@@ -156,6 +156,26 @@
   .month-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
   .month-head:not(:first-of-type){margin-top:20px}
   .schedule-empty{background:var(--paper);border:1px dashed var(--line);border-radius:16px;padding:40px 28px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:14px}
+  /* compact date list under discipline cards */
+  .course.discipline .desc{min-height:0;margin-bottom:14px}
+  .course.discipline .price{margin-bottom:8px;flex-wrap:wrap}
+  .course.discipline .price s.text-lead{order:-1;letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+  .course .dates{margin-top:8px;display:flex;flex-direction:column;gap:8px;padding-top:14px;border-top:1px solid var(--line-soft)}
+  .date-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--base-2);border:1px solid var(--line-soft);border-radius:10px}
+  .date-row.is-full{opacity:.75}
+  .date-row .date-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .date-row .d{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal);font-weight:600}
+  .date-row .s{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em}
+  .btn-mini{font-family:var(--disp);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--charcoal);border:1px solid var(--charcoal);border-radius:8px;padding:7px 12px;transition:.16s;white-space:nowrap;cursor:pointer}
+  .btn-mini:hover{background:var(--copper-deep);border-color:var(--copper-deep)}
+  .btn-mini.fully{background:var(--base-2);color:var(--muted);border-color:var(--line);cursor:not-allowed}
+  .btn-mini.fully:hover{background:var(--base-2);color:var(--muted);border-color:var(--line)}
+  .btn-mini.waitlist{background:transparent;color:var(--charcoal);border-color:var(--line)}
+  .btn-mini.waitlist:hover{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+  .course.discipline.feat .btn-mini{background:var(--copper-deep);border-color:var(--copper-deep)}
+  .course.discipline.feat .btn-mini:hover{background:var(--copper);border-color:var(--copper)}
+  .date-empty{padding:16px 12px;font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;border:1px dashed var(--line);border-radius:10px}
+  .date-empty a{color:var(--copper-deep);border-bottom:1px solid var(--copper-deep)}
   .private{margin-top:20px;background:var(--charcoal);color:#fff;border-radius:16px;padding:26px 30px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
   .private .txt{flex:1;min-width:240px}
   .private h3{color:#fff;font-size:28px;margin-bottom:6px}
@@ -372,8 +392,26 @@
   .auth-form{display:flex;flex-direction:column;gap:16px}
   .form-field{display:flex;flex-direction:column;gap:6px}
   .form-field label{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-weight:700;font-size:12px;color:var(--charcoal)}
-  .form-field input{font:inherit;font-size:15px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--charcoal);transition:border-color .15s ease, box-shadow .15s ease}
-  .form-field input:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(212,91,46,.18)}
+  .form-field input,.form-field textarea{font:inherit;font-size:15px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--charcoal);transition:border-color .15s ease, box-shadow .15s ease}
+  .form-field input:focus,.form-field textarea:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(212,91,46,.18)}
+  .form-field textarea{min-height:140px;resize:vertical;line-height:1.5}
+
+  /* ---------- contact + legal ---------- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:44px;align-items:start}
+  .contact-copy h2{font-size:clamp(30px,4vw,46px);color:var(--charcoal);margin:14px 0 16px}
+  .contact-copy p{color:var(--muted);margin:0 0 16px}
+  .contact-copy p.soft{font-size:14.5px}
+  .contact-copy a{color:var(--copper-deep)}
+  .contact-points{margin:0 0 20px;padding:0 0 0 18px;color:var(--muted)}
+  .contact-points li{margin-bottom:8px}
+  .contact-card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:32px 28px;box-shadow:var(--shadow-lg)}
+  .legal{max-width:760px}
+  .legal-prose h3{font-size:22px;color:var(--charcoal);margin:32px 0 10px}
+  .legal-prose p,.legal-prose li{color:var(--muted);font-size:15.5px;line-height:1.65}
+  .legal-prose ul{margin:0 0 16px;padding:0 0 0 18px}
+  .legal-prose li{margin-bottom:8px}
+  .legal-prose a{color:var(--copper-deep)}
+  .schedule-empty a{color:var(--copper-deep)}
   .form-hint{font-size:12px;color:var(--gray);font-family:var(--mono);letter-spacing:.02em}
   .form-err{font-size:12px;color:#c0392b;font-family:var(--mono)}
   .form-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
@@ -407,6 +445,7 @@
     .courses{grid-template-columns:1fr;gap:16px}
     .course.feat{order:-1}
     .about-grid{grid-template-columns:1fr;gap:28px}
+    .contact-grid{grid-template-columns:1fr;gap:28px}
     .about-photo{max-width:340px}
     .steps{grid-template-columns:1fr 1fr;border-top:0}
     .step{border:1px solid rgba(255,255,255,.1);border-radius:12px;margin-bottom:12px}
@@ -429,6 +468,8 @@
     .mobile-menu a.btn-primary{color:#fff}
     .cta-band{padding:40px 28px}
     .private{padding:24px}
+    .date-row{flex-wrap:wrap;padding:10px}
+    .date-row .btn-mini{width:100%;text-align:center;justify-content:center}
     .cal-nav h2{font-size:22px;min-width:auto}
     .cal-nav{gap:10px}
     .cal-arrow span{display:none}

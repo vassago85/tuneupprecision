@@ -25,7 +25,7 @@
         <a href="{{ $ctaHref ?? route('courses') }}" class="btn btn-primary">{{ $ctaLabel }}
           <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a class="note" href="mailto:hello@tuneupprecision.co.za?subject=Tune%20Up%20enquiry">{{ $note }}</a>
+        <a class="note" href="{{ route('contact.create', ['subject' => 'Tune Up enquiry']) }}">{{ $note }}</a>
       </div>
     </div>
   </div>

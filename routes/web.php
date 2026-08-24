@@ -6,7 +6,10 @@ use App\Enums\EventKind;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\SitemapController;
 use App\Livewire\RifleBuilder;
 use App\Models\Product;
 use App\Models\TrainingEvent;
@@ -32,29 +35,47 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/courses', function (Request $request) {
-    // Public agenda: every upcoming training date, month-grouped, with a
-    // discipline filter (Reloading, PRS, Precision Long Range, ...). Fully-booked dates DO show
-    // (as "Fully booked" on the card).
-    $trainingTypes = TrainingType::query()->activeOrdered()->get();
-    $selectedType = $request->query('type');
+Route::get('/courses', function () {
+    // Public agenda: three discipline cards (Reloading, PRS Shooting,
+    // Precision Long Range), each with a compact list of upcoming dates.
+    // Fully-booked dates DO show (as "Fully booked" on the row).
+    $trainingTypes = TrainingType::query()
+        ->activeOrdered()
+        ->with(['courseTemplates' => fn ($q) => $q->where('is_active', true)])
+        ->get();
 
-    $eventsByMonth = TrainingEvent::query()
+    $upcomingEvents = TrainingEvent::query()
         ->with('courseTemplate.trainingType')
         ->where('kind', EventKind::Training->value)
         ->publiclyVisible()
         ->upcoming()
-        ->when($selectedType, fn ($query, $slug) => $query->whereHas(
-            'courseTemplate.trainingType',
-            fn ($q) => $q->where('slug', $slug)
-        ))
         ->get()
-        ->groupBy(fn (TrainingEvent $event): string => $event->starts_on->format('F Y'));
+        ->groupBy(fn (TrainingEvent $event): ?int => $event->courseTemplate?->training_type_id);
+
+    // Build one payload per active training type — its representative template
+    // (for the on-card blurb/specs) plus every upcoming date on it.
+    $disciplines = $trainingTypes->map(function (TrainingType $type) use ($upcomingEvents) {
+        $events = ($upcomingEvents->get($type->id) ?? collect())
+            ->sortBy(fn (TrainingEvent $e) => $e->starts_on->timestamp)
+            ->values();
+
+        $representative = $type->courseTemplates->first();
+
+        $prices = $events->map(fn (TrainingEvent $e) => $e->effectivePriceCents())->filter()->unique();
+        $fromPriceCents = $prices->min();
+        $priceIsFrom = $prices->count() > 1;
+
+        return [
+            'type' => $type,
+            'representative' => $representative,
+            'events' => $events,
+            'from_price_cents' => $fromPriceCents ? (int) $fromPriceCents : ($representative?->base_price_cents ?? 0),
+            'price_is_from' => $priceIsFrom,
+        ];
+    })->values();
 
     return view('courses', [
-        'trainingTypes' => $trainingTypes,
-        'selectedType' => $selectedType,
-        'eventsByMonth' => $eventsByMonth,
+        'disciplines' => $disciplines,
     ]);
 })->name('courses');
 
@@ -136,11 +157,13 @@ Route::get('/calendar', function (Request $request) {
         if ($isComp) {
             $actionLabel = $event->external_url ? 'Match info' : 'Contact Dirk';
             $actionHref = $event->external_url
-                ?? 'mailto:hello@tuneupprecision.co.za?subject='.rawurlencode($event->displayTitle());
+                ?? route('contact.create', ['subject' => $event->displayTitle()]);
             $actionExternal = (bool) $event->external_url;
         } else {
             $actionLabel = $event->isFull() ? 'Join the waitlist' : 'Book this date';
-            $actionHref = route('courses');
+            $actionHref = route('contact.create', [
+                'subject' => ($event->isFull() ? 'Waitlist: ' : 'Book: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel,
+            ]);
             $actionExternal = false;
         }
 
@@ -235,9 +258,23 @@ Route::post('/logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
+Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:8,1')
+    ->name('contact.store');
+
+Route::view('/privacy', 'legal.privacy')->name('legal.privacy');
+Route::view('/terms', 'legal.terms')->name('legal.terms');
+
 // Newsletter subscribe (public form) + one-click unsubscribe.
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware('throttle:10,1')
     ->name('newsletter.subscribe');
 Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])
     ->name('newsletter.unsubscribe');
+
+// SEO / AI discoverability — sitemap.xml for search engines, llms.txt for
+// language-model crawlers (llmstxt.org).
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms');
+Route::get('/llms-full.txt', [LlmsTxtController::class, 'full'])->name('llms.full');

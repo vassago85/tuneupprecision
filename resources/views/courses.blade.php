@@ -1,45 +1,69 @@
-<x-layouts.site title="Courses">
+@php
+    $courseSchemas = $disciplines->map(function ($d) {
+        $type = $d['type'];
+        $tpl = $d['representative'];
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Course',
+            'name' => $tpl?->title ?? $type->name,
+            'description' => $tpl?->blurb ?? $type->blurb,
+            'provider' => [
+                '@type' => 'Organization',
+                'name' => 'Tune Up Precision',
+                'sameAs' => url('/'),
+            ],
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => $d['from_price_cents'] > 0 ? number_format(((int) $d['from_price_cents']) / 100, 2, '.', '') : null,
+                'priceCurrency' => 'ZAR',
+                'availability' => $d['events']->contains(fn ($e) => ! $e->isFull())
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/SoldOut',
+                'url' => route('courses'),
+            ],
+            'hasCourseInstance' => $d['events']->map(fn ($e) => [
+                '@type' => 'CourseInstance',
+                'courseMode' => 'onsite',
+                'startDate' => $e->starts_on?->toDateString(),
+                'endDate' => ($e->ends_on ?? $e->starts_on)?->toDateString(),
+                'location' => $e->venue ? [
+                    '@type' => 'Place',
+                    'name' => $e->venue,
+                    'address' => ['@type' => 'PostalAddress', 'addressCountry' => 'ZA'],
+                ] : null,
+            ])->values()->all(),
+        ];
+    })->values()->all();
+
+    $coursesJsonLd = ['@context' => 'https://schema.org', '@graph' => $courseSchemas];
+@endphp
+<x-layouts.site
+    title="Courses"
+    description="Book a full-day precision rifle course — Reloading, PRS Shooting or Precision Long Range — with Dirk Charsley at Tune Up Precision. Upcoming dates and prices per discipline."
+    :json-ld="$coursesJsonLd"
+>
 
   {{-- ============ COURSE AGENDA ============ --}}
   <section>
     <div class="wrap">
       <div class="sec-head reveal">
-        <span class="eyebrow">Upcoming course dates</span>
-        <h2>Pick a date. Book your seat.</h2>
-        <p>Each date is a full day at a private facility — on the line or at the bench, depending on the course. Bring your own rifle and ammo; targets and use of the ballistic and reloading kit are included.</p>
+        <span class="eyebrow">What you can book</span>
+        <h2>Three disciplines. Upcoming dates below each.</h2>
+        <p>Full days at a private facility — on the line or at the bench, depending on the discipline. Bring your rifle and ammo; targets and use of the ballistic and reloading kit are included.</p>
       </div>
 
-      @if ($trainingTypes->isNotEmpty())
-        <div class="type-filter reveal">
-          <a href="{{ route('courses') }}" class="{{ $selectedType ? '' : 'active' }}">All training</a>
-          @foreach ($trainingTypes as $type)
-            <a href="{{ route('courses', ['type' => $type->slug]) }}" class="{{ $selectedType === $type->slug ? 'active' : '' }}">{{ $type->name }}</a>
-          @endforeach
-        </div>
-      @endif
-
-      @forelse ($eventsByMonth as $month => $events)
-        <div class="month-head reveal">
-          <h3>{{ $month }}</h3>
-          <span class="rule"></span>
-        </div>
-        <div class="courses">
-          @foreach ($events as $event)
-            <x-training.event-card
-              :event="$event"
-              :featured="$event->courseTemplate?->slug === 'applied-long-range'"
-            />
-          @endforeach
-        </div>
-      @empty
-        <div class="schedule-empty reveal">
-          @if ($selectedType)
-            No upcoming {{ optional($trainingTypes->firstWhere('slug', $selectedType))->name ?? 'dates for this discipline' }} dates right now — <a href="{{ route('courses') }}">see all training</a> or message Dirk to be first on the list.
-          @else
-            New dates are being scheduled — message Dirk to be first on the list.
-          @endif
-        </div>
-      @endforelse
+      <div class="courses">
+        @foreach ($disciplines as $discipline)
+          <x-training.discipline-card
+            :type="$discipline['type']"
+            :representative="$discipline['representative']"
+            :events="$discipline['events']"
+            :from-price-cents="$discipline['from_price_cents']"
+            :price-is-from="$discipline['price_is_from']"
+            :featured="$discipline['type']->slug === 'long-range-prone'"
+          />
+        @endforeach
+      </div>
 
       {{-- One-on-one coaching --}}
       <div class="private reveal">
@@ -49,7 +73,7 @@
         </div>
         <div class="p2">
           <div class="amt">On request <s>Quoted per day · scoped to what you need</s></div>
-          <a href="mailto:hello@tuneupprecision.co.za?subject=One-on-one%20coaching" class="btn btn-primary book" data-course="One-on-one coaching">Enquire</a>
+          <a href="{{ route('contact.create', ['subject' => 'One-on-one coaching']) }}" class="btn btn-primary book" data-course="One-on-one coaching">Enquire</a>
         </div>
       </div>
     </div>

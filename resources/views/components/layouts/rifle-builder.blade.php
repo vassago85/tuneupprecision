@@ -1,12 +1,23 @@
-@props(['title' => 'Rifle Builder'])
+@props([
+    'title' => 'Rifle Builder',
+    'description' => 'Build your precision rifle configuration — barrel, action, stock, optic and load — and share the spec with Dirk.',
+    'canonical' => null,
+    'image' => null,
+])
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title }} · Tune Up Precision</title>
+    <x-seo-meta
+        :title="$title"
+        :description="$description"
+        :canonical="$canonical"
+        :image="$image"
+    />
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="alternate" type="application/xml" title="Sitemap" href="{{ url('/sitemap.xml') }}">
     <meta name="theme-color" content="#1F2D3A">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

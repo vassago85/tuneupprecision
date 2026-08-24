@@ -32,7 +32,7 @@ class CourseTemplateForm
                             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug((string) $state))),
                         TextInput::make('slug')->required(),
                     ])
-                    ->helperText('e.g. Reloading, PRS, Long Range Prone.'),
+                    ->helperText('e.g. Reloading, PRS Shooting, Precision Long Range.'),
                 TextInput::make('title')
                     ->required()
                     ->live(onBlur: true)

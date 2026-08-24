@@ -1,4 +1,7 @@
-<x-layouts.site title="The Range">
+<x-layouts.site
+    title="The Range"
+    description="Videos from the line — long range, PRS and reloading tutorials filmed at the Tune Up Precision facility."
+>
   {{-- ============ HERO ============ --}}
   <section class="range-hero">
     <div class="wrap">

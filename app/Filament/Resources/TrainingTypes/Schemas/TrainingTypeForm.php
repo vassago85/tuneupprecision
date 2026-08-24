@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\TrainingTypes\Schemas;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -20,7 +20,7 @@ class TrainingTypeForm
                     ->required()
                     ->live(onBlur: true)
                     ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug((string) $state)))
-                    ->placeholder('Long Range Prone'),
+                    ->placeholder('Precision Long Range'),
                 TextInput::make('slug')
                     ->required()
                     ->unique(ignoreRecord: true)

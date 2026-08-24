@@ -1,4 +1,7 @@
-<x-layouts.site title="Shop">
+<x-layouts.site
+    title="Shop"
+    description="Precision reloading components, dies, brass, powder and projectiles Dirk actually loads and shoots — hand-picked for long range accuracy."
+>
 
   {{-- ============ SHOP ============ --}}
   <section>
