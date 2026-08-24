@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\EventKind;
-use App\Models\TrainingEvent;
 use Illuminate\Http\Response;
 
 /**
  * Public sitemap.xml for Search Console and crawlers.
  *
- * Only indexable guest URLs are listed. Auth pages (/login, /register,
- * /password/*) and the admin panel stay out on purpose.
+ * Built as a raw XML string (not a Blade view) so `<?xml` cannot be
+ * interpreted as a PHP short open tag — that 500s the URL and Google
+ * reports "Couldn't fetch".
+ *
+ * Only indexable guest URLs are listed. Auth pages and /admin stay out.
  */
 class SitemapController extends Controller
 {
@@ -32,42 +33,34 @@ class SitemapController extends Controller
             $this->url(route('llms.full'), 'weekly', '0.3'),
         ];
 
-        // Individual upcoming training dates so each date can appear in
-        // search / rich results. Competitions Dirk is attending aren't
-        // bookable pages on our site, so they're excluded.
-        $events = TrainingEvent::query()
-            ->with('courseTemplate.trainingType')
-            ->where('kind', EventKind::Training->value)
-            ->publiclyVisible()
-            ->upcoming()
-            ->get(['id', 'course_template_id', 'starts_on', 'updated_at']);
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
 
-        foreach ($events as $event) {
-            // We don't have per-event pages yet — link back to the courses
-            // agenda with a hash so crawlers still discover the date.
-            $urls[] = $this->url(
-                route('courses').'#event-'.$event->id,
-                'weekly',
-                '0.6',
-                $event->updated_at?->toAtomString(),
-            );
+        foreach ($urls as $url) {
+            $xml .= "    <url>\n";
+            $xml .= '        <loc>'.htmlspecialchars($url['loc'], ENT_XML1)."</loc>\n";
+            $xml .= '        <changefreq>'.$url['changefreq']."</changefreq>\n";
+            $xml .= '        <priority>'.$url['priority']."</priority>\n";
+            $xml .= "    </url>\n";
         }
 
-        return response()
-            ->view('sitemap', ['urls' => $urls])
-            ->header('Content-Type', 'application/xml');
+        $xml .= '</urlset>';
+
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8',
+            'Cache-Control' => 'public, max-age=3600',
+        ]);
     }
 
     /**
-     * @return array{loc: string, changefreq: string, priority: string, lastmod: ?string}
+     * @return array{loc: string, changefreq: string, priority: string}
      */
-    private function url(string $loc, string $changefreq, string $priority, ?string $lastmod = null): array
+    private function url(string $loc, string $changefreq, string $priority): array
     {
         return [
             'loc' => $loc,
             'changefreq' => $changefreq,
             'priority' => $priority,
-            'lastmod' => $lastmod,
         ];
     }
 }
