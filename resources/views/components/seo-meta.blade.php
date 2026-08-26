@@ -24,7 +24,7 @@
         ? $title.' · '.$siteName.' — '.$tagline
         : $siteName.' — '.$tagline;
     $description = $description
-        ?: 'Long range rifle training with Dirk Charsley in South Africa — foundation, applied long range, PRS shooting and precision reloading. Small squads, private range, your own rifle.';
+        ?: 'Long range rifle training with Dirk Pio in South Africa — foundation, applied long range, PRS shooting and precision reloading. Small squads, private range, your own rifle.';
     $canonical = $canonical ?: url()->current();
     $image = $image ?: asset('images/hero-loop-poster.webp');
     $verification = config('services.google.site_verification');
@@ -40,7 +40,7 @@
         'areaServed' => 'South Africa',
         'founder' => [
             '@type' => 'Person',
-            'name' => 'Dirk Charsley',
+            'name' => 'Dirk Pio',
             'jobTitle' => 'Long Range Precision Instructor',
         ],
         'sameAs' => array_values(array_filter([

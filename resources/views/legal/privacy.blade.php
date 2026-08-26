@@ -13,7 +13,7 @@
 
       <article class="legal-prose reveal">
         <h3>1. Who is responsible</h3>
-        <p>Dirk Charsley, trading as Tune Up Long Range Precision Training, is the responsible party. The only way to reach us about this policy, or to exercise your rights, is the <a href="{{ route('contact.create', ['subject' => 'Privacy request']) }}">contact form</a> on this website. We do not publish an email address or phone number for public contact.</p>
+        <p>Dirk Pio, trading as Tune Up Long Range Precision Training, is the responsible party. The only way to reach us about this policy, or to exercise your rights, is the <a href="{{ route('contact.create', ['subject' => 'Privacy request']) }}">contact form</a> on this website. We do not publish an email address or phone number for public contact.</p>
 
         <h3>2. What we collect</h3>
         <p>We only collect what we need to run the site and the training:</p>

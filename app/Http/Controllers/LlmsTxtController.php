@@ -40,7 +40,7 @@ class LlmsTxtController extends Controller
         $lines = [
             '# Tune Up Precision — Long Range Rifle Training (South Africa)',
             '',
-            '> Long range precision rifle training with Dirk Charsley in South Africa. Full-day courses at a private facility cover foundation prone (zero, ballistics, first steel), applied long range past a kilometre, PRS positional shooting, and precision reloading. Small squads, your own rifle, private one-on-one coaching on request.',
+            '> Long range precision rifle training with Dirk Pio in South Africa. Full-day courses at a private facility cover foundation prone (zero, ballistics, first steel), applied long range past a kilometre, PRS positional shooting, and precision reloading. Small squads, your own rifle, private one-on-one coaching on request.',
             '',
             'Public HTML pages are canonical. This file is a curated map for language-model crawlers. A fuller dump (course details, upcoming dates and prices) is at [llms-full.txt]('.url('/llms-full.txt').'). XML sitemap: '.url('/sitemap.xml').'.',
             '',

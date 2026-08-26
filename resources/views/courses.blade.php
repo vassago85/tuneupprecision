@@ -39,7 +39,7 @@
 @endphp
 <x-layouts.site
     title="Courses"
-    description="Book a full-day precision rifle course — Reloading, PRS Shooting or Precision Long Range — with Dirk Charsley at Tune Up Precision. Upcoming dates and prices per discipline."
+    description="Book a full-day precision rifle course — Reloading, PRS Shooting or Precision Long Range — with Dirk Pio at Tune Up Precision. Upcoming dates and prices per discipline."
     :json-ld="$coursesJsonLd"
 >
 

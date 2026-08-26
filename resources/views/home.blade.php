@@ -1,5 +1,5 @@
 <x-layouts.site
-    description="Long range rifle training with Dirk Charsley in South Africa. Reloading, PRS Shooting and Precision Long Range — small squads at a private facility, your own rifle."
+    description="Long range rifle training with Dirk Pio in South Africa. Reloading, PRS Shooting and Precision Long Range — small squads at a private facility, your own rifle."
 >
 
   {{-- ============ HERO ============ --}}
