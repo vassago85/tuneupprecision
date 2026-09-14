@@ -52,6 +52,14 @@ echo "Database is ready"
 echo "Running migrations..."
 php artisan migrate --force || echo "Migration had issues, continuing..."
 
+# Guard against placeholder contact / VAT / dealer values reaching production.
+if [ "${APP_ENV}" = "production" ]; then
+    echo "Checking legal identity..."
+    php artisan legal:check
+else
+    php artisan legal:check || echo "legal:check failed (non-production, continuing)"
+fi
+
 # Optionally seed on first boot (set RUN_SEED=true in env for the very first deploy)
 if [ "${RUN_SEED}" = "true" ]; then
     echo "Seeding database (RUN_SEED=true)..."

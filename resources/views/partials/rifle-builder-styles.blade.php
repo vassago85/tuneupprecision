@@ -110,7 +110,8 @@
 .rb-page .divider .ln{height:1px;background:var(--line);flex:1}
 .rb-page .divider svg{width:22px;height:22px;flex:0 0 22px}
 .rb-page footer.rb-foot{background:var(--charcoal);color:#9fb0bd;margin-top:40px;padding:34px 0 26px;font-size:13px}
-.rb-page footer.rb-foot .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:26px}
+.rb-page footer.rb-foot .cols{display:grid;grid-template-columns:2fr 2fr;gap:26px}
+.rb-page footer.rb-foot .legal-disclosure-compact{color:#9fb0bd;font-size:12px;line-height:1.6;margin:0}
 .rb-page footer.rb-foot h5{font-family:var(--disp);text-transform:uppercase;color:#fff;font-size:15px;margin-bottom:8px}
 .rb-page .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,80px);background:var(--charcoal);color:#fff;border-left:3px solid var(--copper);padding:11px 18px;font-family:var(--mono);font-size:12px;z-index:90;opacity:0;transition:all .28s;pointer-events:none}
 .rb-page .toast.on{transform:translate(-50%,0);opacity:1}

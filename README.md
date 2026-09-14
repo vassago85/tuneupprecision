@@ -136,7 +136,15 @@ cd /opt/tuneupprecision && git pull origin main \
 ```
 
 The entrypoint auto-handles migrations, cache warming, Livewire + Filament
-assets, and the storage link on every boot.
+assets, and the storage link on every boot. In production it also runs
+`php artisan legal:check` and refuses to start if a required legal identity
+value is empty or still a placeholder (`0000`, `+27 00 000 0000`, and similar).
+Set `LEGAL_*` in `.env` or fill telephone / email / VAT / dealer on **Settings**.
+Inspect the merged values on **Legal & Compliance**. Locally:
+
+```bash
+php artisan legal:check
+```
 
 ### Reverse proxy + DNS
 

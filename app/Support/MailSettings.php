@@ -92,11 +92,17 @@ final class MailSettings
         }
 
         $settings = self::details();
+        $from = $settings['from_address']
+            ?: LegalIdentity::filled(config('legal.legal_email'))
+            ?: config('mail.from.address');
+        $fromName = $settings['from_name'] ?: config('mail.from.name');
 
         config([
             'mail.default' => $settings['mailer'] ?: config('mail.default'),
-            'mail.from.address' => $settings['from_address'] ?: config('mail.from.address'),
-            'mail.from.name' => $settings['from_name'] ?: config('mail.from.name'),
+            'mail.from.address' => $from,
+            'mail.from.name' => $fromName,
+            'mail.reply_to.address' => $from,
+            'mail.reply_to.name' => $fromName,
             'services.mailgun.domain' => $settings['mailgun_domain'] ?: config('services.mailgun.domain'),
             'services.mailgun.secret' => $settings['mailgun_secret'] ?: config('services.mailgun.secret'),
             'services.mailgun.endpoint' => $settings['mailgun_endpoint'] ?: config('services.mailgun.endpoint'),

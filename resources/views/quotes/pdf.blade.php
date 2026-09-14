@@ -32,8 +32,14 @@
             <td>
                 <h1 style="margin:0;font-size:26px">Tune Up Precision</h1>
                 <div class="co">CUSTOM RIFLE BUILD QUOTATION<br>
-                    TEL {{ $business['tel'] }} · {{ strtoupper($business['email'] ?? '') }}<br>
-                    VAT NO. {{ $business['vat_number'] }} · DEALER NO. {{ $business['dealer_number'] }}
+                    {{ collect([
+                        $business['tel'] ? 'TEL '.$business['tel'] : null,
+                        $business['email'] ? strtoupper($business['email']) : null,
+                    ])->filter()->implode(' · ') }}<br>
+                    {{ collect([
+                        $business['vat_number'] ? 'VAT NO. '.$business['vat_number'] : null,
+                        $business['dealer_number'] ? 'DEALER NO. '.$business['dealer_number'] : null,
+                    ])->filter()->implode(' · ') }}
                 </div>
             </td>
             <td class="q-meta">QUOTE<br><b>{{ $quote->reference }}</b><br>

@@ -70,7 +70,7 @@ class ManageEftSettings extends Page
                             ->maxLength(255),
                     ]),
                 Section::make('Business details')
-                    ->description('Letterhead on rifle-build quotations. Editable without a deploy.')
+                    ->description('Overrides config/legal.php for telephone, email, VAT and dealer licence. Shown on quotes, the disclosure and legal:check. Leave blank to use .env. Placeholders such as 0000 are omitted.')
                     ->columns(2)
                     ->schema([
                         TextInput::make('tel')

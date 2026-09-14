@@ -27,8 +27,11 @@ class SitemapController extends Controller
             $this->url(route('shop'), 'weekly', '0.6'),
             $this->url(route('rifle-builder'), 'monthly', '0.6'),
             $this->url(route('contact.create'), 'monthly', '0.7'),
+            $this->url(route('legal.index'), 'yearly', '0.4'),
             $this->url(route('legal.privacy'), 'yearly', '0.3'),
             $this->url(route('legal.terms'), 'yearly', '0.3'),
+            $this->url(route('legal.shipping'), 'yearly', '0.3'),
+            $this->url(route('legal.refunds'), 'yearly', '0.3'),
             $this->url(route('llms'), 'weekly', '0.4'),
             $this->url(route('llms.full'), 'weekly', '0.3'),
         ];

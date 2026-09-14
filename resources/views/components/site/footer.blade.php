@@ -59,13 +59,19 @@
       <div class="foot-col">
         <h3>Contact</h3>
         <a href="{{ route('contact.create') }}">Message Dirk</a>
+        <a href="{{ route('legal.index') }}">Legal</a>
         <a href="{{ route('legal.privacy') }}">Privacy Policy</a>
         <a href="{{ route('legal.terms') }}">Terms</a>
+        <a href="{{ route('legal.shipping') }}">Shipping Policy</a>
+        <a href="{{ route('legal.refunds') }}">Returns &amp; Refunds</a>
         <p>Gauteng · by arrangement</p>
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© {{ date('Y') }} Tune Up Long Range Precision Training</span>
+      <div>
+        <span>© {{ date('Y') }} Tune Up Long Range Precision Training</span>
+        <x-legal.disclosure compact />
+      </div>
       <span>Shoot safe · Know your target and beyond</span>
     </div>
   </div>

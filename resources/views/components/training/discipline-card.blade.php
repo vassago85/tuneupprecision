@@ -69,7 +69,7 @@
           </div>
         </div>
         @if ($isFull)
-          <a href="{{ route('contact.create', ['subject' => 'Waitlist: '.$dataLabel]) }}" class="btn-mini waitlist">Waitlist</a>
+          <a href="{{ route('contact.create', ['subject' => 'Fully booked: '.$dataLabel]) }}" class="btn-mini waitlist">Enquire</a>
         @else
           <a href="{{ route('contact.create', ['subject' => 'Book: '.$dataLabel]) }}"
              class="btn-mini book"

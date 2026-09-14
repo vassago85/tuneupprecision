@@ -160,9 +160,9 @@ Route::get('/calendar', function (Request $request) {
                 ?? route('contact.create', ['subject' => $event->displayTitle()]);
             $actionExternal = (bool) $event->external_url;
         } else {
-            $actionLabel = $event->isFull() ? 'Join the waitlist' : 'Book this date';
+            $actionLabel = $event->isFull() ? 'Enquire about this date' : 'Book this date';
             $actionHref = route('contact.create', [
-                'subject' => ($event->isFull() ? 'Waitlist: ' : 'Book: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel,
+                'subject' => ($event->isFull() ? 'Fully booked: ' : 'Book: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel,
             ]);
             $actionExternal = false;
         }
@@ -263,8 +263,11 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:8,1')
     ->name('contact.store');
 
+Route::view('/legal', 'legal.index')->name('legal.index');
 Route::view('/privacy', 'legal.privacy')->name('legal.privacy');
 Route::view('/terms', 'legal.terms')->name('legal.terms');
+Route::view('/shipping', 'legal.shipping')->name('legal.shipping');
+Route::view('/refunds', 'legal.refunds')->name('legal.refunds');
 
 // Newsletter subscribe (public form) + one-click unsubscribe.
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])

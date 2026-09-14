@@ -82,12 +82,8 @@
                 <p>Custom rifle builds, chambering and long-range training. Gauteng, by arrangement.</p>
             </div>
             <div>
-                <h5>Contact</h5>
-                <p class="mono">{{ $business['tel'] }}<br>{{ $business['email'] }}</p>
-            </div>
-            <div>
-                <h5>Dealer</h5>
-                <p class="mono">VAT {{ $business['vat_number'] }}<br>Dealer {{ $business['dealer_number'] }}</p>
+                <h5>Legal</h5>
+                <x-legal.disclosure compact />
             </div>
         </div>
     </footer>

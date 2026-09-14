@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ContactEnquiry;
 use App\Support\BusinessDetails;
+use App\Support\LegalIdentity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -54,7 +55,8 @@ class ContactController extends Controller
             'message' => trim($validated['message']),
         ];
 
-        $dirk = BusinessDetails::details()['email'] ?? config('tuneup.mail.from_address');
+        $dirk = BusinessDetails::details()['email']
+            ?? LegalIdentity::email();
 
         Mail::to($dirk)->queue(new ContactEnquiry($enquiry, false));
         Mail::to($enquiry['email'])->queue(new ContactEnquiry($enquiry, true));

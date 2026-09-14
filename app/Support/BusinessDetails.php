@@ -7,7 +7,8 @@ namespace App\Support;
 use App\Models\Setting;
 
 /**
- * Letterhead details for quote PDFs. Settings-table values win over config.
+ * Letterhead details for quote PDFs and the rifle-builder footer.
+ * Settings-table values win over config/legal.php. Placeholders are omitted.
  */
 final class BusinessDetails
 {
@@ -17,10 +18,14 @@ final class BusinessDetails
     public static function details(): array
     {
         return [
-            'tel' => Setting::get('business.tel', config('tuneup.business.tel')),
-            'email' => Setting::get('business.email', config('tuneup.business.email')),
-            'vat_number' => Setting::get('business.vat_number', config('tuneup.business.vat_number')),
-            'dealer_number' => Setting::get('business.dealer_number', config('tuneup.business.dealer_number')),
+            'tel' => LegalIdentity::filled(Setting::get('business.tel'))
+                ?? LegalIdentity::filled(config('legal.legal_phone')),
+            'email' => LegalIdentity::filled(Setting::get('business.email'))
+                ?? LegalIdentity::filled(config('legal.legal_email')),
+            'vat_number' => LegalIdentity::filled(Setting::get('business.vat_number'))
+                ?? LegalIdentity::filled(config('legal.vat_no')),
+            'dealer_number' => LegalIdentity::filled(Setting::get('business.dealer_number'))
+                ?? LegalIdentity::filled(config('legal.dealer_licence_no')),
         ];
     }
 

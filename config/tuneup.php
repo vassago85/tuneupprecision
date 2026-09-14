@@ -49,10 +49,10 @@ return [
     */
 
     'business' => [
-        'tel' => env('TUNEUP_TEL', '+27 00 000 0000'),
-        'email' => env('TUNEUP_EMAIL', 'dirk@tuneupprecision.co.za'),
-        'vat_number' => env('TUNEUP_VAT_NO', '0000000000'),
-        'dealer_number' => env('TUNEUP_DEALER_NO', '0000000'),
+        'tel' => env('TUNEUP_TEL'),
+        'email' => env('TUNEUP_EMAIL'),
+        'vat_number' => env('TUNEUP_VAT_NO'),
+        'dealer_number' => env('TUNEUP_DEALER_NO'),
     ],
 
     /*
@@ -112,7 +112,7 @@ return [
 
     'mail' => [
         'mailer' => env('MAIL_MAILER', 'log'),
-        'from_address' => env('MAIL_FROM_ADDRESS', 'hello@tuneupprecision.co.za'),
+        'from_address' => env('MAIL_FROM_ADDRESS', 'info@tuneupprecision.co.za'),
         'from_name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Tune Up Precision')),
         'mailgun_domain' => env('MAILGUN_DOMAIN'),
         'mailgun_secret' => env('MAILGUN_SECRET'),

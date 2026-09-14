@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,8 +20,8 @@ class SmokeTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('Tune Up Trucker Cap')
-            ->assertDontSee('Mini IPSC Gong'); // out of stock => hidden by available()
+            ->assertSee('Dial in')
+            ->assertSee('Meet Dirk');
     }
 
     public function test_courses_page_shows_three_disciplines_with_dates(): void
@@ -38,7 +39,7 @@ class SmokeTest extends TestCase
 
     public function test_admin_dashboard_renders_with_widgets(): void
     {
-        $admin = User::factory()->create();
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
 
         $this->actingAs($admin)
             ->get('/admin')
@@ -47,7 +48,7 @@ class SmokeTest extends TestCase
 
     public function test_admin_resource_indexes_and_settings_render(): void
     {
-        $admin = User::factory()->create();
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
 
         $pages = [
             '/admin/training-types',
@@ -62,6 +63,7 @@ class SmokeTest extends TestCase
             '/admin/components',
             '/admin/quotes',
             '/admin/manage-eft-settings',
+            '/admin/legal-compliance',
         ];
 
         foreach ($pages as $page) {

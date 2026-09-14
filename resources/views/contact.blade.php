@@ -1,6 +1,6 @@
 <x-layouts.site
     title="Contact"
-    description="Message Dirk at Tune Up Precision — book a course date, ask about one-on-one coaching, or enquire about a rifle build. All contact goes through this form."
+    description="Message Dirk at Tune Up Precision — book a course date, ask about one-on-one coaching, or enquire about a rifle build. The form is the preferred route; statutory details are on the legal page."
 >
 
   <section>
@@ -8,9 +8,9 @@
       <div class="contact-copy reveal">
         <span class="eyebrow">Get in touch</span>
         <h2>Message Dirk through the site.</h2>
-        <p>Bookings, coaching, builds and general questions all come in here. There is no public email or phone on the site — this form is the only way to reach Tune Up Precision.</p>
+        <p>Bookings, coaching, builds and general questions all come in here. The form is the preferred route for bookings and enquiries. Statutory contact details are on the <a href="{{ route('legal.index') }}">legal page</a>.</p>
         <ul class="contact-points">
-          <li>Course dates and waitlists</li>
+          <li>Course dates and availability</li>
           <li>One-on-one coaching</li>
           <li>Rifle builder and shop questions</li>
         </ul>
@@ -64,7 +64,7 @@
           </div>
 
           <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Send message</button>
-          <p class="form-hint" style="text-align:center">By sending this you agree to the <a class="form-link" href="{{ route('legal.terms') }}">Terms</a> and <a class="form-link" href="{{ route('legal.privacy') }}">Privacy Policy</a>.</p>
+          <p class="form-hint" style="text-align:center">By sending this you agree to the <a class="form-link" href="{{ route('legal.terms') }}">Terms</a>, <a class="form-link" href="{{ route('legal.privacy') }}">Privacy Policy</a>, <a class="form-link" href="{{ route('legal.shipping') }}">Shipping Policy</a> and <a class="form-link" href="{{ route('legal.refunds') }}">Returns &amp; Refunds</a>.</p>
         </form>
       </div>
     </div>

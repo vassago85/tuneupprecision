@@ -15,9 +15,15 @@ class ContactTest extends TestCase
 
     public function test_contact_privacy_and_terms_pages_render(): void
     {
-        $this->get('/contact')->assertOk()->assertSee('Message Dirk through the site');
+        $this->get('/contact')
+            ->assertOk()
+            ->assertSee('Message Dirk through the site')
+            ->assertSee('Course dates and availability')
+            ->assertDontSee('Course dates and waitlists')
+            ->assertSee('Shipping Policy')
+            ->assertSee('Returns &amp; Refunds', false);
         $this->get('/privacy')->assertOk()->assertSee('Privacy Policy')->assertSee('POPIA');
-        $this->get('/terms')->assertOk()->assertSee('Terms of use')->assertSee('Contact only through this site');
+        $this->get('/terms')->assertOk()->assertSee('Terms of use')->assertSee('Bookings, cancellation and refunds');
     }
 
     public function test_contact_form_prefills_subject_and_sends_mail(): void
