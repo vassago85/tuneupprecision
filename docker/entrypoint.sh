@@ -52,12 +52,14 @@ echo "Database is ready"
 echo "Running migrations..."
 php artisan migrate --force || echo "Migration had issues, continuing..."
 
-# Guard against placeholder contact / VAT / dealer values reaching production.
-if [ "${APP_ENV}" = "production" ]; then
-    echo "Checking legal identity..."
+# Guard against placeholder contact / VAT / dealer values.
+# Default: warn and continue so a missing LEGAL_* value cannot take the site down.
+# Set LEGAL_ENFORCE=true in .env only after Dirk has filled the real identity.
+echo "Checking legal identity..."
+if [ "${LEGAL_ENFORCE}" = "true" ]; then
     php artisan legal:check
 else
-    php artisan legal:check || echo "legal:check failed (non-production, continuing)"
+    php artisan legal:check || echo "legal:check failed — site will start anyway. Set LEGAL_* in .env, then LEGAL_ENFORCE=true when ready."
 fi
 
 # Optionally seed on first boot (set RUN_SEED=true in env for the very first deploy)

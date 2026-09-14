@@ -136,11 +136,11 @@ cd /opt/tuneupprecision && git pull origin main \
 ```
 
 The entrypoint auto-handles migrations, cache warming, Livewire + Filament
-assets, and the storage link on every boot. In production it also runs
-`php artisan legal:check` and refuses to start if a required legal identity
-value is empty or still a placeholder (`0000`, `+27 00 000 0000`, and similar).
-Set `LEGAL_*` in `.env` or fill telephone / email / VAT / dealer on **Settings**.
-Inspect the merged values on **Legal & Compliance**. Locally:
+assets, and the storage link on every boot. It also runs `php artisan legal:check`
+and **warns** if a required legal identity value is empty or still a placeholder.
+The site still starts. Set `LEGAL_ENFORCE=true` in `.env` only after the real
+`LEGAL_*` values (or Settings overrides) are in place — then a failed check
+refuses to boot. Inspect the merged values on **Legal & Compliance**.
 
 ```bash
 php artisan legal:check
