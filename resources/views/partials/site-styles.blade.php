@@ -85,8 +85,11 @@
   .hamburger svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none}
 
   /* ---------- hero ---------- */
-  .hero{position:relative;overflow:hidden;padding:64px 0 30px}
-  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:44px;align-items:center}
+  /* Hero — trimmed a notch top-and-bottom so the thesis grid below feels
+     like a continuation, not a new page. Grid gap tightened to close the
+     empty space between the copy column and the emblem. */
+  .hero{position:relative;overflow:hidden;padding:56px 0 20px}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:36px;align-items:center}
   .hero h1{font-size:clamp(48px,7.4vw,92px);color:var(--charcoal);font-weight:800}
   .hero h1 .cop{color:var(--copper)}
   .hero p.lead{font-size:19px;color:var(--muted);max-width:46ch;margin:22px 0 30px}
@@ -97,7 +100,9 @@
   .hero-data .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gray);text-transform:uppercase}
   .hero-data .v{font-family:var(--disp);font-weight:700;font-size:20px;color:var(--charcoal);margin-top:3px}
   .hero-badge{position:relative;display:grid;place-items:center}
-  .hero-badge img{width:min(100%,440px);height:auto;filter:drop-shadow(0 18px 34px rgba(31,44,57,.22))}
+  /* Emblem slightly smaller so it fills less of the hero's implicit height
+     and the whole strip reads tighter. Same drop-shadow, same aspect. */
+  .hero-badge img{width:min(100%,400px);height:auto;filter:drop-shadow(0 18px 34px rgba(31,44,57,.22))}
   .hero-badge .ret{position:absolute;inset:0;pointer-events:none}
   .hero-badge .ret .h,.hero-badge .ret .v{position:absolute;background:var(--line)}
   .hero-badge .ret .h{left:-4%;right:-4%;top:50%;height:1px}
@@ -114,10 +119,12 @@
      public page. Overrides live *inside* bands (below) so continuous regions
      don't double-up top+bottom padding at their internal joins. */
   section{padding:56px 0}
-  /* `section-flush-top` — used for the second light section on the home page
-     so the hero and the thesis grid read as one continuous introduction. */
-  .section-flush-top{padding-top:20px}
-  .sec-head{max-width:640px;margin-bottom:38px}
+  /* `section-flush-top` — the second light section on the home page (the
+     thesis grid). Tight top brings it up against the hero so hero + thesis
+     read as one continuous introduction; the reduced bottom tightens the
+     handoff into the off-white tint band that starts with the testimonials. */
+  .section-flush-top{padding-top:12px;padding-bottom:40px}
+  .sec-head{max-width:640px;margin-bottom:32px}
   .sec-head h2{font-size:clamp(32px,4.4vw,50px);color:var(--charcoal);margin-top:14px;font-weight:800}
   .sec-head p{color:var(--muted);margin-top:14px;font-size:17.5px}
 
@@ -135,10 +142,15 @@
   .band-dark .sec-head p{color:rgba(255,255,255,.66)}
   /* Sections inside a band lose their global 56px top/bottom — the band
      supplies its own outer padding once, and adjacent sections split a
-     shared 44px gap at the join. */
-  .band>section{padding-top:22px;padding-bottom:22px}
-  .band>section:first-child{padding-top:56px}
-  .band>section:last-child{padding-bottom:56px}
+     shared 32px gap at the join (16 + 16). */
+  .band>section{padding-top:16px;padding-bottom:16px}
+  .band>section:first-child{padding-top:40px}
+  .band>section:last-child{padding-bottom:40px}
+  /* Dark band opens the "training content" arc and needs a bigger internal
+     breath between #process and .loop-band than the tint band does — 80px
+     of whitespace (40 + 40) does the job without a horizontal rule. */
+  .band-dark>section:first-child{padding-bottom:40px}
+  .band-dark>section:last-child{padding-top:40px}
 
   /* value strip — currently just the 3-up "thesis" grid on the light band
      (WHY / VALUE / RESULTS). The 4-up tactical pillar variant was retired
@@ -227,8 +239,8 @@
      destination section. The card itself is wider and flatter than before
      so a single quote doesn't take up half the viewport. */
   #testimonials{padding:0}
-  .tst-frame{position:relative;max-width:940px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 60px;min-height:180px;display:flex;flex-direction:column;justify-content:center}
-  .tst-track{position:relative;min-height:110px;display:flex;align-items:center;justify-content:center}
+  .tst-frame{position:relative;max-width:940px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 60px;min-height:160px;display:flex;flex-direction:column;justify-content:center}
+  .tst-track{position:relative;min-height:96px;display:flex;align-items:center;justify-content:center}
   .tst-card{width:100%;text-align:center}
   .tst-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:16px}
   .tst-body{font-family:var(--disp);font-size:20px;line-height:1.5;color:var(--charcoal);margin:0 0 20px;font-weight:500;font-style:italic}
@@ -278,11 +290,11 @@
   .step h3{font-size:22px;color:#fff;margin:16px 0 8px}
   .step p{font-size:13.5px;color:rgba(255,255,255,.6);margin:0}
   /* learn-steps variant: driven by admin-editable bullet lists (6–12 items).
-     Slightly wider min-column and generous internal padding so the grid
-     stops feeling like a spreadsheet and starts feeling like a discipline
-     brief — one skill per tile, room to breathe. */
+     Row underlines removed and column separator faded so the grid reads as
+     an editorial list, not a spreadsheet. The copper top-mark (`.no::before`)
+     and item numbers stay untouched — they're the primary structure now. */
   .steps.learn-steps{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));border-top:0;gap:0}
-  .steps.learn-steps .step{padding:28px 28px 30px;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.06)}
+  .steps.learn-steps .step{padding:30px 32px 28px;border-right:1px solid rgba(255,255,255,.05);border-bottom:0}
   .steps.learn-steps .step h3{font-size:17px;line-height:1.4;margin:16px 0 0;font-weight:600;letter-spacing:.01em}
   .proc-tabbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
   .proc-tabbar button{font-family:var(--disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:15px;color:rgba(255,255,255,.62);background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:9px 20px;cursor:pointer;transition:color .16s ease, background .18s ease, border-color .18s ease}
@@ -401,12 +413,11 @@
   /* ---------- looping merch band ---------- */
   /* loop-band — the merch band. Background + colour now come from the
      parent .band-dark so it merges with #process into one dark region.
-     A subtle top rule marks the join without a bg change. */
-  .loop-band{color:#fff;padding:56px 0;border-top:1px solid rgba(255,255,255,.08)}
-  /* When loop-band sits inside .band-dark AND is the last child, the band
-     supplies the closing 56px — zero the section's own bottom padding
-     inherited from .band>section so we don't stack space. */
-  .band-dark>.loop-band:first-child{border-top:0}
+     No horizontal rule at the join — the 80 px of shared whitespace
+     supplied by `.band-dark > section` last-child/first-child rules does
+     the separation instead. The standalone `padding: 56px 0` is the
+     fallback for cases where .loop-band appears outside a band. */
+  .loop-band{color:#fff;padding:56px 0}
   .loop-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:36px;align-items:center}
   .loop-copy .eyebrow{color:#F09A72}
   .loop-copy h2{font-family:var(--disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:44px;line-height:1.02;color:#fff;margin:8px 0 14px}
