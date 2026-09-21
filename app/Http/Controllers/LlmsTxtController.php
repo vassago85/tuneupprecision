@@ -48,7 +48,7 @@ class LlmsTxtController extends Controller
             '',
             '## What you can book',
             '',
-            '- [Courses]('.route('courses').'): Three disciplines — Reloading, PRS Shooting, Precision Long Range — with upcoming dates listed under each.',
+            '- [Courses]('.route('courses').'): Four disciplines — Reloading, PRS Shooting, Precision Long Range, Handgun Fundamentals — each with a "What you\'ll learn" list and upcoming dates.',
             '- [Calendar]('.route('calendar').'): Month grid of every training date plus competitions Dirk is attending.',
         ];
 
@@ -98,7 +98,6 @@ class LlmsTxtController extends Controller
             '- [Home]('.route('home').'): Positioning, values, next scheduled training date.',
             '- [The Range]('.route('range').'): Video library grouped by discipline.',
             '- [Shop]('.route('shop').'): Precision components, dies, brass, powder, projectiles.',
-            '- [Rifle Builder]('.route('rifle-builder').'): Interactive rifle configurator with shareable specs.',
             '',
             '## Contact & legal',
             '',

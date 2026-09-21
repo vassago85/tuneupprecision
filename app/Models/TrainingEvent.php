@@ -79,6 +79,14 @@ class TrainingEvent extends Model
     }
 
     /**
+     * @return HasMany<Testimonial, $this>
+     */
+    public function testimonials(): HasMany
+    {
+        return $this->hasMany(Testimonial::class);
+    }
+
+    /**
      * Guest RSVPs (competition/guest events).
      *
      * @return HasMany<EventRsvp, $this>

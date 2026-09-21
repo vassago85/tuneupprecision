@@ -25,7 +25,7 @@ class SitemapController extends Controller
             $this->url(route('calendar'), 'daily', '0.8'),
             $this->url(route('range'), 'weekly', '0.7'),
             $this->url(route('shop'), 'weekly', '0.6'),
-            $this->url(route('rifle-builder'), 'monthly', '0.6'),
+            // Rifle Builder intentionally omitted — admin-only preview page.
             $this->url(route('contact.create'), 'monthly', '0.7'),
             $this->url(route('legal.index'), 'yearly', '0.4'),
             $this->url(route('legal.privacy'), 'yearly', '0.3'),

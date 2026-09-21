@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TrainingEvents\Pages;
 
 use App\Filament\Resources\TrainingEvents\Actions\NotifyAttendeesAction;
+use App\Filament\Resources\TrainingEvents\Actions\SendTestimonialInvitesAction;
 use App\Filament\Resources\TrainingEvents\TrainingEventResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -15,6 +16,7 @@ class EditTrainingEvent extends EditRecord
     {
         return [
             NotifyAttendeesAction::make(),
+            SendTestimonialInvitesAction::make(),
             DeleteAction::make(),
         ];
     }

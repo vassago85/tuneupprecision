@@ -12,7 +12,7 @@
         <ul class="contact-points">
           <li>Course dates and availability</li>
           <li>One-on-one coaching</li>
-          <li>Rifle builder and shop questions</li>
+          <li>Shop questions and custom builds</li>
         </ul>
         <p class="soft">We reply as soon as we can. Read how we handle your details in the <a href="{{ route('legal.privacy') }}">Privacy Policy</a>.</p>
       </div>

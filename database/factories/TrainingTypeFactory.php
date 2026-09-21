@@ -23,6 +23,7 @@ class TrainingTypeFactory extends Factory
             'name' => Str::title($name),
             'slug' => Str::slug($name),
             'blurb' => fake()->sentence(),
+            'learnings' => [],
             'icon' => null,
             'sort_order' => fake()->numberBetween(0, 10),
             'is_active' => true,

@@ -18,23 +18,39 @@ class SmokeTest extends TestCase
     {
         $this->seed(DatabaseSeeder::class);
 
+        // Literal template strings keep raw apostrophes (Blade only escapes
+        // interpolated `{{ ... }}` output), so needles with apostrophes are
+        // asserted with the escape flag disabled.
         $this->get('/')
             ->assertOk()
             ->assertSee('Dial in')
-            ->assertSee('Meet Dirk');
+            ->assertSee('Meet Dirk')
+            // "What you'll learn" tabs are driven by TrainingType + at least one
+            // bullet from every seeded discipline should render.
+            ->assertSee("What you'll learn", false)
+            ->assertSee('Handgun Fundamentals')
+            ->assertSee('PRS safety, equipment and match fundamentals')
+            ->assertSee('Setting up and using a ballistic calculator')
+            ->assertSee('Handgun controls, components and safe operation');
     }
 
-    public function test_courses_page_shows_three_disciplines_with_dates(): void
+    public function test_courses_page_shows_four_disciplines_with_learn_lists(): void
     {
         $this->seed(DatabaseSeeder::class);
 
         $this->get('/courses')
             ->assertOk()
+            ->assertSee('Four disciplines')
             ->assertSee('Precision Reloading')
             ->assertSee('PRS Shooting')
             ->assertSee('Precision Long Range')
+            ->assertSee('Handgun Fundamentals')
             ->assertSee('Fully booked')
-            ->assertSee('Book');
+            ->assertSee('Book')
+            // "What you'll learn" bullets render on the discipline cards.
+            ->assertSee("What you'll learn", false)
+            ->assertSee('Reloading bench and component safety')
+            ->assertSee('Correct stance, grip and sight alignment');
     }
 
     public function test_admin_dashboard_renders_with_widgets(): void
@@ -56,6 +72,7 @@ class SmokeTest extends TestCase
             '/admin/training-events',
             '/admin/events-calendar',
             '/admin/bookings',
+            '/admin/testimonials',
             '/admin/products',
             '/admin/orders',
             '/admin/payments',

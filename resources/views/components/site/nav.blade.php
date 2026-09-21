@@ -14,7 +14,6 @@
     </a>
     <nav class="links">
       <a href="{{ route('courses') }}">Courses</a>
-      <a href="{{ route('rifle-builder') }}">Rifle Builder</a>
       <a href="{{ route('shop') }}">Shop</a>
       <a href="{{ route('range') }}">The Range</a>
       <a href="{{ route('calendar') }}">Calendar</a>
@@ -43,7 +42,6 @@
 </header>
 <div class="mobile-menu" id="mobileMenu">
   <a href="{{ route('courses') }}">Courses</a>
-  <a href="{{ route('rifle-builder') }}">Rifle Builder</a>
   <a href="{{ route('shop') }}">Shop</a>
   <a href="{{ route('range') }}">The Range</a>
   <a href="{{ route('calendar') }}">Calendar</a>

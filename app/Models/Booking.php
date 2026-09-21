@@ -33,6 +33,7 @@ class Booking extends Model
         'amount_cents',
         'status',
         'hold_expires_at',
+        'testimonial_invited_at',
     ];
 
     protected function casts(): array
@@ -42,6 +43,7 @@ class Booking extends Model
             'amount_cents' => 'integer',
             'status' => BookingStatus::class,
             'hold_expires_at' => 'datetime',
+            'testimonial_invited_at' => 'datetime',
         ];
     }
 

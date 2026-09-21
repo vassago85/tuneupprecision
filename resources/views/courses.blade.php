@@ -39,7 +39,7 @@
 @endphp
 <x-layouts.site
     title="Courses"
-    description="Book a full-day precision rifle course — Reloading, PRS Shooting or Precision Long Range — with Dirk Pio at Tune Up Precision. Upcoming dates and prices per discipline."
+    description="Book a full-day precision course — Reloading, PRS Shooting, Precision Long Range or Handgun Fundamentals — with Dirk Pio at Tune Up Precision. Upcoming dates and prices per discipline."
     :json-ld="$coursesJsonLd"
 >
 
@@ -48,8 +48,8 @@
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">What you can book</span>
-        <h2>Three disciplines. Upcoming dates below each.</h2>
-        <p>Full days at a private facility — on the line or at the bench, depending on the discipline. Bring your rifle and ammo; targets and use of the ballistic and reloading kit are included.</p>
+        <h2>Four disciplines. Upcoming dates below each.</h2>
+        <p>Full days at a private facility — on the line, at the bench or on the pistol range, depending on the discipline. Bring your firearm and ammo; targets and use of the ballistic and reloading kit are included.</p>
       </div>
 
       <div class="courses">

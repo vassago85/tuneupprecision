@@ -1,8 +1,24 @@
 <x-layouts.site
-    description="Long range rifle training with Dirk Pio in South Africa. Reloading, PRS Shooting and Precision Long Range — small squads at a private facility, your own rifle."
+    description="Long range rifle training with Dirk Pio in South Africa. Reloading, PRS Shooting, Precision Long Range and Handgun Fundamentals — small squads at a private facility, your own rifle."
 >
 
-  {{-- ============ HERO ============ --}}
+  {{-- =====================================================================
+       Homepage rhythm — three background bands, one shared content grid.
+       .wrap (max-width:1180px, 26px inline pad) is the ONLY horizontal
+       container on this page; every section aligns to it. Backgrounds are
+       carried by .band-tint / .band-dark wrappers so the eye reads three
+       deliberate regions rather than seven independent components:
+
+         LIGHT  →  Hero, Why Tune Up (thesis)
+         TINT   →  Fundamentals pillars, Testimonials, Meet Dirk
+         DARK   →  What you'll learn, Wear the process
+         LIGHT  →  Newsletter + footer (from the layout wrapper)
+
+       No reticle dividers between sections — the .eyebrow motif + the band
+       transitions carry the rhythm.
+       ===================================================================== --}}
+
+  {{-- ============ HERO — LIGHT ============ --}}
   <span id="top"></span>
   <section class="hero">
     <div class="wrap hero-grid">
@@ -18,8 +34,9 @@
         </div>
         <div class="hero-data">
           <div class="cell"><div class="k">Precision hand loading</div><div class="v">Bench to barrel.</div></div>
-          <div class="cell"><div class="k">PRS "positional"</div><div class="v">On the clock.</div></div>
           <div class="cell"><div class="k">Long range precision</div><div class="v">Far steel, called.</div></div>
+          <div class="cell"><div class="k">PRS "positional"</div><div class="v">On the clock.</div></div>
+          <div class="cell"><div class="k">Handgun fundamentals</div><div class="v">Safe. Consistent. Confident.</div></div>
         </div>
       </div>
       <div class="hero-badge reveal">
@@ -28,152 +45,123 @@
     </div>
   </section>
 
-  <x-site.reticle-divider />
-
-  {{-- ============ VALUES ============ --}}
-  <section id="training">
+  {{-- ============ WHY TUNE UP (thesis) — LIGHT ============ --}}
+  {{-- Flows straight out of the hero on the same cream background so the --}}
+  {{-- introduction reads as one continuous idea, not a new page. --}}
+  <section id="training" class="section-flush-top">
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">Why train here</span>
         <h2>Fundamentals and data driven.</h2>
         <p>No magic, no gimmicks — just the disciplined process good shooters and reloaders actually run, taught step by step.</p>
       </div>
-      <div class="values">
-        <div class="val reveal">
-          <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg></div>
-          <h3>Watched every round</h3>
-          <p>Six shooters, one instructor on glass. Your misses get called and corrected in real time.</p>
+      <div class="values values-thesis">
+        <div class="val val-thesis reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M6 20V10l6-4 6 4v10"/><path d="M10 20v-5h4v5"/></svg></div>
+          <h3>Fundamentals first</h3>
+          <p>The shortcut to skill isn't more range time — it's the fundamentals. You don't know what you don't know.</p>
         </div>
-        <div class="val reveal">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg></div>
-          <h3>Real ballistic data</h3>
-          <p>Chrono, Kestrel and Applied Ballistics on the line. You leave with a truing DOPE, not a printout.</p>
+        <div class="val val-thesis reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12"/><path d="M15 9h-3.5a2 2 0 0 0 0 4h3a2 2 0 0 1 0 4H9"/></svg></div>
+          <h3>Coaching saves money</h3>
+          <p>No amount of solo range time gets you past your plateau. A coached day pays for itself in components and hours.</p>
         </div>
-        <div class="val reveal">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 20l6-9 4 5 3-4 5 8z"/><circle cx="8" cy="6" r="2"/></svg></div>
-          <h3>Steel at distance</h3>
-          <p>Full-value, half-value, transitions and positional stages out to the far plates. Wind you can hear ring.</p>
-        </div>
-        <div class="val reveal">
-          <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20l7-7"/><path d="M14 3l7 7-4 1-4 4-1 4-7-7 4-1 4-4z"/></svg></div>
-          <h3>Your own rifle</h3>
-          <p>Whatever you compete or hunt with — we build the load and the process around your kit, not ours.</p>
+        <div class="val val-thesis reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 4h12v4a6 6 0 0 1-12 0z"/><path d="M6 5H4a2 2 0 0 0 0 4h2"/><path d="M18 5h2a2 2 0 0 1 0 4h-2"/></svg></div>
+          <h3>Confidence and competence</h3>
+          <p>A better shooter walks off the line — with results you wouldn't reach alone.</p>
         </div>
       </div>
     </div>
   </section>
 
-  {{-- ============ NEXT EVENT ============ --}}
-  <section id="next-event">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <span class="eyebrow">Next event</span>
-        <h2>The next date on the line.</h2>
-        <p>Here's the next scheduled training day. Every upcoming date for Reloading, PRS Shooting and Precision Long Range is on the courses page.</p>
-      </div>
+  {{-- ============ TINT BAND ============ ============================== --}}
+  {{-- Testimonials → Meet Dirk. Shared off-white bg pulls "proof → trust" --}}
+  {{-- into one region between the thesis (light) and the dark learning     --}}
+  {{-- block below.                                                         --}}
+  <div class="band band-tint">
 
-      @if ($nextEvent)
-        <div class="courses">
-          <x-training.event-card :event="$nextEvent" :featured="true" />
-        </div>
-        <div class="reveal" style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap">
-          <a href="{{ route('courses') }}" class="btn btn-primary">Book a seat
-            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-          <a href="{{ route('calendar') }}" class="btn btn-ghost">View full calendar
-            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-        </div>
-      @else
-        <div class="schedule-empty reveal">
-          New dates are being scheduled — <a href="{{ route('contact.create', ['subject' => 'Next training date']) }}">message Dirk</a> to be first on the list.
-        </div>
-      @endif
-    </div>
-  </section>
+    {{-- Testimonials — flat social-proof strip, not a page destination. --}}
+    <x-site.testimonials :testimonials="$testimonials ?? collect()" />
 
-  {{-- ============ ABOUT ============ --}}
-  <section id="about">
-    <div class="wrap about-grid">
-      <div class="about-photo reveal">
-        <img class="photo" src="{{ asset('images/dirk.png') }}" alt="Dirk shooting long range prone off a rest" loading="lazy">
-        <div class="frame"></div>
-      </div>
-      <div class="about-copy reveal">
-        <span class="eyebrow">Your instructor</span>
-        <h2>Meet Dirk.</h2>
-        <div class="cred-line">
-          <span>Founder &amp; first Chairperson, Pretoria Precision Rifle Club</span>
-          <span>Co-founder, Royal Flush Steel Challenge</span>
-          <span>SAPRF board</span>
-          <span>Match director</span>
+    {{-- Meet Dirk — the human anchor before the site starts selling training. --}}
+    <section id="about">
+      <div class="wrap about-grid">
+        <div class="about-photo reveal">
+          <img class="photo" src="{{ asset('images/dirk.png') }}" alt="Dirk shooting long range prone off a rest" loading="lazy">
+          <div class="frame"></div>
         </div>
-        <p>Tune Up runs on one idea: long range precision — shooting and reloading alike — is a process you can learn, not a talent you're born with. Dirk coaches from the same process he runs on the line and at the bench: methodically, with the data to back every call.</p>
-        <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
-        <div class="creds">
-          <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>
+        <div class="about-copy reveal">
+          <span class="eyebrow">Your instructor</span>
+          <h2>Meet Dirk.</h2>
+          <div class="cred-line">
+            <span>Founder &amp; first Chairperson, Pretoria Precision Rifle Club</span>
+            <span>Co-founder, Royal Flush Steel Challenge</span>
+            <span>SAPRF board</span>
+            <span>Match director</span>
+          </div>
+          <p>Tune Up runs on one idea: long range precision — shooting and reloading alike — is a process you can learn, not a talent you're born with. Dirk coaches from the same process he runs on the line and at the bench: methodically, with the data to back every call.</p>
+          <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
+          <div class="creds">
+            <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  {{-- ============ PROCESS ============ --}}
-  <section id="process">
-    <div class="wrap" x-data="{ tab: 'prs' }">
-      <div class="sec-head reveal">
-        <span class="eyebrow">How a day runs</span>
-        <h2>One method. Every discipline.</h2>
-        <p>Every Tune Up day runs on a repeatable process — on the line or at the bench. Pick a discipline to see how the day is built.</p>
-      </div>
+  </div>
 
-      <div class="proc-tabbar reveal" role="tablist">
-        <button type="button" role="tab" :class="{ active: tab === 'prs' }" @click="tab = 'prs'">PRS</button>
-        <button type="button" role="tab" :class="{ active: tab === 'elr' }" @click="tab = 'elr'">Precision Long Range</button>
-        <button type="button" role="tab" :class="{ active: tab === 'reloading' }" @click="tab = 'reloading'">Reloading</button>
-      </div>
+  {{-- ============ DARK BAND =========================================== --}}
+  {{-- What you'll learn → Wear the process. Same navy across both so it --}}
+  {{-- reads as one dark region, separated only by internal whitespace.  --}}
+  @php
+      // Only show tabs for disciplines that actually have a learnings list.
+      $learnDisciplines = ($disciplineTypes ?? collect())
+          ->filter(fn ($type) => ! empty($type->learnings))
+          ->values();
+      $defaultTab = $learnDisciplines->first()?->slug;
+  @endphp
+  <div class="band band-dark">
 
-      {{-- PRS --}}
-      <div x-show="tab === 'prs'" x-cloak>
-        <p class="proc-meta">Private range · positional stages against the clock</p>
-        <div class="steps">
-          <div class="step"><div class="no">01</div><h3>Zero &amp; gear check</h3><p>Confirm zero and set the rifle, bag and bipod up for positional work.</p></div>
-          <div class="step"><div class="no">02</div><h3>Build positions</h3><p>Get stable off barricades, tank traps and improvised support.</p></div>
-          <div class="step"><div class="no">03</div><h3>Plan the stage</h3><p>Read a stage, build a plan and sequence your targets before the beep.</p></div>
-          <div class="step"><div class="no">04</div><h3>Run the clock</h3><p>Engage multiple targets under time, transitioning between positions.</p></div>
-          <div class="step"><div class="no">05</div><h3>Debrief</h3><p>Review each run and the fixes that buy back the most points.</p></div>
+    @if ($learnDisciplines->isNotEmpty())
+      <section id="process">
+        <div class="wrap" x-data="{ tab: @js($defaultTab) }">
+          <div class="sec-head reveal">
+            <span class="eyebrow">Every discipline</span>
+            <h2>What you'll learn.</h2>
+            <p>Pick a discipline to see the skills, safety and technique you'll walk away with.</p>
+          </div>
+
+          <div class="proc-tabbar reveal" role="tablist">
+            @foreach ($learnDisciplines as $type)
+              <button type="button" role="tab"
+                      :class="{ active: tab === {{ Illuminate\Support\Js::from($type->slug) }} }"
+                      @click="tab = {{ Illuminate\Support\Js::from($type->slug) }}">{{ $type->name }}</button>
+            @endforeach
+          </div>
+
+          @foreach ($learnDisciplines as $type)
+            <div x-show="tab === {{ Illuminate\Support\Js::from($type->slug) }}" x-cloak>
+              @if ($type->blurb)
+                <p class="proc-meta">{{ $type->blurb }}</p>
+              @endif
+              <div class="steps learn-steps">
+                @foreach ($type->learnings as $index => $bullet)
+                  <div class="step">
+                    <div class="no">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</div>
+                    <h3>{{ $bullet }}</h3>
+                  </div>
+                @endforeach
+              </div>
+            </div>
+          @endforeach
         </div>
-      </div>
+      </section>
+    @endif
 
-      {{-- Precision Long Range --}}
-      <div x-show="tab === 'elr'" x-cloak>
-        <p class="proc-meta">Private range · known distance out to the far steel</p>
-        <div class="steps">
-          <div class="step"><div class="no">01</div><h3>Zero &amp; confirm</h3><p>Set a true zero and confirm your rifle and ammo are honest before anything else.</p></div>
-          <div class="step"><div class="no">02</div><h3>Build data</h3><p>Chrono, solver and a live truing pass so your DOPE matches the real world.</p></div>
-          <div class="step"><div class="no">03</div><h3>Read wind</h3><p>Learn to see, bracket and call the wind — the skill that separates hits from misses.</p></div>
-          <div class="step"><div class="no">04</div><h3>Engage steel</h3><p>Apply the solution on distant plates, stretching out to the far targets.</p></div>
-          <div class="step"><div class="no">05</div><h3>Debrief</h3><p>Leave with written data and the three things to work on next.</p></div>
-        </div>
-      </div>
+    {{-- Wear the process — same navy, just the natural close of the dark region. --}}
+    <x-site.loop-band />
 
-      {{-- Reloading --}}
-      <div x-show="tab === 'reloading'" x-cloak>
-        <p class="proc-meta">Dedicated reloading room · class-based, all equipment provided</p>
-        <div class="steps">
-          <div class="step"><div class="no">01</div><h3>Deprime &amp; anneal</h3><p>Punch primers first — so cleaning reaches the primer pockets, and so no live primer is in the case when heat goes on. Annealing the neck and shoulder restores even neck tension and stretches case life.</p></div>
-          <div class="step"><div class="no">02</div><h3>Clean &amp; case prep</h3><p>Clean, then size, trim to length and chamfer. Uniform, correctly-trimmed brass is what keeps chambering, neck tension and pressure consistent shot to shot.</p></div>
-          <div class="step"><div class="no">03</div><h3>Prime</h3><p>Small vs large rifle, standard vs magnum — matching the primer to the job, then seating it fully and consistently below flush. High or inconsistent primers mean misfires and safety risk.</p></div>
-          <div class="step"><div class="no">04</div><h3>Powder</h3><p>Matching powder type and burn rate to the cartridge — and why the wrong powder is dangerous, since a fast powder in a rifle case can spike pressure catastrophically. Charges weighed for consistent speed.</p></div>
-          <div class="step"><div class="no">05</div><h3>Seat</h3><p>Seating depth and jump to the lands drive both speed and consistency. Too long jams the lands and raises pressure; too short adds jump — we find and tune the sweet spot.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {{-- ============ THE KIT (looping merch band) ============ --}}
-  <x-site.loop-band />
-
-  {{-- ============ FINAL CTA ============ --}}
-  <x-site.cta-band />
+  </div>
 
 </x-layouts.site>

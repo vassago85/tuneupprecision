@@ -28,6 +28,17 @@
     <div class="desc">{{ $blurb }}</div>
   @endif
 
+  @if (! empty($type?->learnings))
+    <div class="learn-block">
+      <div class="learn-title">What you'll learn</div>
+      <ul class="learn-list">
+        @foreach ($type->learnings as $bullet)
+          <li>{{ $bullet }}</li>
+        @endforeach
+      </ul>
+    </div>
+  @endif
+
   @if (! empty($specs))
     <x-site.dope-card :rows="$specs" />
   @endif

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Livewire\RifleBuilder;
 use App\Mail\BuildEnquiry;
 use App\Models\Component;
 use App\Models\Quote;
 use App\Models\RifleBuildShare;
+use App\Models\User;
 use Database\Seeders\ComponentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -23,15 +25,33 @@ class RifleBuilderTest extends TestCase
     {
         parent::setUp();
         $this->seed(ComponentSeeder::class);
+        // Rifle builder is currently admin-only (public launch on hold while
+        // Dirk finishes the component catalogue), so every route hit needs to
+        // be authenticated as the admin.
+        $this->actingAs(User::factory()->create(['role' => UserRole::Admin]));
     }
 
-    public function test_public_builder_renders(): void
+    public function test_admin_can_view_builder(): void
     {
         $this->get(route('rifle-builder'))
             ->assertOk()
             ->assertSee('Precision Rifle Builder')
             ->assertSee('Build it.')
             ->assertSee('Request this build');
+    }
+
+    public function test_guest_cannot_view_builder(): void
+    {
+        auth()->logout();
+
+        $this->get(route('rifle-builder'))->assertRedirect(route('login'));
+    }
+
+    public function test_non_admin_member_cannot_view_builder(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => UserRole::Member]));
+
+        $this->get(route('rifle-builder'))->assertForbidden();
     }
 
     public function test_selecting_a_component_updates_totals(): void

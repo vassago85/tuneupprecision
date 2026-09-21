@@ -18,6 +18,7 @@ class TrainingType extends Model
         'name',
         'slug',
         'blurb',
+        'learnings',
         'icon',
         'sort_order',
         'is_active',
@@ -26,6 +27,7 @@ class TrainingType extends Model
     protected function casts(): array
     {
         return [
+            'learnings' => 'array',
             'sort_order' => 'integer',
             'is_active' => 'boolean',
         ];
@@ -37,6 +39,14 @@ class TrainingType extends Model
     public function courseTemplates(): HasMany
     {
         return $this->hasMany(CourseTemplate::class);
+    }
+
+    /**
+     * @return HasMany<Testimonial, $this>
+     */
+    public function testimonials(): HasMany
+    {
+        return $this->hasMany(Testimonial::class);
     }
 
     /**

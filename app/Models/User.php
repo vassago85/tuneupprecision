@@ -40,6 +40,15 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
+        return $this->isAdmin();
+    }
+
+    /**
+     * True for admin (Dirk) — the gate for admin-only public URLs like the
+     * rifle-builder preview page that isn't ready for public consumption yet.
+     */
+    public function isAdmin(): bool
+    {
         return $this->role === UserRole::Admin;
     }
 

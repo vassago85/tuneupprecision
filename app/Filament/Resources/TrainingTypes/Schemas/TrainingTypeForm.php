@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\TrainingTypes\Schemas;
 
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -29,6 +30,12 @@ class TrainingTypeForm
                     ->rows(2)
                     ->columnSpanFull()
                     ->helperText('Short description of this training discipline.'),
+                TagsInput::make('learnings')
+                    ->label("What you'll learn")
+                    ->reorderable()
+                    ->columnSpanFull()
+                    ->placeholder('Add a bullet and press Enter')
+                    ->helperText('One bullet per tag. Drag to reorder. Shown on the homepage tabs and the courses page cards.'),
                 TextInput::make('icon')
                     ->placeholder('heroicon-o-viewfinder-circle')
                     ->helperText('Optional Heroicon name for admin display.'),

@@ -110,13 +110,42 @@
   @media (prefers-reduced-motion:reduce){.hero-badge .ret .fdot{animation:none}}
 
   /* ---------- section shell ---------- */
-  section{padding:76px 0}
-  .sec-head{max-width:640px;margin-bottom:42px}
+  /* Standard vertical rhythm — one number, applied to every section on every
+     public page. Overrides live *inside* bands (below) so continuous regions
+     don't double-up top+bottom padding at their internal joins. */
+  section{padding:56px 0}
+  /* `section-flush-top` — used for the second light section on the home page
+     so the hero and the thesis grid read as one continuous introduction. */
+  .section-flush-top{padding-top:20px}
+  .sec-head{max-width:640px;margin-bottom:38px}
   .sec-head h2{font-size:clamp(32px,4.4vw,50px);color:var(--charcoal);margin-top:14px;font-weight:800}
   .sec-head p{color:var(--muted);margin-top:14px;font-size:17.5px}
 
-  /* value strip */
-  .values{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  /* ---------- background bands ----------
+     Wrap adjacent sections in a `.band.band-*` div to give the region a
+     single, shared background. The `.band > section` reset compresses the
+     internal joins so two sections inside the same band read as one region,
+     while the outer band edges keep enough breathing room to separate it
+     from the neighbouring light band. */
+  .band-tint{background:var(--base-2)}
+  .band-dark{background:var(--charcoal);color:#fff}
+  .band-dark .eyebrow{color:#F09A72}
+  .band-dark .eyebrow::before{background:#F09A72}
+  .band-dark .sec-head h2{color:#fff}
+  .band-dark .sec-head p{color:rgba(255,255,255,.66)}
+  /* Sections inside a band lose their global 56px top/bottom — the band
+     supplies its own outer padding once, and adjacent sections split a
+     shared 44px gap at the join. */
+  .band>section{padding-top:22px;padding-bottom:22px}
+  .band>section:first-child{padding-top:56px}
+  .band>section:last-child{padding-bottom:56px}
+
+  /* value strip — currently just the 3-up "thesis" grid on the light band
+     (WHY / VALUE / RESULTS). The 4-up tactical pillar variant was retired
+     when Dirk pulled those four cards; the .val chrome and grid base stay
+     so any future card row can plug straight in. */
+  .values{display:grid;gap:16px}
+  .values-thesis{grid-template-columns:repeat(3,1fr)}
   .val{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:24px 22px;transition:transform .2s ease, box-shadow .2s ease}
   .val:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
   .val .ic{width:40px;height:40px;border-radius:10px;background:rgba(44,62,80,.06);display:grid;place-items:center;margin-bottom:16px;color:var(--copper)}
@@ -126,7 +155,9 @@
 
   /* ---------- courses ---------- */
   #courses{background:var(--base-2)}
-  .courses{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+  /* Two-up (2×2) at desktop so four discipline cards read as a balanced grid.
+     Collapses to a single column on narrow screens (see mobile rules below). */
+  .courses{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;align-items:stretch}
   .course{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 24px;display:flex;flex-direction:column;position:relative;transition:transform .2s ease, box-shadow .2s ease}
   .course:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
   .course.feat{border-color:var(--copper);box-shadow:0 20px 44px -24px rgba(212,91,46,.5)}
@@ -160,6 +191,12 @@
   .course.discipline .desc{min-height:0;margin-bottom:14px}
   .course.discipline .price{margin-bottom:8px;flex-wrap:wrap}
   .course.discipline .price s.text-lead{order:-1;letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+  /* "What you'll learn" list on discipline cards */
+  .learn-block{margin:0 0 16px;padding:14px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+  .learn-title{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:8px}
+  .learn-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .learn-list li{position:relative;padding-left:16px;font-size:13.5px;line-height:1.4;color:var(--charcoal)}
+  .learn-list li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:1px;background:var(--copper-deep)}
   .course .dates{margin-top:8px;display:flex;flex-direction:column;gap:8px;padding-top:14px;border-top:1px solid var(--line-soft)}
   .date-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:var(--base-2);border:1px solid var(--line-soft);border-radius:10px}
   .date-row.is-full{opacity:.75}
@@ -184,9 +221,34 @@
   .private .p2 .amt{font-family:var(--disp);font-weight:800;font-size:32px;color:#fff}
   .private .p2 .amt s{font-family:var(--mono);font-weight:400;font-size:12px;color:rgba(255,255,255,.6);display:block;letter-spacing:.1em;text-decoration:none}
 
-  /* ---------- about ---------- */
-  .about-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:44px;align-items:center}
-  .about-photo{position:relative;border-radius:16px;overflow:hidden;background:var(--charcoal);aspect-ratio:4/5;border:1px solid var(--line);display:grid;place-items:center}
+  /* ---------- testimonials carousel ---------- */
+  /* Background comes from the parent .band-tint — no local override. Padding
+     is deliberately compact: this is a supporting social-proof strip, not a
+     destination section. The card itself is wider and flatter than before
+     so a single quote doesn't take up half the viewport. */
+  #testimonials{padding:0}
+  .tst-frame{position:relative;max-width:940px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 60px;min-height:180px;display:flex;flex-direction:column;justify-content:center}
+  .tst-track{position:relative;min-height:110px;display:flex;align-items:center;justify-content:center}
+  .tst-card{width:100%;text-align:center}
+  .tst-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:16px}
+  .tst-body{font-family:var(--disp);font-size:20px;line-height:1.5;color:var(--charcoal);margin:0 0 20px;font-weight:500;font-style:italic}
+  .tst-open,.tst-close{color:var(--copper);font-size:26px;font-weight:700;font-style:normal;line-height:1;margin:0 2px}
+  .tst-author{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
+  .tst-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:transparent;border:1px solid var(--line);color:var(--charcoal);display:grid;place-items:center;cursor:pointer;transition:.16s;z-index:2}
+  .tst-arrow svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .tst-arrow:hover{background:var(--copper-deep);border-color:var(--copper-deep);color:#fff}
+  .tst-arrow.prev{left:12px}
+  .tst-arrow.next{right:12px}
+  .tst-dots{display:flex;justify-content:center;gap:8px;margin-top:24px}
+  .tst-dot{width:8px;height:8px;border-radius:50%;background:var(--line);border:0;padding:0;cursor:pointer;transition:.16s}
+  .tst-dot:hover{background:var(--gray)}
+  .tst-dot.active{background:var(--copper-deep);transform:scale(1.25)}
+
+  /* ---------- about (Meet Dirk) ----------
+     Balanced 1:1 grid gives the portrait more real estate — it's the human
+     anchor of the page and should feel like a portrait, not a thumbnail. */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .about-photo{position:relative;border-radius:16px;overflow:hidden;background:var(--charcoal);aspect-ratio:4/5;border:1px solid var(--line);display:grid;place-items:center;box-shadow:var(--shadow-lg)}
   .about-photo .silh{color:rgba(255,255,255,.14);width:66%}
   .about-photo .photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%}
   .about-photo .cap{position:absolute;left:16px;bottom:16px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:rgba(255,255,255,.55);text-transform:uppercase}
@@ -203,19 +265,25 @@
   .cred .n{font-family:var(--disp);font-weight:800;font-size:30px;color:var(--copper);line-height:1}
   .cred .l{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-top:5px}
 
-  /* ---------- process ---------- */
-  #process{background:var(--charcoal);color:#fff}
-  #process .sec-head h2{color:#fff}
-  #process .sec-head p{color:rgba(255,255,255,.66)}
-  #process .eyebrow{color:#F09A72}
-  #process .eyebrow::before{background:#F09A72}
+  /* ---------- process ("What you'll learn") ----------
+     Background + colour come from the parent .band-dark so this section
+     and .loop-band form one continuous dark region. Local styles stay
+     scoped to structure (grid, tabs, step chrome) so the section still
+     reads clearly against its neighbour. */
   .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-top:1px solid rgba(255,255,255,.14)}
-  .step{padding:26px 20px 8px;border-right:1px solid rgba(255,255,255,.1);position:relative}
+  .step{padding:26px 20px 20px;border-right:1px solid rgba(255,255,255,.1);position:relative}
   .step:last-child{border-right:0}
   .step .no{font-family:var(--mono);font-size:12px;color:#F09A72;letter-spacing:.1em}
   .step .no::before{content:"";position:absolute;top:-1px;left:0;width:40px;height:2px;background:#F09A72}
   .step h3{font-size:22px;color:#fff;margin:16px 0 8px}
   .step p{font-size:13.5px;color:rgba(255,255,255,.6);margin:0}
+  /* learn-steps variant: driven by admin-editable bullet lists (6–12 items).
+     Slightly wider min-column and generous internal padding so the grid
+     stops feeling like a spreadsheet and starts feeling like a discipline
+     brief — one skill per tile, room to breathe. */
+  .steps.learn-steps{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));border-top:0;gap:0}
+  .steps.learn-steps .step{padding:28px 28px 30px;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.06)}
+  .steps.learn-steps .step h3{font-size:17px;line-height:1.4;margin:16px 0 0;font-weight:600;letter-spacing:.01em}
   .proc-tabbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
   .proc-tabbar button{font-family:var(--disp);text-transform:uppercase;letter-spacing:.04em;font-weight:700;font-size:15px;color:rgba(255,255,255,.62);background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:9px 20px;cursor:pointer;transition:color .16s ease, background .18s ease, border-color .18s ease}
   .proc-tabbar button:hover{color:#fff;border-color:rgba(255,255,255,.34)}
@@ -331,7 +399,14 @@
   .modal .btn{width:100%;justify-content:center}
 
   /* ---------- looping merch band ---------- */
-  .loop-band{background:var(--charcoal-deep);color:#fff;padding:70px 0}
+  /* loop-band — the merch band. Background + colour now come from the
+     parent .band-dark so it merges with #process into one dark region.
+     A subtle top rule marks the join without a bg change. */
+  .loop-band{color:#fff;padding:56px 0;border-top:1px solid rgba(255,255,255,.08)}
+  /* When loop-band sits inside .band-dark AND is the last child, the band
+     supplies the closing 56px — zero the section's own bottom padding
+     inherited from .band>section so we don't stack space. */
+  .band-dark>.loop-band:first-child{border-top:0}
   .loop-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:36px;align-items:center}
   .loop-copy .eyebrow{color:#F09A72}
   .loop-copy h2{font-family:var(--disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:44px;line-height:1.02;color:#fff;margin:8px 0 14px}
@@ -343,8 +418,14 @@
   .loop-video{opacity:1;z-index:0}
   .loop-poster{z-index:1;transition:opacity .45s ease;pointer-events:none}
   .loop-frame.is-playing .loop-poster{opacity:0}
-  .loop-play-cue{position:absolute;inset:0;z-index:2;display:none;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff}
-  .loop-frame.needs-gesture .loop-play-cue{display:grid}
+  /* Play cue is visible by default (any state where the video isn't already
+     playing) — mobile autoplay is unreliable across Chrome Android Data
+     Saver, iOS Low Power Mode, Samsung Internet and Firefox Mobile, and the
+     failures don't always reach the .play() promise rejection handler. A
+     tap on the poster triggers the frame click handler in site.blade.php,
+     which calls video.play() from a real user gesture. */
+  .loop-play-cue{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff;transition:opacity .3s ease}
+  .loop-frame.is-playing .loop-play-cue{opacity:0;pointer-events:none}
   .loop-play-cue svg{width:64px;height:64px;filter:drop-shadow(0 4px 18px rgba(0,0,0,.55));background:rgba(212,91,46,.92);border-radius:999px;padding:14px}
   .loop-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(120% 80% at 50% 40%, #253544 0%, #17222E 60%, #0d1620 100%);color:rgba(255,255,255,.5);z-index:1}
   .loop-placeholder .mark{width:78px;height:78px}
@@ -461,12 +542,14 @@
   @media (max-width:960px){
     .hero-grid{grid-template-columns:1fr;gap:30px}
     .hero-badge{order:-1;max-width:360px;margin:0 auto}
-    .values{grid-template-columns:repeat(2,1fr)}
+    /* Thesis grid collapses to 2-up on tablet (2 + 1 orphan is fine here —
+       only one card ever lands in the second row). */
+    .values-thesis{grid-template-columns:repeat(2,1fr)}
     .courses{grid-template-columns:1fr;gap:16px}
     .course.feat{order:-1}
     .about-grid{grid-template-columns:1fr;gap:28px}
     .contact-grid{grid-template-columns:1fr;gap:28px}
-    .about-photo{max-width:340px}
+    .about-photo{max-width:420px;margin:0 auto}
     .steps{grid-template-columns:1fr 1fr;border-top:0}
     .step{border:1px solid rgba(255,255,255,.1);border-radius:12px;margin-bottom:12px}
     .shop{grid-template-columns:repeat(2,1fr)}
@@ -480,6 +563,11 @@
   @media (max-width:720px){
     nav.links,.nav-actions .btn,.nav-user,.nav-user-in{display:none}
     .hamburger{display:grid;place-items:center}
+    .tst-frame{padding:28px 22px}
+    .tst-body{font-size:17px}
+    .tst-arrow{width:32px;height:32px}
+    .tst-arrow.prev{left:6px}
+    .tst-arrow.next{right:6px}
     .hero-data{flex-wrap:wrap}.hero-data .cell{min-width:100%;border-right:0;border-bottom:1px solid var(--line-soft)}
     .hero-data .cell:last-child{border-bottom:0}
     .mobile-menu.open{display:block;position:fixed;inset:70px 0 0;background:var(--base);z-index:55;padding:26px;border-top:1px solid var(--line)}
@@ -504,12 +592,13 @@
     .video-featured-meta h3{font-size:22px}
     .video-play svg{width:44px;height:44px;padding:9px}
     .auth-card{padding:26px 22px}
-    .loop-band{padding:48px 0}
     .loop-copy h2{font-size:28px}
     .loop-placeholder .mark{width:56px;height:56px}
   }
   @media (max-width:520px){
-    .values,.shop,.foot-grid,.range-grid{grid-template-columns:1fr}
+    .shop,.foot-grid,.range-grid{grid-template-columns:1fr}
+    /* Thesis grid stacks to a single column on phones. */
+    .values-thesis{grid-template-columns:1fr}
     .steps{grid-template-columns:1fr}
     .wrap{padding:0 18px}
   }

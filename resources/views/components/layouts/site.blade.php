@@ -108,25 +108,26 @@
         var wantPlay=false;
         function markPlaying(){
           frame.classList.add('is-playing');
-          frame.classList.remove('needs-gesture');
           video.classList.add('playing');
         }
         function markStopped(){
+          // Poster stays visible and the play cue re-appears via CSS —
+          // the cue is default-visible now and only hides on .is-playing,
+          // so any pause (autoplay blocked, scroll-out, ended, error)
+          // automatically gives the user a tap target on mobile.
           frame.classList.remove('is-playing');
           video.classList.remove('playing');
-        }
-        function showGesture(){
-          frame.classList.add('needs-gesture');
-          markStopped();
         }
         function tryPlay(){
           wantPlay=true;
           video.muted=true;
           var p=video.play();
           if(p&&typeof p.then==='function'){
-            p.then(markPlaying).catch(function(){showGesture();});
+            p.then(markPlaying).catch(markStopped);
           }else if(!video.paused){
             markPlaying();
+          }else{
+            markStopped();
           }
         }
         function tryPause(){
@@ -152,13 +153,14 @@
 
         function unlock(e){
           if(e) e.preventDefault();
-          frame.classList.remove('needs-gesture');
           tryPlay();
         }
         if(cue) cue.addEventListener('click',unlock);
+        // Whole frame is a tap target on mobile — user shouldn't have to hit
+        // the tiny play icon dead-centre.
         frame.addEventListener('click',function(e){
-          if(e.target.closest&&e.target.closest('a,button')) return;
-          if(video.paused||frame.classList.contains('needs-gesture')) unlock(e);
+          if(e.target.closest&&e.target.closest('a,button:not(.loop-play-cue)')) return;
+          if(video.paused) unlock(e);
         });
 
         if(!video.paused) markPlaying();

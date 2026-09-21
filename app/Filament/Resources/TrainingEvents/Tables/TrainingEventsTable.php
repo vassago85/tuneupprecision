@@ -7,6 +7,7 @@ namespace App\Filament\Resources\TrainingEvents\Tables;
 use App\Enums\EventKind;
 use App\Enums\TrainingEventStatus;
 use App\Filament\Resources\TrainingEvents\Actions\NotifyAttendeesAction;
+use App\Filament\Resources\TrainingEvents\Actions\SendTestimonialInvitesAction;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
 use Filament\Actions\BulkActionGroup;
@@ -68,6 +69,7 @@ class TrainingEventsTable
             ])
             ->recordActions([
                 NotifyAttendeesAction::make(),
+                SendTestimonialInvitesAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

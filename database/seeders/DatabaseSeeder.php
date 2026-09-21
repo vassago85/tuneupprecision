@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
         $this->seedProducts();
         $this->call(CompetitionEventSeeder::class);
         $this->call(ComponentSeeder::class);
+        // Sample testimonials for the homepage carousel — Dirk deletes/edits
+        // them from the Filament Testimonials resource. Idempotent.
+        $this->call(TestimonialSeeder::class);
     }
 
     protected function seedAdmin(): void
@@ -58,6 +61,20 @@ class DatabaseSeeder extends Seeder
                 'blurb' => 'Prone precision — zero, ballistics and wind out past a kilometre.',
                 'icon' => 'heroicon-o-viewfinder-circle',
                 'sort_order' => 1,
+                'learnings' => [
+                    'Essential firearm safety and range procedures',
+                    'Rifle and ammunition fundamentals',
+                    'Rifle fit, scope setup and reticle fundamentals',
+                    'Setting up and using a ballistic calculator',
+                    'Basic external ballistics and bullet trajectory',
+                    'Establishing and verifying a ballistic solution',
+                    'Correct prone shooting technique and recoil management',
+                    'Reading basic wind and mirage conditions',
+                    'Understanding elevation and wind corrections',
+                    'Understanding and correcting for impacts at distance',
+                    'Basic ballistic data and DOPE management',
+                    'Safe and responsible long-range shooting practices',
+                ],
                 'templates' => [
                     [
                         'title' => 'Zero to First Steel',
@@ -91,6 +108,14 @@ class DatabaseSeeder extends Seeder
                 'blurb' => 'Precision Rifle Series — positional stages against the clock.',
                 'icon' => 'heroicon-o-clock',
                 'sort_order' => 2,
+                'learnings' => [
+                    'PRS safety, equipment and match fundamentals',
+                    'Reading and understanding a PRS Course of Fire',
+                    'Building stable shooting positions from barricades and other props',
+                    'Using bags, bipods and positional supports effectively',
+                    'Stage planning, target transitions and time management',
+                    'Practical techniques for maintaining your position and rifle control under match conditions',
+                ],
                 'templates' => [
                     [
                         'title' => 'PRS Match Skills',
@@ -112,6 +137,19 @@ class DatabaseSeeder extends Seeder
                 'blurb' => 'Handloading for precision — brass prep, load development and truing.',
                 'icon' => 'heroicon-o-beaker',
                 'sort_order' => 3,
+                'learnings' => [
+                    'Reloading bench and component safety',
+                    'Cartridge components and how they work together',
+                    'Safe use of reloading manuals and load data',
+                    'Brass inspection, preparation and sizing',
+                    'Understanding headspace and case dimensions',
+                    'Primer selection and correct primer seating',
+                    'Powder measurement and charge consistency',
+                    'Bullet seating and cartridge dimensions',
+                    'Understanding COAL, CBTO and bullet jump',
+                    'Basic quality control and ammunition inspection',
+                    'Keeping accurate reloading records and managing load development',
+                ],
                 'templates' => [
                     [
                         'title' => 'Precision Reloading',
@@ -127,6 +165,39 @@ class DatabaseSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'name' => 'Handgun Fundamentals',
+                'slug' => 'handgun',
+                'blurb' => 'Safe, consistent, confident — the fundamentals of handgun shooting.',
+                'icon' => 'heroicon-o-shield-check',
+                'sort_order' => 4,
+                'learnings' => [
+                    'Essential firearm safety and range procedures',
+                    'Handgun controls, components and safe operation',
+                    'Correct stance, grip and sight alignment',
+                    'Trigger control and recoil management',
+                    'Safe loading, unloading and magazine changes',
+                    'Applying shooting fundamentals during practical live-fire exercises',
+                    'Basic malfunction recognition and procedures',
+                    'Handgun maintenance and equipment fundamentals',
+                ],
+                'templates' => [
+                    [
+                        'title' => 'Handgun Fundamentals',
+                        'level' => 'Foundation',
+                        'blurb' => 'Build the skills, knowledge and confidence to handle and shoot a handgun safely and effectively.',
+                        // On-request pricing — no dummy dates on this discipline yet.
+                        'base_price_cents' => 0,
+                        'specs' => [
+                            'Duration' => '1 day · 08:00–16:00',
+                            'Prerequisite' => 'None',
+                            'Rounds' => 'Approx. 60–80',
+                            'Squad' => '6 shooters',
+                        ],
+                        'skip_events' => true,
+                    ],
+                ],
+            ],
         ];
 
         $eventOffset = 0;
@@ -137,6 +208,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => $typeData['name'],
                     'blurb' => $typeData['blurb'],
+                    'learnings' => $typeData['learnings'] ?? [],
                     'icon' => $typeData['icon'],
                     'sort_order' => $typeData['sort_order'],
                     'is_active' => true,
@@ -157,6 +229,15 @@ class DatabaseSeeder extends Seeder
                         'is_active' => true,
                     ],
                 );
+
+                // Some disciplines (e.g. Handgun Fundamentals) are on-request
+                // only and should not seed dummy dates — the public card will
+                // render its "Dates coming soon" empty state.
+                if (! empty($data['skip_events'])) {
+                    $eventOffset++;
+
+                    continue;
+                }
 
                 // Two published future events per template, staggered so the
                 // agenda spreads across months.

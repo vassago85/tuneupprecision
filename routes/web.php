@@ -10,8 +10,10 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\TestimonialController;
 use App\Livewire\RifleBuilder;
 use App\Models\Product;
+use App\Models\Testimonial;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
 use App\Models\Video;
@@ -21,23 +23,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    // Landing page shows a single "next event" card — the soonest publicly
-    // visible training date (never a competition/guest event).
-    $nextEvent = TrainingEvent::query()
-        ->with('courseTemplate.trainingType')
-        ->where('kind', EventKind::Training->value)
-        ->publiclyVisible()
-        ->upcoming()
-        ->first();
+    // The "What you'll learn" tabs are driven by the active training types so
+    // Dirk can add/reorder disciplines and edit bullets from the admin without
+    // touching Blade.
+    $disciplineTypes = TrainingType::query()
+        ->activeOrdered()
+        ->get();
+
+    // Approved testimonials feed the homepage carousel (rendered only when at
+    // least one exists). Random order so returning visitors don't see the same
+    // one at the top every time.
+    $testimonials = Testimonial::query()
+        ->approved()
+        ->with(['trainingType', 'trainingEvent'])
+        ->inRandomOrder()
+        ->limit(8)
+        ->get();
 
     return view('home', [
-        'nextEvent' => $nextEvent,
+        'disciplineTypes' => $disciplineTypes,
+        'testimonials' => $testimonials,
     ]);
 })->name('home');
 
 Route::get('/courses', function () {
-    // Public agenda: three discipline cards (Reloading, PRS Shooting,
-    // Precision Long Range), each with a compact list of upcoming dates.
+    // Public agenda: one card per active training discipline (Reloading,
+    // PRS Shooting, Precision Long Range, Handgun Fundamentals, ...), each
+    // with the "What you'll learn" list and a compact list of upcoming dates.
     // Fully-booked dates DO show (as "Fully booked" on the row).
     $trainingTypes = TrainingType::query()
         ->activeOrdered()
@@ -196,8 +208,15 @@ Route::get('/calendar', function (Request $request) {
     ]);
 })->name('calendar');
 
-Route::get('/rifle-builder', RifleBuilder::class)->name('rifle-builder');
-Route::get('/rifle-builder/{code}', RifleBuilder::class)->name('rifle-builder.share');
+// Rifle Builder is admin-only for now — Dirk is still curating components.
+// Kept as a real public URL (rather than moving into /admin) so the existing
+// Livewire component + layout stays untouched; the guard just fires 403 for
+// anyone who isn't the admin. Once Dirk is happy, drop the middleware group
+// and put the nav links back.
+Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->group(function () {
+    Route::get('/rifle-builder', RifleBuilder::class)->name('rifle-builder');
+    Route::get('/rifle-builder/{code}', RifleBuilder::class)->name('rifle-builder.share');
+});
 
 Route::get('/shop', function () {
     // Full product listing (out-of-stock / inactive items simply don't show).
@@ -262,6 +281,18 @@ Route::get('/contact', [ContactController::class, 'create'])->name('contact.crea
 Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:8,1')
     ->name('contact.store');
+
+// Testimonials — the create route is reached via a signed URL emailed to
+// attendees after training (see App\Mail\TestimonialInvitation). Every
+// submission is queued for admin approval before appearing on the site.
+Route::get('/testimonials/submit', [TestimonialController::class, 'create'])
+    ->middleware('signed')
+    ->name('testimonials.create');
+Route::post('/testimonials', [TestimonialController::class, 'store'])
+    ->middleware('throttle:5,60')
+    ->name('testimonials.store');
+Route::get('/testimonials/thanks', [TestimonialController::class, 'thanks'])
+    ->name('testimonials.thanks');
 
 Route::view('/legal', 'legal.index')->name('legal.index');
 Route::view('/privacy', 'legal.privacy')->name('legal.privacy');
