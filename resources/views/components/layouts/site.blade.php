@@ -96,6 +96,7 @@
       document.querySelectorAll('[data-loop]').forEach(function(frame){
         var video=frame.querySelector('video.loop-video');
         var cue=frame.querySelector('.loop-play-cue');
+        var pauseBtn=frame.querySelector('.loop-pause');
         if(!video||reducedMotion) return;
 
         video.muted=true;
@@ -106,6 +107,7 @@
         video.setAttribute('webkit-playsinline','');
 
         var wantPlay=false;
+        var userPaused=false;
         function markPlaying(){
           frame.classList.add('is-playing');
           video.classList.add('playing');
@@ -119,6 +121,7 @@
           video.classList.remove('playing');
         }
         function tryPlay(){
+          if(userPaused) return;
           wantPlay=true;
           video.muted=true;
           var p=video.play();
@@ -153,9 +156,16 @@
 
         function unlock(e){
           if(e) e.preventDefault();
+          userPaused=false;
           tryPlay();
         }
         if(cue) cue.addEventListener('click',unlock);
+        if(pauseBtn) pauseBtn.addEventListener('click',function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          userPaused=true;
+          tryPause();
+        });
         // Whole frame is a tap target on mobile — user shouldn't have to hit
         // the tiny play icon dead-centre.
         frame.addEventListener('click',function(e){

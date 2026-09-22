@@ -25,7 +25,7 @@
       <div class="hero-copy reveal">
         <span class="eyebrow">Aiming for consistent long range impacts.</span>
         <h1>Dial in<br>your <span class="cop">distance.</span></h1>
-        <p class="lead">From precision handloading to consistent impacts at extended distances, Tune Up covers every step of the process. Our small group, one-on-one, and squad training days are all structured around a single objective — repeatable, consistent performance.</p>
+        <p class="lead">From precision handloading to consistent impacts at extended distances, Tune Up covers every step of the process. Our small group, one-on-one, and squad training days are all structured around a single objective. Repeatable, consistent performance.</p>
         <div class="hero-cta">
           <a href="{{ route('courses') }}" class="btn btn-primary">Book a course
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -53,13 +53,13 @@
       <div class="sec-head reveal">
         <span class="eyebrow">Why train here</span>
         <h2>Fundamentals and data driven.</h2>
-        <p>No magic, no gimmicks — just the disciplined process good shooters and reloaders actually run, taught step by step.</p>
+        <p>No magic, no gimmicks. Just the disciplined process good shooters and reloaders actually run, taught step by step.</p>
       </div>
       <div class="values values-thesis">
         <div class="val val-thesis reveal">
           <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M6 20V10l6-4 6 4v10"/><path d="M10 20v-5h4v5"/></svg></div>
           <h3>Fundamentals first</h3>
-          <p>The shortcut to skill isn't more range time — it's the fundamentals. You don't know what you don't know.</p>
+          <p>The shortcut to skill isn't more range time. It's the fundamentals. You don't know what you don't know.</p>
         </div>
         <div class="val val-thesis reveal">
           <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12"/><path d="M15 9h-3.5a2 2 0 0 0 0 4h3a2 2 0 0 1 0 4H9"/></svg></div>
@@ -69,7 +69,7 @@
         <div class="val val-thesis reveal">
           <div class="ic"><svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 4h12v4a6 6 0 0 1-12 0z"/><path d="M6 5H4a2 2 0 0 0 0 4h2"/><path d="M18 5h2a2 2 0 0 1 0 4h-2"/></svg></div>
           <h3>Confidence and competence</h3>
-          <p>A better shooter walks off the line — with results you wouldn't reach alone.</p>
+          <p>A better shooter walks off the line, with results you wouldn't reach alone.</p>
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@
             <span>SAPRF board</span>
             <span>Match director</span>
           </div>
-          <p>Tune Up runs on one idea: long range precision — shooting and reloading alike — is a process you can learn, not a talent you're born with. Dirk coaches from the same process he runs on the line and at the bench: methodically, with the data to back every call.</p>
+          <p>Tune Up runs on one idea: long range precision, shooting and reloading alike, is a process you can learn, not a talent you're born with. Dirk coaches from the same process he runs on the line and at the bench: methodically, with the data to back every call.</p>
           <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
           <div class="creds">
             <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>

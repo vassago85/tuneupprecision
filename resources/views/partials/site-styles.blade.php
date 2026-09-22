@@ -30,7 +30,8 @@
     font-family:var(--body);font-size:17px;line-height:1.6;
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   }
-  h1,h2,h3,h4{font-family:var(--disp);font-weight:700;line-height:.98;margin:0;text-transform:uppercase;letter-spacing:.005em}
+  h1,h2,h3,h4{font-family:var(--disp);font-weight:700;line-height:.98;margin:0;text-transform:uppercase;letter-spacing:.005em;text-wrap:balance}
+  p{text-wrap:pretty}
   a{color:inherit;text-decoration:none}
   img{max-width:100%;display:block}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
@@ -243,7 +244,7 @@
   .tst-track{position:relative;min-height:96px;display:flex;align-items:center;justify-content:center}
   .tst-card{width:100%;text-align:center}
   .tst-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:16px}
-  .tst-body{font-family:var(--disp);font-size:20px;line-height:1.5;color:var(--charcoal);margin:0 0 20px;font-weight:500;font-style:italic}
+  .tst-body{font-family:var(--disp);font-size:20px;line-height:1.5;color:var(--charcoal);margin:0 0 20px;font-weight:500}
   .tst-open,.tst-close{color:var(--copper);font-size:26px;font-weight:700;font-style:normal;line-height:1;margin:0 2px}
   .tst-author{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
   .tst-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:transparent;border:1px solid var(--line);color:var(--charcoal);display:grid;place-items:center;cursor:pointer;transition:.16s;z-index:2}
@@ -438,12 +439,17 @@
   .loop-play-cue{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff;transition:opacity .3s ease}
   .loop-frame.is-playing .loop-play-cue{opacity:0;pointer-events:none}
   .loop-play-cue svg{width:64px;height:64px;filter:drop-shadow(0 4px 18px rgba(0,0,0,.55));background:rgba(212,91,46,.92);border-radius:999px;padding:14px}
+  /* Pause stays available while the loop is running. WCAG 2.2.2: anything
+     that moves on its own for more than five seconds needs a real pause. */
+  .loop-pause{position:absolute;right:12px;bottom:12px;z-index:3;width:36px;height:36px;border-radius:999px;border:0;padding:0;display:none;place-items:center;cursor:pointer;background:rgba(13,22,32,.72);color:#fff}
+  .loop-frame.is-playing .loop-pause{display:grid}
+  .loop-pause svg{width:16px;height:16px}
   .loop-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:radial-gradient(120% 80% at 50% 40%, #253544 0%, #17222E 60%, #0d1620 100%);color:rgba(255,255,255,.5);z-index:1}
   .loop-placeholder .mark{width:78px;height:78px}
   .loop-placeholder-tag{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.55)}
 
   @media (prefers-reduced-motion: reduce){
-    .loop-video,.loop-play-cue{display:none!important}
+    .loop-video,.loop-play-cue,.loop-pause{display:none!important}
     .loop-poster{opacity:1!important}
   }
 

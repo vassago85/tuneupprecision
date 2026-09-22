@@ -103,6 +103,9 @@
         <button type="button" class="loop-play-cue" aria-label="Play video">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
         </button>
+        <button type="button" class="loop-pause" aria-label="Pause video" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+        </button>
       @endif
     </div>
   </div>
