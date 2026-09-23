@@ -24,10 +24,14 @@
     <div class="wrap hero-grid">
       <div class="hero-copy reveal">
         <span class="eyebrow">Aiming for consistent long range impacts.</span>
-        <h1>Dial in<br>your <span class="cop">distance.</span></h1>
+        <h1>Dial in<br>your <span class="cop shimmer">distance.</span></h1>
         <p class="lead">From precision handloading to consistent impacts at extended distances, Tune Up covers every step of the process. Our small group, one-on-one, and squad training days are all structured around a single objective. Repeatable, consistent performance.</p>
         <div class="hero-cta">
-          <a href="{{ route('courses') }}" class="btn btn-primary">Book a course
+          <a href="{{ route('courses') }}" class="btn btn-primary btn-slide">
+            <span class="btn-slide-label">
+              <span>Book a course</span>
+              <span aria-hidden="true">Book a course</span>
+            </span>
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
           <a href="{{ route('shop') }}" class="btn btn-ghost">Browse the shop</a>
@@ -55,18 +59,18 @@
         <h2>Fundamentals and data driven.</h2>
         <p>No magic, no gimmicks. Just the disciplined process good shooters and reloaders actually run, taught step by step.</p>
       </div>
-      <div class="values values-thesis">
-        <div class="val val-thesis reveal">
+      <div class="values values-thesis spot-grid">
+        <div class="val val-thesis reveal spot">
           <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M6 20V10l6-4 6 4v10"/><path d="M10 20v-5h4v5"/></svg></div>
           <h3>Fundamentals first</h3>
           <p>The shortcut to skill isn't more range time. It's the fundamentals. You don't know what you don't know.</p>
         </div>
-        <div class="val val-thesis reveal">
+        <div class="val val-thesis reveal spot">
           <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v12"/><path d="M15 9h-3.5a2 2 0 0 0 0 4h3a2 2 0 0 1 0 4H9"/></svg></div>
           <h3>Coaching saves money</h3>
           <p>No amount of solo range time gets you past your plateau. A coached day pays for itself in components and hours.</p>
         </div>
-        <div class="val val-thesis reveal">
+        <div class="val val-thesis reveal spot">
           <div class="ic"><svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 4h12v4a6 6 0 0 1-12 0z"/><path d="M6 5H4a2 2 0 0 0 0 4h2"/><path d="M18 5h2a2 2 0 0 1 0 4h-2"/></svg></div>
           <h3>Confidence and competence</h3>
           <p>A better shooter walks off the line, with results you wouldn't reach alone.</p>

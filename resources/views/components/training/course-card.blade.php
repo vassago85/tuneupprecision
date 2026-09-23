@@ -11,7 +11,7 @@
     'bookHref' => null,
 ])
 {{-- Course card, extracted from the approved mockup (.course). --}}
-<div class="course {{ $featured ? 'feat' : '' }} reveal">
+<div class="course {{ $featured ? 'feat' : '' }} reveal spot">
   @if ($tag)
     <span class="tag">{{ $tag }}</span>
   @endif

@@ -88,8 +88,29 @@
       }
       document.addEventListener('keydown',function(e){if(e.key==='Escape') closeCart();});
 
-      // reveal on scroll
+      // Spotlight cards: tilt toward the cursor and park the copper glow under it.
       var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if(fine && !reduce){
+        document.querySelectorAll('.spot').forEach(function(card){
+          var glow=document.createElement('span');
+          glow.className='spot-glow';
+          glow.setAttribute('aria-hidden','true');
+          card.appendChild(glow);
+          card.addEventListener('mousemove',function(e){
+            var r=card.getBoundingClientRect();
+            var px=(e.clientX-r.left)/r.width;
+            var py=(e.clientY-r.top)/r.height;
+            var rx=(0.5-py)*8;
+            var ry=(px-0.5)*8;
+            card.style.transform='perspective(900px) rotateX('+rx.toFixed(2)+'deg) rotateY('+ry.toFixed(2)+'deg)';
+            glow.style.background='radial-gradient(ellipse at '+(px*100).toFixed(1)+'% '+(py*100).toFixed(1)+'%, rgba(212,91,46,.24), transparent 62%)';
+          });
+          card.addEventListener('mouseleave',function(){ card.style.transform=''; });
+        });
+      }
+
+      // reveal on scroll
       var els=document.querySelectorAll('.reveal');
       if(reduce||!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('in');});}
       else{

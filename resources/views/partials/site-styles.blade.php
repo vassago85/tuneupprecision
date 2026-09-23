@@ -54,6 +54,13 @@
   .btn-dark{background:var(--charcoal);color:#fff}
   .btn-dark:hover{background:var(--charcoal-deep)}
   .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+  /* Slide-text button — KokonutUI hover: the label rolls up and the same line comes in from below. */
+  .btn-slide{overflow:hidden}
+  .btn-slide-label{display:grid;height:1.05em;overflow:hidden;line-height:1.05}
+  .btn-slide-label span{grid-area:1/1;transition:transform .38s cubic-bezier(.2,.8,.2,1)}
+  .btn-slide-label span:last-child{transform:translateY(110%)}
+  .btn-slide:hover .btn-slide-label span:first-child,.btn-slide:focus-visible .btn-slide-label span:first-child{transform:translateY(-110%)}
+  .btn-slide:hover .btn-slide-label span:last-child,.btn-slide:focus-visible .btn-slide-label span:last-child{transform:translateY(0)}
   :focus-visible{outline:2.5px solid var(--copper);outline-offset:3px;border-radius:4px}
 
   /* ---------- reticle divider ---------- */
@@ -93,6 +100,13 @@
   .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:36px;align-items:center}
   .hero h1{font-size:clamp(48px,7.4vw,92px);color:var(--charcoal);font-weight:800}
   .hero h1 .cop{color:var(--copper)}
+  .hero h1 .shimmer{
+    background-image:linear-gradient(90deg,var(--copper-deeper) 0%,var(--copper-deeper) 36%,#F6D2BE 50%,var(--copper) 64%,var(--copper-deeper) 100%);
+    background-size:200% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shimmer 2.8s linear infinite;
+  }
+  @keyframes shimmer{from{background-position:200% center}to{background-position:-200% center}}
   .hero p.lead{font-size:19px;color:var(--muted);max-width:46ch;margin:22px 0 30px}
   .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
   .hero-data{display:flex;gap:0;margin-top:34px;border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden}
@@ -113,7 +127,16 @@
 
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,91,46,.5)}50%{box-shadow:0 0 0 9px rgba(212,91,46,0)}}
   .hero-badge .ret .fdot{animation:pulse 3.2s ease-in-out infinite}
-  @media (prefers-reduced-motion:reduce){.hero-badge .ret .fdot{animation:none}}
+  @media (prefers-reduced-motion:reduce){
+    .hero-badge .ret .fdot,.hero h1 .shimmer{animation:none}
+    .hero h1 .shimmer{background:none;-webkit-text-fill-color:var(--copper);color:var(--copper)}
+    .btn-slide-label span,.btn-slide:hover .btn-slide-label span,.btn-slide:focus-visible .btn-slide-label span{transform:none;transition:none}
+    .btn-slide-label span:last-child{display:none}
+    .spot,.spot::after,.cart-panel,.cart-backdrop,.cart-drawer.open .cart-head,.cart-drawer.open .cart-lines li,.cart-drawer.open .cart-totals,.cart-drawer.open .cart-panel > .btn,.cart-drawer.open .cart-panel > a.btn,.cart-drawer.open .cart-note,.cart-drawer.open .cart-empty{animation:none;transition:none}
+    .cart-panel,.cart-drawer.open .cart-panel{transform:none}
+    .cart-drawer:not(.open) .cart-panel{transform:translateX(100%)}
+    .tst-scroll{scroll-behavior:auto}
+  }
 
   /* ---------- section shell ---------- */
   /* Standard vertical rhythm — one number, applied to every section on every
@@ -159,19 +182,36 @@
      so any future card row can plug straight in. */
   .values{display:grid;gap:16px}
   .values-thesis{grid-template-columns:repeat(3,1fr)}
-  .val{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:24px 22px;transition:transform .2s ease, box-shadow .2s ease}
+  .val{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:24px 22px;transition:transform .2s ease, box-shadow .2s ease, opacity .18s ease}
   .val:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
   .val .ic{width:40px;height:40px;border-radius:10px;background:rgba(44,62,80,.06);display:grid;place-items:center;margin-bottom:16px;color:var(--copper)}
   .val .ic svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7}
   .val h3{font-size:22px;color:var(--charcoal);margin-bottom:7px}
   .val p{font-size:14.5px;color:var(--muted);margin:0;line-height:1.5}
 
+  /* Spotlight cards — KokonutUI: cursor glow, tilt, and dimmed siblings. */
+  .spot{position:relative;transform-style:preserve-3d}
+  .spot.reveal.in{transition:opacity .18s ease, box-shadow .2s ease, transform .12s ease-out}
+  .spot > :not(.spot-glow){position:relative;z-index:1}
+  .spot-glow{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;z-index:0;background:radial-gradient(ellipse at 18% 16%, rgba(212,91,46,.2), transparent 64%);transition:opacity .28s ease}
+  .val.spot{overflow:hidden;background:radial-gradient(ellipse at 0% 0%, rgba(212,91,46,.09), transparent 58%), var(--paper)}
+  .val.spot::before{content:"";position:absolute;left:18px;right:18px;bottom:0;height:2px;background:var(--copper);transform:scaleX(0);transform-origin:left center;transition:transform .35s ease;z-index:2}
+  .val.spot:hover::before{transform:scaleX(1)}
+  .val.spot::after,.prod.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;background:linear-gradient(115deg, transparent 36%, rgba(255,255,255,.55) 50%, transparent 64%);transform:translateX(-130%);opacity:0}
+  @media (hover:hover) and (pointer:fine){
+    .spot:hover .spot-glow{opacity:1}
+    .spot:hover::after{opacity:1;animation:spot-sweep .7s ease}
+    .spot-grid:has(.spot:hover) .spot:not(:hover){opacity:.52;transform:scale(.98)}
+    .val.spot:hover,.course.spot:hover,.prod.spot:hover{transform:none;box-shadow:var(--shadow-lg)}
+  }
+  @keyframes spot-sweep{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
+
   /* ---------- courses ---------- */
   #courses{background:var(--base-2)}
   /* Two-up (2×2) at desktop so four discipline cards read as a balanced grid.
      Collapses to a single column on narrow screens (see mobile rules below). */
   .courses{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;align-items:stretch}
-  .course{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 24px;display:flex;flex-direction:column;position:relative;transition:transform .2s ease, box-shadow .2s ease}
+  .course{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 24px;display:flex;flex-direction:column;position:relative;transition:transform .2s ease, box-shadow .2s ease, opacity .18s ease}
   .course:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
   .course.feat{border-color:var(--copper);box-shadow:0 20px 44px -24px rgba(212,91,46,.5)}
   .course .tag{position:absolute;top:-11px;right:20px;background:var(--copper-deep);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:20px}
@@ -240,26 +280,19 @@
      destination section. The card itself is wider and flatter than before
      so a single quote doesn't take up half the viewport. */
   #testimonials{padding:0}
-  .tst-frame{position:relative;max-width:940px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 60px;min-height:160px;display:flex;flex-direction:column;justify-content:center}
-  /* Every quote occupies the same grid cell, so the track stays as tall as
-     the longest one and the page below does not jump when the slide changes. */
-  .tst-track{display:grid;min-height:96px}
-  .tst-card{grid-area:1/1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s ease,visibility 0s linear .45s}
-  .tst-card.active{opacity:1;visibility:visible;pointer-events:auto;z-index:1;transition:opacity .45s ease,visibility 0s linear 0s}
-  .tst-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:16px}
-  .tst-body{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:20px;line-height:1.5;color:var(--charcoal);margin:0;font-weight:500}
-  .tst-open,.tst-close{color:var(--copper);font-size:26px;font-weight:700;font-style:normal;line-height:1;margin:0 2px}
-  .tst-author{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);margin-top:20px}
-  @media (prefers-reduced-motion:reduce){.tst-card{transition:none}}
-  .tst-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:transparent;border:1px solid var(--line);color:var(--charcoal);display:grid;place-items:center;cursor:pointer;transition:.16s;z-index:2}
+  .tst-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
+  .tst-head .sec-head{margin-bottom:0}
+  .tst-nav{display:flex;gap:8px;flex:none}
+  .tst-scroll{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 8px;scrollbar-width:none}
+  .tst-scroll::-webkit-scrollbar{display:none}
+  .tst-card{flex:0 0 min(420px,86%);scroll-snap-align:start;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 22px;display:flex;flex-direction:column;min-height:210px;box-shadow:var(--shadow)}
+  .tst-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:14px}
+  .tst-body{flex:1;font-family:var(--disp);font-size:22px;line-height:1.35;color:var(--charcoal);margin:0;font-weight:600;text-transform:none;letter-spacing:0}
+  .tst-open,.tst-close{color:var(--copper);font-size:28px;font-weight:700;line-height:1;margin:0 2px}
+  .tst-author{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);margin-top:18px}
+  .tst-arrow{width:38px;height:38px;border-radius:50%;background:var(--paper);border:1px solid var(--line);color:var(--charcoal);display:grid;place-items:center;cursor:pointer;transition:.16s}
   .tst-arrow svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .tst-arrow:hover{background:var(--copper-deep);border-color:var(--copper-deep);color:#fff}
-  .tst-arrow.prev{left:12px}
-  .tst-arrow.next{right:12px}
-  .tst-dots{display:flex;justify-content:center;gap:8px;margin-top:24px}
-  .tst-dot{width:8px;height:8px;border-radius:50%;background:var(--line);border:0;padding:0;cursor:pointer;transition:.16s}
-  .tst-dot:hover{background:var(--gray)}
-  .tst-dot.active{background:var(--copper-deep);transform:scale(1.25)}
 
   /* ---------- about (Meet Dirk) ----------
      Balanced 1:1 grid gives the portrait more real estate — it's the human
@@ -312,7 +345,7 @@
   .shop-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:34px}
   .shop-top .sec-head{margin-bottom:0}
   .shop{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-  .prod{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s ease, box-shadow .2s ease}
+  .prod{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s ease, box-shadow .2s ease, opacity .18s ease}
   .prod:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
   .prod .img{aspect-ratio:1/1;background:var(--base-2);position:relative;display:grid;place-items:center;color:var(--gray);border-bottom:1px solid var(--line-soft);overflow:hidden}
   .prod .img img{width:100%;height:100%;object-fit:cover}
@@ -371,12 +404,29 @@
   .eft-box dt{color:var(--muted)}
   .eft-box dd{margin:0;font-weight:600;text-align:right}
   body.cart-lock{overflow:hidden}
-  .cart-drawer{position:fixed;inset:0;z-index:80;pointer-events:none}
+  .cart-drawer{position:fixed;inset:0;z-index:80;pointer-events:none;perspective:1400px}
   .cart-drawer.open{pointer-events:auto}
-  .cart-backdrop{position:absolute;inset:0;border:0;background:rgba(23,34,46,.46);opacity:0;transition:opacity .2s ease;cursor:pointer}
+  .cart-backdrop{position:absolute;inset:0;border:0;background:rgba(23,34,46,.46);opacity:0;transition:opacity .4s ease;cursor:pointer}
   .cart-drawer.open .cart-backdrop{opacity:1}
-  .cart-panel{position:absolute;top:0;right:0;height:100%;width:min(420px,100%);background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow-lg);padding:22px 20px 28px;display:flex;flex-direction:column;gap:16px;transform:translateX(100%);transition:transform .24s ease;overflow:auto}
-  .cart-drawer.open .cart-panel{transform:none}
+  .cart-panel{position:absolute;top:0;right:0;height:100%;width:min(420px,100%);background:var(--paper);border-left:1px solid var(--line);box-shadow:var(--shadow-lg);padding:22px 20px 28px;display:flex;flex-direction:column;gap:16px;transform:translateX(108%) rotateY(-7deg);transform-origin:right center;transition:transform .62s cubic-bezier(.16,1.12,.28,1);overflow:auto}
+  .cart-drawer.open .cart-panel{transform:translateX(0) rotateY(0)}
+  @keyframes cart-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .cart-drawer.open .cart-head,
+  .cart-drawer.open .cart-note,
+  .cart-drawer.open .cart-empty,
+  .cart-drawer.open .cart-lines li,
+  .cart-drawer.open .cart-totals,
+  .cart-drawer.open .cart-panel > .btn,
+  .cart-drawer.open .cart-panel > a.btn{animation:cart-rise .48s cubic-bezier(.2,.8,.2,1) both}
+  .cart-drawer.open .cart-head{animation-delay:.06s}
+  .cart-drawer.open .cart-note,.cart-drawer.open .cart-empty{animation-delay:.12s}
+  .cart-drawer.open .cart-lines li:nth-child(1){animation-delay:.12s}
+  .cart-drawer.open .cart-lines li:nth-child(2){animation-delay:.18s}
+  .cart-drawer.open .cart-lines li:nth-child(3){animation-delay:.24s}
+  .cart-drawer.open .cart-lines li:nth-child(n+4){animation-delay:.3s}
+  .cart-drawer.open .cart-totals{animation-delay:.34s}
+  .cart-drawer.open .cart-panel > .btn,
+  .cart-drawer.open .cart-panel > a.btn{animation-delay:.4s}
   .cart-head{display:flex;align-items:center;justify-content:space-between}
   .cart-head h2{font-family:var(--disp);font-size:28px;text-transform:uppercase;margin:0;color:var(--charcoal)}
   .cart-head button,.cart-remove{border:0;background:transparent;color:var(--charcoal);cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.04em}
@@ -661,11 +711,9 @@
   @media (max-width:720px){
     nav.links,.nav-actions .btn,.nav-user,.nav-user-in{display:none}
     .hamburger{display:grid;place-items:center}
-    .tst-frame{padding:28px 22px}
-    .tst-body{font-size:17px}
-    .tst-arrow{width:32px;height:32px}
-    .tst-arrow.prev{left:6px}
-    .tst-arrow.next{right:6px}
+    .tst-card{flex-basis:88%}
+    .tst-body{font-size:20px}
+    .tst-arrow{width:34px;height:34px}
     .hero-data{flex-wrap:wrap}.hero-data .cell{min-width:100%;border-right:0;border-bottom:1px solid var(--line-soft)}
     .hero-data .cell:last-child{border-bottom:0}
     .mobile-menu.open{display:block;position:fixed;inset:70px 0 0;background:var(--base);z-index:55;padding:26px;border-top:1px solid var(--line)}

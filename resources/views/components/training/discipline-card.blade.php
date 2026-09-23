@@ -14,7 +14,7 @@
 
     $specs = collect($representative?->specs ?? [])->all();
 @endphp
-<div class="course discipline {{ $featured ? 'feat' : '' }} reveal" id="{{ $type?->slug }}">
+<div class="course discipline {{ $featured ? 'feat' : '' }} reveal spot" id="{{ $type?->slug }}">
   @if ($featured)
     <span class="tag">Most booked</span>
   @endif

@@ -4,7 +4,7 @@
 ])
 {{-- Product card, extracted from the approved mockup (.prod). --}}
 @php($image = $product->getFirstMediaUrl('images', 'thumb') ?: $product->getFirstMediaUrl('images'))
-<div class="prod reveal">
+<div class="prod reveal spot">
   <a class="img" href="{{ route('shop.show', $product) }}">
     @if ($badge)
       <span class="badge">{{ $badge }}</span>

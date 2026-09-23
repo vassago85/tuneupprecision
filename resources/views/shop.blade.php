@@ -22,7 +22,7 @@
         </div>
       @endif
 
-      <div class="shop">
+      <div class="shop spot-grid">
         @forelse ($products as $product)
           <x-shop.product-card :product="$product" />
         @empty

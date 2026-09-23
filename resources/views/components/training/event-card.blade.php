@@ -21,7 +21,7 @@
         ->put('Seats left', $isFull ? 'Fully booked' : (string) $seatsLeft.' of '.$event->capacity)
         ->all();
 @endphp
-<div class="course {{ $featured ? 'feat' : '' }} reveal">
+<div class="course {{ $featured ? 'feat' : '' }} reveal spot">
   @if ($featured && ! $isFull)
     <span class="tag">Most booked</span>
   @endif
