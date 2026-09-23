@@ -40,6 +40,7 @@
     </main>
 
     <x-site.footer />
+    <x-shop.cart-drawer />
     <x-site.toast />
 
     @livewireScripts
@@ -56,26 +57,36 @@
         menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu);});
       }
 
-      // cart + toast (presentational for now — the interactive cart lands in a later commit)
-      var count=0, badge=document.getElementById('cartBadge');
       var toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg'), tTimer;
       function showToast(msg){
         if(!toast) return;
         toastMsg.textContent=msg; toast.classList.add('show');
         clearTimeout(tTimer); tTimer=setTimeout(function(){toast.classList.remove('show');},2600);
       }
-      function bump(){if(!badge) return; count++; badge.textContent=count; badge.classList.add('show');
-        badge.style.animation='none'; void badge.offsetWidth; badge.style.animation='';}
-      document.querySelectorAll('.add').forEach(function(b){
-        b.addEventListener('click',function(){bump(); showToast('Added · '+b.dataset.name);});
-      });
       document.querySelectorAll('.book').forEach(function(b){
         b.addEventListener('click',function(){showToast('Seat request started · '+b.dataset.course);});
       });
+
+      var drawer=document.getElementById('cartDrawer');
       var cartBtn=document.getElementById('cartBtn');
-      if(cartBtn){cartBtn.addEventListener('click',function(){
-        showToast(count?('Cart · '+count+' item'+(count>1?'s':'')):'Your cart is empty');
-      });}
+      function openCart(){
+        if(!drawer) return;
+        drawer.classList.add('open');
+        drawer.setAttribute('aria-hidden','false');
+        document.body.classList.add('cart-lock');
+      }
+      function closeCart(){
+        if(!drawer) return;
+        drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden','true');
+        document.body.classList.remove('cart-lock');
+      }
+      if(cartBtn){cartBtn.addEventListener('click',function(){drawer && drawer.classList.contains('open') ? closeCart() : openCart();});}
+      if(drawer){
+        drawer.querySelectorAll('[data-cart-close]').forEach(function(el){el.addEventListener('click',closeCart);});
+        if(drawer.dataset.open==='1') openCart();
+      }
+      document.addEventListener('keydown',function(e){if(e.key==='Escape') closeCart();});
 
       // reveal on scroll
       var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;

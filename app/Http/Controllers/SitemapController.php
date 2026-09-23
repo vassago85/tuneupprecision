@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Response;
 
 /**
@@ -25,6 +26,9 @@ class SitemapController extends Controller
             $this->url(route('calendar'), 'daily', '0.8'),
             $this->url(route('range'), 'weekly', '0.7'),
             $this->url(route('shop'), 'weekly', '0.6'),
+            ...Product::query()->available()->orderBy('name')->get()->map(
+                fn (Product $product): array => $this->url(route('shop.show', $product), 'weekly', '0.5'),
+            )->all(),
             // Rifle Builder intentionally omitted — admin-only preview page.
             $this->url(route('contact.create'), 'monthly', '0.7'),
             $this->url(route('legal.index'), 'yearly', '0.4'),

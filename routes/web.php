@@ -9,10 +9,11 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Livewire\RifleBuilder;
-use App\Models\Product;
 use App\Models\Testimonial;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
@@ -213,19 +214,19 @@ Route::get('/calendar', function (Request $request) {
 // Livewire component + layout stays untouched; the guard just fires 403 for
 // anyone who isn't the admin. Once Dirk is happy, drop the middleware group
 // and put the nav links back.
-Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsAdmin::class])->group(function () {
+Route::middleware(['auth', EnsureUserIsAdmin::class])->group(function () {
     Route::get('/rifle-builder', RifleBuilder::class)->name('rifle-builder');
     Route::get('/rifle-builder/{code}', RifleBuilder::class)->name('rifle-builder.share');
 });
 
-Route::get('/shop', function () {
-    // Full product listing (out-of-stock / inactive items simply don't show).
-    $products = Product::query()->available()->latest()->get();
-
-    return view('shop', [
-        'products' => $products,
-    ]);
-})->name('shop');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+Route::get('/shop/checkout', [ShopController::class, 'checkout'])->name('shop.checkout');
+Route::post('/shop/checkout', [ShopController::class, 'place'])->name('shop.checkout.place');
+Route::get('/shop/order/confirmation', [ShopController::class, 'confirmation'])->name('shop.confirmation');
+Route::post('/shop/cart', [ShopController::class, 'add'])->name('shop.cart.add');
+Route::patch('/shop/cart/{product}', [ShopController::class, 'update'])->name('shop.cart.update');
+Route::delete('/shop/cart/{product}', [ShopController::class, 'remove'])->name('shop.cart.remove');
+Route::get('/shop/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
 
 Route::get('/the-range', function () {
     // The video library. Videos are grouped by discipline (TrainingType); a

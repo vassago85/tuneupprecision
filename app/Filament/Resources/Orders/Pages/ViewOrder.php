@@ -7,23 +7,26 @@ use App\Filament\Support\CancelOrderAction;
 use App\Filament\Support\DownloadInvoiceAction;
 use App\Filament\Support\FulfillOrderAction;
 use App\Filament\Support\MarkAsPaidAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditOrder extends EditRecord
+class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
+
+    public function getTitle(): string
+    {
+        return (string) $this->getRecord()->reference;
+    }
 
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make()->label('Open'),
             MarkAsPaidAction::make(),
             FulfillOrderAction::make(),
             DownloadInvoiceAction::make(),
             CancelOrderAction::make(),
-            DeleteAction::make(),
+            EditAction::make(),
         ];
     }
 }

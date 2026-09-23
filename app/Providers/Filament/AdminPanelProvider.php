@@ -6,6 +6,7 @@ use App\Filament\Widgets\KpiStatsWidget;
 use App\Filament\Widgets\LowStockProductsWidget;
 use App\Filament\Widgets\PaymentsAttentionWidget;
 use App\Filament\Widgets\QuotesOverviewWidget;
+use App\Filament\Widgets\ShopDeskWidget;
 use App\Filament\Widgets\TestimonialLinkWidget;
 use App\Filament\Widgets\UpcomingTrainingWidget;
 use Filament\Http\Middleware\Authenticate;
@@ -87,6 +88,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 TestimonialLinkWidget::class,
                 KpiStatsWidget::class,
+                ShopDeskWidget::class,
                 QuotesOverviewWidget::class,
                 UpcomingTrainingWidget::class,
                 PaymentsAttentionWidget::class,

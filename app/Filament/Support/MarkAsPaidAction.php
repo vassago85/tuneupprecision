@@ -34,7 +34,7 @@ class MarkAsPaidAction
             ->color('success')
             ->requiresConfirmation()
             ->modalHeading('Confirm payment received')
-            ->modalDescription('This confirms the booking / decrements stock and sends a confirmation email. Use once the EFT reflects.')
+            ->modalDescription('This records the payment and emails a confirmation. A paid shop order includes a tax invoice.')
             ->action(function (Model $record): void {
                 $payment = static::resolvePayment($record);
 
@@ -76,6 +76,7 @@ class MarkAsPaidAction
         // Booking or Order: create the EFT payment shell on first confirmation.
         $amountCents = match (true) {
             $record instanceof Booking => (int) $record->amount_cents,
+            $record instanceof Order => $record->totalCents(),
             $record instanceof Quote => $record->depositCents(),
             default => (int) $record->subtotal_cents,
         };

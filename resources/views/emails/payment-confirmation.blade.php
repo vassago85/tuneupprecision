@@ -14,7 +14,7 @@ Your seat on **{{ optional($payable->trainingEvent->courseTemplate)->title }}** 
 Your order is being prepared.
 
 - **Reference:** {{ $payable->reference }}
-- **Total:** {{ $payable->subtotal }}
+- **Total:** {{ $payable->total }}
 @elseif ($isQuote)
 We've received the deposit on your rifle build.
 

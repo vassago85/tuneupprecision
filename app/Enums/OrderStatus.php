@@ -16,7 +16,12 @@ enum OrderStatus: string implements HasColor, HasLabel
 
     public function getLabel(): string
     {
-        return ucfirst($this->value);
+        return match ($this) {
+            self::Pending => 'Awaiting payment',
+            self::Paid => 'Ready to send',
+            self::Fulfilled => 'Sent',
+            self::Cancelled => 'Cancelled',
+        };
     }
 
     public function getColor(): string

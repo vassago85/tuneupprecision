@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Livewire\RifleBuildPicker;
 use App\Livewire\RifleBuilder;
 use App\Mail\BuildEnquiry;
 use App\Models\Component;
@@ -74,13 +75,15 @@ class RifleBuilderTest extends TestCase
         $tikka = Component::query()->where('slug', 'tikka-t3x-ctr-action')->firstOrFail();
         $manners = Component::query()->where('slug', 'manners-t6a-carbon-stock')->firstOrFail();
 
-        Livewire::test(RifleBuilder::class)
-            ->dispatch('rifle-build-changed', selection: [
+        Livewire::test(RifleBuildPicker::class, [
+            'initialSelection' => [
                 'platform' => 'separate',
                 'singles' => ['action' => $tikka->id],
                 'multis' => [],
                 'quantities' => [],
-            ])
+            ],
+        ])
+            ->call('toggleStep', 'chassis')
             ->assertSee('Does not fit Tikka footprint');
 
         $this->assertNotNull($manners);

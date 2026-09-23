@@ -32,6 +32,20 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Shop
+    |--------------------------------------------------------------------------
+    |
+    | Courier fee in cents, shown before checkout. 0 means delivery is included
+    | in the product price. Set SHOP_SHIPPING_CENTS to charge a flat national fee.
+    |
+    */
+
+    'shop' => [
+        'shipping_cents' => (int) env('SHOP_SHIPPING_CENTS', 0),
+    ],
+
     'references' => [
         'booking' => 'TU-B-######',
         'order' => 'TU-S-######',

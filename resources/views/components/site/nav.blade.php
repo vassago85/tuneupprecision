@@ -21,9 +21,10 @@
       <a href="{{ route('contact.create') }}">Contact</a>
     </nav>
     <div class="nav-actions">
-      <button class="cart-btn" id="cartBtn" aria-label="View cart">
+      @php($cartCount = app(\App\Shop\Cart::class)->count())
+      <button class="cart-btn" id="cartBtn" type="button" aria-label="View cart" aria-controls="cartDrawer">
         <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.2 12.2a1.5 1.5 0 0 0 1.5 1.3h8.4a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/></svg>
-        <span class="cart-badge" id="cartBadge">0</span>
+        <span class="cart-badge {{ $cartCount > 0 ? 'show' : '' }}" id="cartBadge">{{ $cartCount }}</span>
       </button>
       @auth
         <form method="POST" action="{{ route('logout') }}" class="nav-user">

@@ -9,6 +9,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\QuoteStatus;
 use App\Enums\TrainingEventStatus;
+use App\Mail\OrderConfirmed;
 use App\Mail\PaymentConfirmation;
 use App\Models\Booking;
 use App\Models\Order;
@@ -50,8 +51,10 @@ class MarkPaid
                 default => null,
             };
 
-            if ($payable !== null && filled($payable->email)) {
-                // Stubbed confirmation email — real templates land in a later commit.
+            if ($payable instanceof Order && filled($payable->email)) {
+                $payable->loadMissing('orderItems', 'payment');
+                Mail::to($payable->email)->queue(new OrderConfirmed($payable));
+            } elseif ($payable !== null && filled($payable->email)) {
                 Mail::to($payable->email)->queue(new PaymentConfirmation($payable));
             }
 

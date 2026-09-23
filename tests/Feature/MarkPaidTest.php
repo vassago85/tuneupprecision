@@ -10,11 +10,14 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Enums\TrainingEventStatus;
+use App\Mail\OrderConfirmed;
+use App\Mail\PaymentConfirmation;
 use App\Models\Booking;
 use App\Models\CourseTemplate;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\TrainingEvent;
+use App\Shop\OrderInvoice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -53,6 +56,12 @@ class MarkPaidTest extends TestCase
         $this->assertNotNull($payment->fresh()->paid_at);
         $this->assertSame(OrderStatus::Paid, $order->fresh()->status);
         $this->assertSame(7, $product->fresh()->stock_qty);
+
+        Mail::assertQueued(OrderConfirmed::class, function (OrderConfirmed $mail) use ($order): bool {
+            return $mail->hasTo('jane@example.com')
+                && $mail->order->is($order);
+        });
+        Mail::assertNotQueued(PaymentConfirmation::class);
     }
 
     public function test_marking_a_booking_paid_confirms_it_and_clears_the_hold(): void
@@ -83,6 +92,7 @@ class MarkPaidTest extends TestCase
         $this->assertSame(BookingStatus::Confirmed, $booking->fresh()->status);
         $this->assertNull($booking->fresh()->hold_expires_at);
         $this->assertSame(PaymentStatus::Paid, $payment->fresh()->status);
+        Mail::assertQueued(PaymentConfirmation::class);
     }
 
     public function test_mark_paid_is_idempotent(): void
@@ -109,6 +119,49 @@ class MarkPaidTest extends TestCase
         app(MarkPaid::class)->handle($payment); // second call must not double-decrement
 
         $this->assertSame(4, $product->fresh()->stock_qty);
+        Mail::assertQueued(OrderConfirmed::class, 1);
+    }
+
+    public function test_a_paid_order_invoice_shows_the_vat_breakdown(): void
+    {
+        $order = Order::create([
+            'customer_name' => 'Jane',
+            'email' => 'jane@example.com',
+            'phone' => '0820000000',
+            'address_line_1' => '1 Range Road',
+            'suburb' => 'Hartbeespoort',
+            'city' => 'Hartbeespoort',
+            'province' => 'North West',
+            'postal_code' => '0216',
+            'subtotal_cents' => 96000,
+            'shipping_cents' => 0,
+            'status' => OrderStatus::Paid,
+        ]);
+        $order->orderItems()->create([
+            'name_snapshot' => 'Test Cap',
+            'price_cents_snapshot' => 32000,
+            'qty' => 3,
+        ]);
+        $order->payment()->create([
+            'method' => PaymentMethod::Eft,
+            'amount_cents' => 96000,
+            'status' => PaymentStatus::Paid,
+            'reference' => $order->reference,
+            'paid_at' => now(),
+        ]);
+
+        $invoice = app(OrderInvoice::class);
+        $html = view('shop.invoice', $invoice->viewData($order->fresh(['orderItems', 'payment'])))->render();
+
+        $this->assertStringContainsString('TAX INVOICE', $html);
+        $this->assertStringContainsString($order->reference, $html);
+        $this->assertStringContainsString('Test Cap', $html);
+        $this->assertStringContainsString('1 Range Road', $html);
+        $this->assertStringContainsString('R960.00', $html);
+        $this->assertStringContainsString('R125.22', $html);
+        $this->assertStringContainsString('R834.78', $html);
+
+        $this->assertStringStartsWith('%PDF', $invoice->pdf($order)->output());
     }
 
     public function test_references_are_generated_in_the_right_format(): void
