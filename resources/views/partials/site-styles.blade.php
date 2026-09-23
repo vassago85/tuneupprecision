@@ -241,12 +241,16 @@
      so a single quote doesn't take up half the viewport. */
   #testimonials{padding:0}
   .tst-frame{position:relative;max-width:940px;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 60px;min-height:160px;display:flex;flex-direction:column;justify-content:center}
-  .tst-track{position:relative;min-height:96px;display:flex;align-items:center;justify-content:center}
-  .tst-card{width:100%;text-align:center}
+  /* Every quote occupies the same grid cell, so the track stays as tall as
+     the longest one and the page below does not jump when the slide changes. */
+  .tst-track{display:grid;min-height:96px}
+  .tst-card{grid-area:1/1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s ease,visibility 0s linear .45s}
+  .tst-card.active{opacity:1;visibility:visible;pointer-events:auto;z-index:1;transition:opacity .45s ease,visibility 0s linear 0s}
   .tst-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:16px}
-  .tst-body{font-family:var(--disp);font-size:20px;line-height:1.5;color:var(--charcoal);margin:0 0 20px;font-weight:500}
+  .tst-body{flex:1;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:20px;line-height:1.5;color:var(--charcoal);margin:0;font-weight:500}
   .tst-open,.tst-close{color:var(--copper);font-size:26px;font-weight:700;font-style:normal;line-height:1;margin:0 2px}
-  .tst-author{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
+  .tst-author{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);margin-top:20px}
+  @media (prefers-reduced-motion:reduce){.tst-card{transition:none}}
   .tst-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:transparent;border:1px solid var(--line);color:var(--charcoal);display:grid;place-items:center;cursor:pointer;transition:.16s;z-index:2}
   .tst-arrow svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .tst-arrow:hover{background:var(--copper-deep);border-color:var(--copper-deep);color:#fff}

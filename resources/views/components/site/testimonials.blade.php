@@ -41,7 +41,11 @@
 
         <div class="tst-track">
           @foreach ($items as $index => $t)
-            <article class="tst-card" x-show="i === {{ $index }}" x-cloak x-transition.opacity.duration.400ms>
+            <article
+              class="tst-card{{ $index === 0 ? ' active' : '' }}"
+              :class="{ active: i === {{ $index }} }"
+              :aria-hidden="i !== {{ $index }}"
+            >
               <div class="tst-eyebrow">{{ $t->displayEventLabel() }}</div>
               <blockquote class="tst-body">
                 <span class="tst-open">&ldquo;</span>{{ $t->body }}<span class="tst-close">&rdquo;</span>
