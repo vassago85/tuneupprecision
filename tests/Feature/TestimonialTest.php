@@ -10,7 +10,10 @@ use App\Enums\TrainingEventStatus;
 use App\Enums\UserRole;
 use App\Filament\Resources\TrainingEvents\Actions\SendTestimonialInvitesAction;
 use App\Filament\Widgets\TestimonialLinkWidget;
+use App\Mail\TestimonialCopy;
 use App\Mail\TestimonialInvitation;
+use App\Support\BusinessDetails;
+use App\Support\LegalIdentity;
 use App\Models\Booking;
 use App\Models\CourseTemplate;
 use App\Models\Testimonial;
@@ -37,6 +40,7 @@ class TestimonialTest extends TestCase
         Testimonial::factory()->approved()->create([
             'training_type_id' => $prs->id,
             'author_name' => 'Jane Approved',
+            'author_email' => 'jane-secret@example.com',
             'body' => 'A cracker of a training day, walked away with better data.',
         ]);
         Testimonial::factory()->create([
@@ -52,7 +56,8 @@ class TestimonialTest extends TestCase
             ->assertSee('Jane Approved')
             ->assertSee('A cracker of a training day')
             ->assertDontSee('John Pending')
-            ->assertDontSee('Still waiting for review');
+            ->assertDontSee('Still waiting for review')
+            ->assertDontSee('jane-secret@example.com');
     }
 
     public function test_home_page_renders_without_the_carousel_when_no_approved_testimonials(): void
@@ -80,6 +85,7 @@ class TestimonialTest extends TestCase
             ->assertSee('Tell us how it went.')
             ->assertSee('Which training did you do?')
             ->assertSee($type->name)
+            ->assertSee('Email')
             ->assertSee('Submit testimonial');
     }
 
@@ -108,6 +114,7 @@ class TestimonialTest extends TestCase
 
         $signed = URL::temporarySignedRoute('testimonials.create', now()->addDays(30), [
             'name' => 'Pat Attendee',
+            'email' => 'pat@example.com',
             'training_type_id' => $type->id,
             'training_event_id' => $event->id,
         ]);
@@ -115,12 +122,52 @@ class TestimonialTest extends TestCase
         $this->get($signed)
             ->assertOk()
             ->assertSee('Pat Attendee')
+            ->assertSee('pat@example.com', false)
             ->assertSee($type->name)
             ->assertSee($event->starts_on->format('D d M Y'));
     }
 
-    public function test_submitting_stores_a_pending_testimonial_from_shooter(): void
+    public function test_submitting_stores_a_pending_testimonial_and_emails_a_private_copy(): void
     {
+        Mail::fake();
+        $this->seed(DatabaseSeeder::class);
+
+        $type = TrainingType::query()->where('slug', 'reloading')->firstOrFail();
+        $dirk = BusinessDetails::details()['email'] ?? LegalIdentity::email();
+
+        $this->post('/testimonials', [
+            'author_name' => 'Sam Shooter',
+            'author_email' => 'Sam@Example.com',
+            'training_type_id' => $type->id,
+            'body' => 'Learned exactly what I needed at the bench — highly recommend it.',
+        ])->assertRedirect(route('testimonials.thanks'));
+
+        $this->assertDatabaseHas('testimonials', [
+            'author_name' => 'Sam Shooter',
+            'author_email' => 'sam@example.com',
+            'training_type_id' => $type->id,
+            'is_approved' => false,
+            'source' => TestimonialSource::Shooter->value,
+        ]);
+
+        Mail::assertQueued(TestimonialCopy::class, 2);
+        Mail::assertQueued(TestimonialCopy::class, fn (TestimonialCopy $mail): bool => $mail->hasTo('sam@example.com') && $mail->forVisitor);
+        Mail::assertQueued(TestimonialCopy::class, fn (TestimonialCopy $mail): bool => $mail->hasTo($dirk) && $mail->forVisitor === false);
+
+        $copy = new TestimonialCopy(
+            Testimonial::query()->where('author_email', 'sam@example.com')->firstOrFail(),
+            true,
+        );
+        $rendered = $copy->render();
+
+        $this->assertStringContainsString('Learned exactly what I needed', $rendered);
+        $this->assertStringContainsString('not on the site yet', $rendered);
+        $this->assertStringNotContainsString('sam@example.com', $rendered);
+    }
+
+    public function test_submitting_without_an_email_is_rejected(): void
+    {
+        Mail::fake();
         $this->seed(DatabaseSeeder::class);
 
         $type = TrainingType::query()->where('slug', 'reloading')->firstOrFail();
@@ -129,20 +176,17 @@ class TestimonialTest extends TestCase
             'author_name' => 'Sam Shooter',
             'training_type_id' => $type->id,
             'body' => 'Learned exactly what I needed at the bench — highly recommend it.',
-        ])->assertRedirect(route('testimonials.thanks'));
+        ])->assertSessionHasErrors('author_email');
 
-        $this->assertDatabaseHas('testimonials', [
-            'author_name' => 'Sam Shooter',
-            'training_type_id' => $type->id,
-            'is_approved' => false,
-            'source' => TestimonialSource::Shooter->value,
-        ]);
+        $this->assertDatabaseMissing('testimonials', ['author_name' => 'Sam Shooter']);
+        Mail::assertNothingQueued();
     }
 
     public function test_thanks_page_shows_whatsapp_share(): void
     {
         $this->get('/testimonials/thanks')
             ->assertOk()
+            ->assertSee('A copy is on its way to your email')
             ->assertSee('Share on WhatsApp')
             ->assertSee('wa.me/', false);
     }

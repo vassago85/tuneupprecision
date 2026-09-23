@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\TestimonialSource;
+use App\Mail\TestimonialCopy;
 use App\Models\Testimonial;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
+use App\Support\BusinessDetails;
+use App\Support\LegalIdentity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\View as ViewContract;
 
@@ -39,6 +43,7 @@ class TestimonialController extends Controller
 
         return View::make('testimonials.submit', [
             'authorName' => trim((string) $request->query('name', '')),
+            'authorEmail' => trim((string) $request->query('email', '')),
             'trainingType' => $trainingType,
             'trainingEvent' => $trainingEvent,
             // Rendered only when the signed link did not pin a discipline —
@@ -58,20 +63,29 @@ class TestimonialController extends Controller
     {
         $validated = $request->validate([
             'author_name' => ['required', 'string', 'max:120'],
+            'author_email' => ['required', 'email:rfc', 'max:255'],
             'training_type_id' => ['required', 'integer', 'exists:training_types,id'],
             'training_event_id' => ['nullable', 'integer', 'exists:training_events,id'],
             'body' => ['required', 'string', 'min:10', 'max:800'],
         ]);
 
-        Testimonial::create([
+        $testimonial = Testimonial::create([
             'training_type_id' => (int) $validated['training_type_id'],
             'training_event_id' => $validated['training_event_id'] ?? null,
             'author_name' => trim($validated['author_name']),
+            'author_email' => mb_strtolower(trim($validated['author_email'])),
             'body' => trim($validated['body']),
             'is_approved' => false,
             'source' => TestimonialSource::Shooter,
             'submitted_at' => now(),
         ]);
+
+        $testimonial->load('trainingType');
+
+        $dirk = BusinessDetails::details()['email'] ?? LegalIdentity::email();
+
+        Mail::to($dirk)->queue(new TestimonialCopy($testimonial, false));
+        Mail::to($testimonial->author_email)->queue(new TestimonialCopy($testimonial, true));
 
         return redirect()->route('testimonials.thanks');
     }

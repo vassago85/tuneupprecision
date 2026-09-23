@@ -38,6 +38,11 @@ class TestimonialForm
                     ->label('Name and surname')
                     ->required()
                     ->maxLength(120),
+                TextInput::make('author_email')
+                    ->label('Email')
+                    ->email()
+                    ->maxLength(255)
+                    ->helperText('Private. Used to email the shooter a copy. Never shown on the site.'),
                 Textarea::make('body')
                     ->label('Testimonial')
                     ->required()

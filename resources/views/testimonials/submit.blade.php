@@ -45,6 +45,13 @@
             @error('author_name')<div class="form-err">{{ $message }}</div>@enderror
           </div>
 
+          <div class="form-field">
+            <label for="author_email">Email</label>
+            <input id="author_email" type="email" name="author_email" value="{{ old('author_email', $authorEmail) }}" autocomplete="email" required maxlength="255">
+            <div class="form-hint">We'll email you a copy. Your address is not published.</div>
+            @error('author_email')<div class="form-err">{{ $message }}</div>@enderror
+          </div>
+
           @unless ($trainingType)
             {{-- Only shown when the link didn't pin a discipline. --}}
             <div class="form-field">

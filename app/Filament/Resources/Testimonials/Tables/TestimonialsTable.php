@@ -35,6 +35,11 @@ class TestimonialsTable
                     ->label('Name')
                     ->searchable()
                     ->weight('bold'),
+                TextColumn::make('author_email')
+                    ->label('Email')
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(),
                 TextColumn::make('trainingType.name')
                     ->label('Discipline')
                     ->badge()

@@ -159,6 +159,7 @@ class SendTestimonialInvitesAction
             now()->addDays(self::INVITE_TTL_DAYS),
             [
                 'name' => $booking->customer_name,
+                'email' => $booking->email,
                 'training_type_id' => $event->courseTemplate?->training_type_id
                     ?? $event->training_type_id,
                 'training_event_id' => $event->id,

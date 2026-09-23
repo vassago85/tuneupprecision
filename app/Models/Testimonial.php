@@ -19,6 +19,7 @@ class Testimonial extends Model
         'training_type_id',
         'training_event_id',
         'author_name',
+        'author_email',
         'body',
         'is_approved',
         'source',

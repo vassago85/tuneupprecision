@@ -12,7 +12,7 @@
         <div class="sec-head" style="margin-bottom:22px">
           <span class="eyebrow">Testimonial in</span>
           <h2 style="font-size:36px">Thanks — got it.</h2>
-          <p>Dirk will give it a quick read and publish it to the site. If anything needs a small edit for length or clarity, we'll flick you an email first.</p>
+          <p>A copy is on its way to your email. It stays off the site until Dirk has read it.</p>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:12px;align-items:stretch">
