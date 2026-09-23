@@ -46,7 +46,7 @@
           </div>
 
           @unless ($trainingType)
-            {{-- Only shown when the signed URL didn't pin a discipline. --}}
+            {{-- Only shown when the link didn't pin a discipline. --}}
             <div class="form-field">
               <label for="training_type_id">Which training did you do?</label>
               <select id="training_type_id" name="training_type_id" required>

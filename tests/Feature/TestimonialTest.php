@@ -7,13 +7,17 @@ namespace Tests\Feature;
 use App\Enums\BookingStatus;
 use App\Enums\TestimonialSource;
 use App\Enums\TrainingEventStatus;
+use App\Enums\UserRole;
 use App\Filament\Resources\TrainingEvents\Actions\SendTestimonialInvitesAction;
+use App\Filament\Widgets\TestimonialLinkWidget;
 use App\Mail\TestimonialInvitation;
 use App\Models\Booking;
 use App\Models\CourseTemplate;
 use App\Models\Testimonial;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
+use App\Models\User;
+use Livewire\Livewire;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -65,12 +69,34 @@ class TestimonialTest extends TestCase
             ->assertSee('Meet Dirk');
     }
 
-    public function test_submit_form_requires_a_valid_signature(): void
+    public function test_public_submit_form_lets_a_shooter_pick_a_discipline(): void
     {
         $this->seed(DatabaseSeeder::class);
 
+        $type = TrainingType::query()->where('slug', 'prs')->firstOrFail();
+
         $this->get('/testimonials/submit')
-            ->assertForbidden();
+            ->assertOk()
+            ->assertSee('Tell us how it went.')
+            ->assertSee('Which training did you do?')
+            ->assertSee($type->name)
+            ->assertSee('Submit testimonial');
+    }
+
+    public function test_admin_dashboard_shows_the_shooter_testimonial_link(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+
+        $this->actingAs($admin)
+            ->get('/admin')
+            ->assertOk()
+            ->assertSee('Shooter testimonial link')
+            ->assertSee(route('testimonials.create'), false);
+
+        Livewire::actingAs($admin)
+            ->test(TestimonialLinkWidget::class)
+            ->assertSee('Copy link')
+            ->assertSee(route('testimonials.create'), false);
     }
 
     public function test_signed_submit_form_prefills_name_discipline_and_event(): void

@@ -16,9 +16,9 @@ use Illuminate\View\View as ViewContract;
 class TestimonialController extends Controller
 {
     /**
-     * Public submit form. Reached via a signed URL emailed to attendees after
-     * training. The `signed` middleware (on the route) enforces the signature;
-     * we only decorate the pre-filled context here.
+     * Public submit form. The stable URL is copied from the admin dashboard
+     * and sent to shooters. Invite emails still pass name, discipline, and
+     * event as query params so those links open pre-filled.
      */
     public function create(Request $request): ViewContract
     {

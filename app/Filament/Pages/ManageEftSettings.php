@@ -7,6 +7,7 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use App\Support\BusinessDetails;
 use App\Support\Eft;
+use App\Support\SocialLinks;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -41,6 +42,7 @@ class ManageEftSettings extends Page
         $this->form->fill([
             ...Eft::details(),
             ...BusinessDetails::details(),
+            ...SocialLinks::details(),
         ]);
     }
 
@@ -87,6 +89,31 @@ class ManageEftSettings extends Page
                             ->label('Dealer number')
                             ->maxLength(255),
                     ]),
+                Section::make('Social links')
+                    ->description('Icons in the site footer. Leave a field blank to hide that icon.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('instagram')
+                            ->label('Instagram')
+                            ->url()
+                            ->maxLength(500)
+                            ->placeholder('https://instagram.com/tuneupprecision'),
+                        TextInput::make('facebook')
+                            ->label('Facebook')
+                            ->url()
+                            ->maxLength(500)
+                            ->placeholder('https://facebook.com/tuneupprecision'),
+                        TextInput::make('youtube')
+                            ->label('YouTube')
+                            ->url()
+                            ->maxLength(500)
+                            ->placeholder('https://youtube.com/@tuneupprecision'),
+                        TextInput::make('whatsapp')
+                            ->label('WhatsApp')
+                            ->url()
+                            ->maxLength(500)
+                            ->placeholder('https://wa.me/27821234567'),
+                    ]),
             ])
             ->statePath('data');
     }
@@ -103,8 +130,13 @@ class ManageEftSettings extends Page
             Setting::put("business.{$key}", $data[$key] ?? null);
         }
 
+        foreach (SocialLinks::keys() as $key) {
+            $value = trim((string) ($data[$key] ?? ''));
+            Setting::put("social.{$key}", $value === '' ? null : $value);
+        }
+
         Notification::make()
-            ->title('EFT settings saved')
+            ->title('Settings saved')
             ->success()
             ->send();
     }

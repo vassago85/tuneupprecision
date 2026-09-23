@@ -282,11 +282,10 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:8,1')
     ->name('contact.store');
 
-// Testimonials — the create route is reached via a signed URL emailed to
-// attendees after training (see App\Mail\TestimonialInvitation). Every
+// Testimonials — a stable public link (shared from the admin dashboard) plus
+// the signed invite emails, which still pre-fill name and event. Every
 // submission is queued for admin approval before appearing on the site.
 Route::get('/testimonials/submit', [TestimonialController::class, 'create'])
-    ->middleware('signed')
     ->name('testimonials.create');
 Route::post('/testimonials', [TestimonialController::class, 'store'])
     ->middleware('throttle:5,60')

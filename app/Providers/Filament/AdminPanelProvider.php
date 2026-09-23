@@ -6,6 +6,7 @@ use App\Filament\Widgets\KpiStatsWidget;
 use App\Filament\Widgets\LowStockProductsWidget;
 use App\Filament\Widgets\PaymentsAttentionWidget;
 use App\Filament\Widgets\QuotesOverviewWidget;
+use App\Filament\Widgets\TestimonialLinkWidget;
 use App\Filament\Widgets\UpcomingTrainingWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -84,6 +85,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
+                TestimonialLinkWidget::class,
                 KpiStatsWidget::class,
                 QuotesOverviewWidget::class,
                 UpcomingTrainingWidget::class,
