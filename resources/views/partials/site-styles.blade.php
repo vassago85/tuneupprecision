@@ -283,9 +283,14 @@
   .tst-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
   .tst-head .sec-head{margin-bottom:0}
   .tst-nav{display:flex;gap:8px;flex:none}
-  .tst-scroll{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 8px;scrollbar-width:none}
+  .tst-scroll{display:flex;align-items:stretch;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 8px;scrollbar-width:none}
   .tst-scroll::-webkit-scrollbar{display:none}
-  .tst-card{flex:0 0 min(420px,86%);scroll-snap-align:start;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 22px;display:flex;flex-direction:column;min-height:210px;box-shadow:var(--shadow)}
+  .tst-card{flex:0 0 calc((100% - 32px) / 3);min-width:0;scroll-snap-align:start;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 22px;display:flex;flex-direction:column;min-height:210px;box-shadow:var(--shadow)}
+  /* One or two quotes fill the row. Three sit side by side. A fourth starts the scroll. */
+  .tst-single .tst-scroll,.tst-pair .tst-scroll,.tst-trio .tst-scroll{overflow:visible;scroll-snap-type:none}
+  .tst-single .tst-card{flex:1 1 100%}
+  .tst-pair .tst-card,.tst-trio .tst-card{flex:1 1 0}
+  @media (min-width:721px){.tst-nav-fit{display:none}}
   .tst-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:14px}
   .tst-body{flex:1;font-family:var(--disp);font-size:22px;line-height:1.35;color:var(--charcoal);margin:0;font-weight:600;text-transform:none;letter-spacing:0}
   .tst-open,.tst-close{color:var(--copper);font-size:28px;font-weight:700;line-height:1;margin:0 2px}
@@ -711,7 +716,8 @@
   @media (max-width:720px){
     nav.links,.nav-actions .btn,.nav-user,.nav-user-in{display:none}
     .hamburger{display:grid;place-items:center}
-    .tst-card{flex-basis:88%}
+    .tst-card,.tst-pair .tst-card,.tst-trio .tst-card{flex:0 0 88%}
+    .tst-pair .tst-scroll,.tst-trio .tst-scroll{overflow-x:auto;scroll-snap-type:x mandatory}
     .tst-body{font-size:20px}
     .tst-arrow{width:34px;height:34px}
     .hero-data{flex-wrap:wrap}.hero-data .cell{min-width:100%;border-right:0;border-bottom:1px solid var(--line-soft)}

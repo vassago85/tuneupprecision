@@ -3,11 +3,19 @@
 @php
     /** @var \Illuminate\Support\Collection $items */
     $items = collect($testimonials)->values();
+    $count = $items->count();
+    $layout = match (true) {
+        $count === 1 => 'tst-single',
+        $count === 2 => 'tst-pair',
+        $count === 3 => 'tst-trio',
+        default => '',
+    };
 @endphp
 
 @if ($items->isNotEmpty())
   <section
     id="testimonials"
+    @class([$layout])
     x-data="{
       atStart: true,
       atEnd: false,
@@ -28,8 +36,11 @@
         else el.scrollBy({ left: dir * w, behavior: 'smooth' });
       },
       start() {
-        if ({{ $items->count() }} < 2) return;
+        const n = {{ $count }};
+        if (n < 2) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const wide = window.matchMedia('(min-width: 721px)').matches;
+        if (wide && n <= 3) return;
         this.stop();
         this.timer = setInterval(() => this.step(1), 6000);
       },
@@ -47,8 +58,8 @@
           <span class="eyebrow">In their words</span>
           <h2>What shooters say.</h2>
         </div>
-        @if ($items->count() > 1)
-          <div class="tst-nav">
+        @if ($count > 1)
+          <div @class(['tst-nav', 'tst-nav-fit' => $count <= 3])>
             <button type="button" class="tst-arrow" @click="step(-1)" aria-label="Previous testimonial">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
             </button>
