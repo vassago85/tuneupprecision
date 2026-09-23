@@ -7,6 +7,8 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use App\Support\BusinessDetails;
 use App\Support\Eft;
+use App\Support\Money;
+use App\Support\ShopShipping;
 use App\Support\SocialLinks;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
@@ -43,6 +45,7 @@ class ManageEftSettings extends Page
             ...Eft::details(),
             ...BusinessDetails::details(),
             ...SocialLinks::details(),
+            'shipping_rands' => ShopShipping::cents() / 100,
         ]);
     }
 
@@ -89,6 +92,18 @@ class ManageEftSettings extends Page
                             ->label('Dealer number')
                             ->maxLength(255),
                     ]),
+                Section::make('Shop delivery')
+                    ->description('A flat courier fee on every shop order. It is shown on the cart and at checkout before anyone pays. 0 keeps delivery included in the product price.')
+                    ->schema([
+                        TextInput::make('shipping_rands')
+                            ->label('Courier fee')
+                            ->prefix('R')
+                            ->numeric()
+                            ->minValue(0)
+                            ->step(0.01)
+                            ->required()
+                            ->helperText('0 means Included. 150.00 charges a flat R150.00.'),
+                    ]),
                 Section::make('Social links')
                     ->description('Icons in the site footer. Leave a field blank to hide that icon.')
                     ->columns(2)
@@ -134,6 +149,8 @@ class ManageEftSettings extends Page
             $value = trim((string) ($data[$key] ?? ''));
             Setting::put("social.{$key}", $value === '' ? null : $value);
         }
+
+        Setting::put('shop.shipping_cents', (string) Money::toCents($data['shipping_rands'] ?? 0));
 
         Notification::make()
             ->title('Settings saved')

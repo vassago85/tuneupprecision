@@ -132,11 +132,11 @@ docker compose logs -f app
 ```bash
 cd /opt/tuneupprecision && git pull origin main \
   && docker compose build --no-cache app \
-  && docker compose up -d --force-recreate app scheduler queue
+  && docker compose up -d --force-recreate app scheduler queue \
+  && docker exec tuneupprecision-app php artisan db:seed --class=ProductSeeder --force
 ```
 
-The entrypoint auto-handles migrations, cache warming, Livewire + Filament
-assets, and the storage link on every boot. It also runs `php artisan legal:check`
+The entrypoint runs migrations, cache warming, Livewire and Filament assets, and the storage link on every boot. The product seed then adds the four merch lines if they are missing. It does not change stock or prices already saved, and it does not publish consignment stock. The entrypoint also runs `php artisan legal:check`
 and **warns** if a required legal identity value is empty or still a placeholder.
 The site still starts. Set `LEGAL_ENFORCE=true` in `.env` only after the real
 `LEGAL_*` values (or Settings overrides) are in place — then a failed check

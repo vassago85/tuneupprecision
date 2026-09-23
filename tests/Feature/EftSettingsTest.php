@@ -7,6 +7,8 @@ namespace Tests\Feature;
 use App\Filament\Pages\ManageEftSettings;
 use App\Models\Setting;
 use App\Models\User;
+use App\Support\Eft;
+use App\Support\ShopShipping;
 use App\Support\SocialLinks;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -39,7 +41,7 @@ class EftSettingsTest extends TestCase
     {
         Setting::put('eft.bank_name', 'Nedbank');
 
-        $details = \App\Support\Eft::details();
+        $details = Eft::details();
 
         $this->assertSame('Nedbank', $details['bank_name']);
         // Unset key falls back to the config/env default.
@@ -75,6 +77,32 @@ class EftSettingsTest extends TestCase
             'facebook',
             'whatsapp',
         ], array_column(SocialLinks::visible(), 'key'));
+    }
+
+    public function test_admin_can_set_the_shop_courier_fee(): void
+    {
+        $admin = User::factory()->create();
+
+        Livewire::actingAs($admin)
+            ->test(ManageEftSettings::class)
+            ->fillForm([
+                'shipping_rands' => 150,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('15000', Setting::get('shop.shipping_cents'));
+        $this->assertSame(15000, ShopShipping::cents());
+
+        Livewire::actingAs($admin)
+            ->test(ManageEftSettings::class)
+            ->fillForm([
+                'shipping_rands' => 0,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame(0, ShopShipping::cents());
     }
 
     public function test_social_link_rejects_a_value_that_is_not_a_url(): void

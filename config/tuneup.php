@@ -37,8 +37,9 @@ return [
     | Shop
     |--------------------------------------------------------------------------
     |
-    | Courier fee in cents, shown before checkout. 0 means delivery is included
-    | in the product price. Set SHOP_SHIPPING_CENTS to charge a flat national fee.
+    | Courier fee in cents. 0 means delivery is included in the product price.
+    | SHOP_SHIPPING_CENTS is the fallback until a fee is saved under
+    | Admin → Settings → Shop delivery. A saved 0 still means included.
     |
     */
 

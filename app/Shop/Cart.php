@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shop;
 
 use App\Models\Product;
+use App\Support\ShopShipping;
 use App\Support\VatPrice;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
@@ -138,7 +139,7 @@ final class Cart
             return 0;
         }
 
-        return max(0, (int) config('tuneup.shop.shipping_cents', 0));
+        return ShopShipping::cents();
     }
 
     public function totalCents(): int

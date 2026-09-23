@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Support\BusinessDetails;
 use App\Support\LegalIdentity;
+use App\Support\ShopShipping;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
@@ -56,7 +57,7 @@ final class PlaceShopOrder
                 $goods += (int) $product->price_cents * $qty;
             }
 
-            $shipping = $goods > 0 ? max(0, (int) config('tuneup.shop.shipping_cents', 0)) : 0;
+            $shipping = $goods > 0 ? ShopShipping::cents() : 0;
 
             $order = Order::query()->create([
                 'customer_name' => $customer['customer_name'],

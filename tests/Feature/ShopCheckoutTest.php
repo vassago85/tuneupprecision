@@ -9,6 +9,7 @@ use App\Enums\PaymentStatus;
 use App\Mail\OrderPlaced;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -66,7 +67,8 @@ class ShopCheckoutTest extends TestCase
             ->assertOk()
             ->assertSee('Range cap')
             ->assertSee('R640.00')
-            ->assertSee('Includes VAT');
+            ->assertSee('Includes VAT')
+            ->assertSee('Included');
 
         $this->post(route('shop.checkout.place'), $this->customer())
             ->assertRedirect(route('shop.confirmation'));
@@ -91,6 +93,44 @@ class ShopCheckoutTest extends TestCase
         $this->assertFalse((bool) Product::query()->where('sku', 'KES0857XWLFDEM')->value('is_active'));
 
         Mail::assertQueued(OrderPlaced::class, 2);
+    }
+
+    public function test_a_saved_courier_fee_is_shown_before_payment_and_stored_on_the_order(): void
+    {
+        Mail::fake();
+
+        Setting::put('shop.shipping_cents', '15000');
+
+        $product = Product::query()->create([
+            'name' => 'Range cap',
+            'slug' => 'range-cap-courier',
+            'category' => 'Headwear',
+            'price_cents' => 32000,
+            'stock_qty' => 2,
+            'is_active' => true,
+        ]);
+
+        $this->post(route('shop.cart.add'), [
+            'product_id' => $product->id,
+            'qty' => 1,
+        ])->assertRedirect();
+
+        $this->get(route('shop'))
+            ->assertOk()
+            ->assertSee('R150.00');
+
+        $this->get(route('shop.checkout'))
+            ->assertOk()
+            ->assertSee('R150.00')
+            ->assertSee('R470.00');
+
+        $this->post(route('shop.checkout.place'), $this->customer())
+            ->assertRedirect(route('shop.confirmation'));
+
+        $order = Order::query()->first();
+        $this->assertSame(32000, $order->subtotal_cents);
+        $this->assertSame(15000, $order->shipping_cents);
+        $this->assertSame(47000, $order->payment->amount_cents);
     }
 
     /**

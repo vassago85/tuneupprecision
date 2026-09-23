@@ -7,7 +7,6 @@ namespace Database\Seeders;
 use App\Enums\TrainingEventStatus;
 use App\Enums\UserRole;
 use App\Models\CourseTemplate;
-use App\Models\Product;
 use App\Models\TrainingType;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -20,7 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedAdmin();
         $this->seedCourses();
-        $this->seedProducts();
+        $this->call(ProductSeeder::class);
         $this->call(CompetitionEventSeeder::class);
         $this->call(ComponentSeeder::class);
         // Sample testimonials for the homepage carousel — Dirk deletes/edits
@@ -277,55 +276,6 @@ class DatabaseSeeder extends Seeder
 
                 $eventOffset++;
             }
-        }
-    }
-
-    protected function seedProducts(): void
-    {
-        $products = [
-            [
-                'name' => 'Tune Up Trucker Cap',
-                'category' => 'Headwear',
-                'description' => '3D puff-embroidered trucker cap in tactical charcoal with a copper reticle.',
-                'price_cents' => 32000,
-                'stock_qty' => 25,
-            ],
-            [
-                'name' => 'Reticle Morale Patch',
-                'category' => 'Patch · Velcro',
-                'description' => 'PVC velcro-backed morale patch featuring the Tune Up reticle mark.',
-                'price_cents' => 15000,
-                'stock_qty' => 40,
-            ],
-            [
-                'name' => 'Weatherproof DOPE Cards',
-                'category' => 'Range · Data',
-                'description' => 'Set of 5 weatherproof DOPE cards for logging your ballistic solution on the line.',
-                'price_cents' => 18000,
-                'stock_qty' => 60,
-            ],
-            [
-                // Deliberately out of stock — proves the available() scope hides it.
-                'name' => 'Mini IPSC Gong 200mm',
-                'category' => 'Steel · 6mm',
-                'description' => '200 mm AR500 mini IPSC gong, rated for 6 mm centrefire at distance.',
-                'price_cents' => 69000,
-                'stock_qty' => 0,
-            ],
-        ];
-
-        foreach ($products as $data) {
-            Product::updateOrCreate(
-                ['slug' => Str::slug($data['name'])],
-                [
-                    'name' => $data['name'],
-                    'category' => $data['category'],
-                    'description' => $data['description'],
-                    'price_cents' => $data['price_cents'],
-                    'stock_qty' => $data['stock_qty'],
-                    'is_active' => true,
-                ],
-            );
         }
     }
 }
