@@ -101,12 +101,12 @@
   .hero h1{font-size:clamp(48px,7.4vw,92px);color:var(--charcoal);font-weight:800}
   .hero h1 .cop{color:var(--copper)}
   .hero h1 .shimmer{
-    background-image:linear-gradient(90deg,var(--copper-deeper) 0%,var(--copper-deeper) 36%,#F6D2BE 50%,var(--copper) 64%,var(--copper-deeper) 100%);
-    background-size:200% 100%;
+    background-image:linear-gradient(100deg,var(--copper-deeper) 0%,var(--copper-deeper) 42%,var(--copper) 50%,#E8B197 56%,var(--copper) 62%,var(--copper-deeper) 70%,var(--copper-deeper) 100%);
+    background-size:220% 100%;
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:shimmer 2.8s linear infinite;
+    animation:shimmer 8s ease-in-out infinite alternate;
   }
-  @keyframes shimmer{from{background-position:200% center}to{background-position:-200% center}}
+  @keyframes shimmer{from{background-position:100% center}to{background-position:0% center}}
   .hero p.lead{font-size:19px;color:var(--muted);max-width:46ch;margin:22px 0 30px}
   .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
   .hero-data{display:flex;gap:0;margin-top:34px;border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden}
