@@ -52,7 +52,7 @@
         <p>Full days at a private facility — on the line, at the bench or on the pistol range, depending on the discipline. Bring your firearm and ammo; targets and use of the ballistic and reloading kit are included.</p>
       </div>
 
-      <div class="courses spot-grid">
+      <div class="courses">
         @foreach ($disciplines as $discipline)
           <x-training.discipline-card
             :type="$discipline['type']"
@@ -78,7 +78,5 @@
       </div>
     </div>
   </section>
-
-  <x-site.cta-band />
 
 </x-layouts.site>

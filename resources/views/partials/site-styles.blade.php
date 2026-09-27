@@ -211,15 +211,17 @@
   /* Two-up (2×2) at desktop so four discipline cards read as a balanced grid.
      Collapses to a single column on narrow screens (see mobile rules below). */
   .courses{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;align-items:stretch}
-  .course{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 24px;display:flex;flex-direction:column;position:relative;transition:transform .2s ease, box-shadow .2s ease, opacity .18s ease}
-  .course:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+  .course{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 24px;display:flex;flex-direction:column;position:relative;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease}
+  /* Subtle hover: small lift + copper border tint, no shimmer/glow/sibling-dim.
+     The .spot spotlight stack was removed from the courses page markup because
+     it read as too much motion on a page full of dense date rows. */
+  .course:hover{transform:translateY(-2px);box-shadow:0 12px 28px -18px rgba(11,34,57,.32);border-color:var(--copper-deep)}
   .course.feat{border-color:var(--copper);box-shadow:0 20px 44px -24px rgba(212,91,46,.5)}
   .course .tag{position:absolute;top:-11px;right:20px;background:var(--copper-deep);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:20px}
   .course .lvl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--gray);text-transform:uppercase}
   /* Course photo — featured thumbnail (or first gallery image) uploaded in admin. */
   .course-photo{position:relative;margin:-2px 0 18px;border-radius:12px;overflow:hidden;aspect-ratio:16/10;background:var(--base-2);border:1px solid var(--line-soft)}
-  .course-photo img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
-  .course:hover .course-photo img{transform:scale(1.03)}
+  .course-photo img{width:100%;height:100%;object-fit:cover}
   .course h3{font-size:29px;color:var(--charcoal);margin:8px 0 8px}
   .course .desc{font-size:14.5px;color:var(--muted);min-height:44px;margin-bottom:18px}
   .spec{border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);padding:14px 0;margin-bottom:20px;display:grid;gap:9px}
