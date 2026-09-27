@@ -61,8 +61,33 @@ class ShopController extends Controller
     {
         abort_unless($product->is_active && $product->stock_qty > 0 && $product->price_cents > 0, 404);
 
+        $product->load('media');
+
+        $related = Product::query()
+            ->available()
+            ->with('media')
+            ->whereKeyNot($product->id)
+            ->when(
+                filled($product->category),
+                fn ($query) => $query->where('category', $product->category),
+            )
+            ->orderBy('name')
+            ->limit(4)
+            ->get();
+
+        if ($related->isEmpty()) {
+            $related = Product::query()
+                ->available()
+                ->with('media')
+                ->whereKeyNot($product->id)
+                ->orderBy('name')
+                ->limit(4)
+                ->get();
+        }
+
         return view('shop.show', [
             'product' => $product,
+            'related' => $related,
         ]);
     }
 

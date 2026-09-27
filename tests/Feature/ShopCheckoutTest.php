@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -54,9 +55,31 @@ class ShopCheckoutTest extends TestCase
             ->assertSee('Range cap')
             ->assertSee('Charcoal trucker with a copper reticle.');
 
+        $same = Product::query()->create([
+            'name' => 'Range beanie',
+            'slug' => 'range-beanie',
+            'category' => 'Headwear',
+            'price_cents' => 18000,
+            'stock_qty' => 3,
+            'is_active' => true,
+        ]);
+        $other = Product::query()->create([
+            'name' => 'Bore snake',
+            'slug' => 'bore-snake',
+            'category' => 'Cleaning',
+            'price_cents' => 9000,
+            'stock_qty' => 5,
+            'is_active' => true,
+        ]);
+
         $this->get(route('shop.show', $product))
             ->assertOk()
-            ->assertSee('Includes 15% VAT');
+            ->assertSee('Includes 15% VAT')
+            ->assertSee('In stock')
+            ->assertSee('Delivery inside South Africa')
+            ->assertSee('More in Headwear')
+            ->assertSee($same->name)
+            ->assertDontSee($other->name);
 
         $this->post(route('shop.cart.add'), [
             'product_id' => $product->id,
@@ -131,6 +154,30 @@ class ShopCheckoutTest extends TestCase
         $this->assertSame(32000, $order->subtotal_cents);
         $this->assertSame(15000, $order->shipping_cents);
         $this->assertSame(47000, $order->payment->amount_cents);
+    }
+
+    public function test_a_product_page_shows_every_photo(): void
+    {
+        $product = Product::query()->create([
+            'name' => 'Walker muff',
+            'slug' => 'walker-muff',
+            'category' => 'Hearing',
+            'price_cents' => 309005,
+            'stock_qty' => 2,
+            'is_active' => true,
+        ]);
+
+        $product->addMedia(UploadedFile::fake()->image('front.jpg', 400, 680))
+            ->toMediaCollection('images');
+        $product->addMedia(UploadedFile::fake()->image('side.jpg', 400, 680))
+            ->toMediaCollection('images');
+
+        $response = $this->get(route('shop.show', $product))->assertOk();
+
+        foreach ($product->fresh()->getMedia('images') as $index => $image) {
+            $response->assertSee($image->getUrl('web') ?: $image->getUrl(), false);
+            $response->assertSee('photo '.($index + 1).' of 2', false);
+        }
     }
 
     /**
