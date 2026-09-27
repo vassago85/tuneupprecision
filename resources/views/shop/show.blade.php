@@ -1,6 +1,9 @@
+@php($shareImage = $product->getFirstMediaUrl('images', 'web') ?: ($product->getFirstMediaUrl('images') ?: null))
 <x-layouts.site
     :title="$product->name"
     :description="$product->description ?: $product->name.' — Tune Up Precision shop. Price includes VAT.'"
+    :image="$shareImage"
+    type="product"
 >
 
   <section>

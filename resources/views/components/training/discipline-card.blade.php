@@ -13,10 +13,17 @@
     $blurb = $representative?->blurb ?? $type?->blurb;
 
     $specs = collect($representative?->specs ?? [])->all();
+    $photo = $representative?->thumbnailUrl('web') ?? $representative?->thumbnailUrl(null);
 @endphp
 <div class="course discipline {{ $featured ? 'feat' : '' }} reveal spot" id="{{ $type?->slug }}">
   @if ($featured)
     <span class="tag">Most booked</span>
+  @endif
+
+  @if ($photo)
+    <div class="course-photo">
+      <img src="{{ $photo }}" alt="{{ $representative?->title ?? $type?->name }}" loading="lazy">
+    </div>
   @endif
 
   <div class="evt-date">{{ $type?->name }}</div>
