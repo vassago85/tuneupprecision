@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
 
     protected function seedAdmin(): void
     {
-        $email = (string) env('ADMIN_EMAIL', 'dirk@tuneupprecision.co.za');
+        $email = (string) env('ADMIN_EMAIL', 'dirkpio01@gmail.com');
         $password = (string) env('ADMIN_PASSWORD', 'password');
 
         $admin = User::updateOrCreate(

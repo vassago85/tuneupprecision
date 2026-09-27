@@ -317,6 +317,10 @@
   .about-photo .frame::after{left:50%;top:-1px;bottom:-1px;width:1px;opacity:.5}
   .about-copy h2{font-size:clamp(30px,4vw,46px);color:var(--charcoal);margin:14px 0 18px;font-weight:800}
   .about-copy p{color:var(--muted);margin:0 0 16px}
+  /* Credential list uses the shared .learn-list bullet — add breathing room
+     so it doesn't butt against the "why it matters" paragraph below. */
+  .about-copy .learn-list{margin:0 0 20px}
+  .about-copy .learn-list li{font-size:14.5px;line-height:1.5}
   .cred-line{display:flex;flex-wrap:wrap;align-items:center;margin:0 0 20px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--gray);line-height:1.7}
   .cred-line span:not(:last-child)::after{content:"·";color:var(--copper-deep);margin:0 12px;font-weight:700}
   .creds{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}

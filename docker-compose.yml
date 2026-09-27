@@ -24,7 +24,7 @@ services:
       - APP_KEY=${APP_KEY}
       - RUN_SEED=${RUN_SEED:-false}
       - ADMIN_NAME=${ADMIN_NAME:-Dirk}
-      - ADMIN_EMAIL=${ADMIN_EMAIL:-dirk@tuneupprecision.co.za}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-dirkpio01@gmail.com}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
       - DB_CONNECTION=pgsql
       - DB_HOST=db

@@ -88,7 +88,10 @@
     {{-- Testimonials — flat social-proof strip, not a page destination. --}}
     <x-site.testimonials :testimonials="$testimonials ?? collect()" />
 
-    {{-- Meet Dirk — the human anchor before the site starts selling training. --}}
+    {{-- Meet Dirk — credibility block. Reworked from "Meet Dirk." to a full --}}
+    {{-- instructor sell: eyebrow → name → role → credential list → why it   --}}
+    {{-- matters to the student. Uses existing .learn-list bullet styling so --}}
+    {{-- no bespoke CSS is introduced.                                        --}}
     <section id="about">
       <div class="wrap about-grid">
         <div class="about-photo reveal">
@@ -96,19 +99,20 @@
           <div class="frame"></div>
         </div>
         <div class="about-copy reveal">
-          <span class="eyebrow">Your instructor</span>
-          <h2>Meet Dirk.</h2>
+          <span class="eyebrow">Train with someone who actually competes</span>
+          <h2>Dirk Pio.</h2>
           <div class="cred-line">
-            <span>Founder &amp; first Chairperson, Pretoria Precision Rifle Club</span>
-            <span>Co-founder, Royal Flush Steel Challenge</span>
-            <span>SAPRF board</span>
-            <span>Match director</span>
+            <span>Founder — Tune Up Long Range Precision</span>
           </div>
-          <p>Tune Up runs on one idea: long range precision, shooting and reloading alike, is a process you can learn, not a talent you're born with. Dirk coaches from the same process he runs on the line and at the bench: methodically, with the data to back every call.</p>
+          <ul class="learn-list">
+            <li>10+ years on the line — rifle and handgun.</li>
+            <li>Active PRS competitor.</li>
+            <li>Match director, Royal Flush Steel Challenge.</li>
+            <li>Founder &amp; first Chairperson, Pretoria Precision Rifle Club.</li>
+            <li>SAPRF board.</li>
+          </ul>
+          <p>This isn't classroom theory. Every course is built around the same techniques, equipment and decision-making Dirk uses on the competition line and at his own bench.</p>
           <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
-          <div class="creds">
-            <div class="cred"><div class="n">10+</div><div class="l">Years on the line</div></div>
-          </div>
         </div>
       </div>
     </section>

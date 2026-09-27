@@ -77,7 +77,7 @@ The seeder prints the credentials. Defaults (override via `.env`
 `ADMIN_EMAIL` / `ADMIN_PASSWORD`):
 
 - **URL:** `/admin`
-- **Email:** `dirk@tuneupprecision.co.za`
+- **Email:** `dirkpio01@gmail.com`
 - **Password:** `password`
 
 ## Tests

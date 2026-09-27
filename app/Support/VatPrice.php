@@ -36,6 +36,21 @@ final class VatPrice
     }
 
     /**
+     * Ex-VAT amount in cents that produced the given inclusive amount.
+     * Inverse of includedVatCents(): $inclusive - VAT-portion. Used by the
+     * product form's live-linked "Shop price incl. VAT" input to back-fill
+     * the stored ex-VAT field when the shopkeeper types the sticker price.
+     */
+    public static function exVatCents(int $inclusiveCents): int
+    {
+        if ($inclusiveCents <= 0) {
+            return 0;
+        }
+
+        return $inclusiveCents - self::includedVatCents($inclusiveCents);
+    }
+
+    /**
      * Inclusive cents from an ex-VAT amount in cents.
      *
      * When $roundUp is true the result is raised to the next whole rand.

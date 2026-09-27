@@ -33,4 +33,23 @@ class VatPriceTest extends TestCase
         $this->assertSame(8050, VatPrice::inclusiveCents(7000, false));
         $this->assertSame(8100, VatPrice::inclusiveCents(7000, true));
     }
+
+    public function test_ex_vat_round_trips_through_the_inclusive_amount(): void
+    {
+        // Backs the product form's live-linked "Shop price incl. VAT" input:
+        // typing an inclusive price must resolve to the same ex-VAT cents that
+        // produced it in the first place.
+        $ex = 20000; // R200.00
+        $incl = VatPrice::inclusiveCents($ex, false); // R230.00 at 15%
+
+        $this->assertSame($ex, VatPrice::exVatCents($incl));
+        // And the VAT portion equals the difference — trivial identity check.
+        $this->assertSame($incl - $ex, VatPrice::includedVatCents($incl));
+    }
+
+    public function test_ex_vat_of_zero_or_negative_returns_zero(): void
+    {
+        $this->assertSame(0, VatPrice::exVatCents(0));
+        $this->assertSame(0, VatPrice::exVatCents(-500));
+    }
 }
