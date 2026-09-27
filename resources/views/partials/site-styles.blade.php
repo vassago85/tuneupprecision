@@ -210,8 +210,19 @@
   #courses{background:var(--base-2)}
   /* Two-up (2×2) at desktop so four discipline cards read as a balanced grid.
      Collapses to a single column on narrow screens (see mobile rules below). */
-  .courses{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;align-items:stretch}
+  .courses{display:grid;grid-template-columns:repeat(2,1fr);column-gap:20px;row-gap:16px;align-items:stretch}
   .course{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:26px 24px 24px;display:flex;flex-direction:column;position:relative;transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease}
+  /* Discipline cards share four row tracks with the card beside them
+     (intro, specs, price, dates) so the price and the spec block sit on
+     the same line even when the "what you'll learn" lists differ in length. */
+  .course.discipline{display:grid;grid-template-rows:subgrid;grid-row:span 4;align-content:start}
+  .course.discipline .course-top{display:flex;flex-direction:column;min-width:0}
+  .course.discipline .course-specs{align-self:start;min-width:0}
+  .course.discipline .course-specs .spec{margin-bottom:0}
+  .course.discipline .dates{margin-top:0}
+  .course.discipline .price{margin:0;align-self:end;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+  .course.discipline .price .price-main{display:flex;align-items:baseline;gap:8px}
+  .course.discipline .price > .text-lead{display:block;min-height:14px;order:0;line-height:14px}
   /* Subtle hover: small lift + copper border tint, no shimmer/glow/sibling-dim.
      The .spot spotlight stack was removed from the courses page markup because
      it read as too much motion on a page full of dense date rows. */
@@ -248,8 +259,8 @@
   .schedule-empty{background:var(--paper);border:1px dashed var(--line);border-radius:16px;padding:40px 28px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:14px}
   /* compact date list under discipline cards */
   .course.discipline .desc{min-height:0;margin-bottom:14px}
-  .course.discipline .price{margin-bottom:8px;flex-wrap:wrap}
-  .course.discipline .price s.text-lead{order:-1;letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+  .course.discipline .price s.text-lead{letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+  .course.discipline .spec .row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline}
   /* "What you'll learn" list on discipline cards */
   .learn-block{margin:0 0 16px;padding:14px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
   .learn-title{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--copper-deep);margin-bottom:8px}

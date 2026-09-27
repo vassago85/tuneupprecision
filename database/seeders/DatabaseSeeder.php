@@ -19,7 +19,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->seedAdmin();
         $this->seedCourses();
-        $this->call(ProductSeeder::class);
+        // ProductSeeder deliberately not run — the four starter merch products
+        // (cap, patch, DOPE cards, gong) are no longer part of the routine seed
+        // now that the real shop has moved on. Re-add the call temporarily if
+        // you ever need those four back on a fresh install.
         $this->call(CompetitionEventSeeder::class);
         $this->call(ComponentSeeder::class);
         // Sample testimonials for the homepage carousel — Dirk deletes/edits

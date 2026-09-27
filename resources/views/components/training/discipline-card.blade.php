@@ -16,48 +16,58 @@
     $photo = $representative?->thumbnailUrl('web') ?? $representative?->thumbnailUrl(null);
 @endphp
 <div class="course discipline {{ $featured ? 'feat' : '' }} reveal" id="{{ $type?->slug }}">
-  @if ($featured)
-    <span class="tag">Most booked</span>
-  @endif
+  {{-- Four fixed regions so neighbouring cards share the same rows:
+       intro (grows), specs, price, dates. --}}
+  <div class="course-top">
+    @if ($featured)
+      <span class="tag">Most booked</span>
+    @endif
 
-  @if ($photo)
-    <div class="course-photo">
-      <img src="{{ $photo }}" alt="{{ $representative?->title ?? $type?->name }}" loading="lazy">
-    </div>
-  @endif
+    @if ($photo)
+      <div class="course-photo">
+        <img src="{{ $photo }}" alt="{{ $representative?->title ?? $type?->name }}" loading="lazy">
+      </div>
+    @endif
 
-  <div class="evt-date">{{ $type?->name }}</div>
-  @if ($representative?->level)
-    <div class="lvl">{{ $representative->level }}</div>
-  @endif
-  <h3>{{ $representative?->title ?? $type?->name }}</h3>
-  @if ($blurb)
-    <div class="desc">{{ $blurb }}</div>
-  @endif
+    <div class="evt-date">{{ $type?->name }}</div>
+    @if ($representative?->level)
+      <div class="lvl">{{ $representative->level }}</div>
+    @endif
+    <h3>{{ $representative?->title ?? $type?->name }}</h3>
+    @if ($blurb)
+      <div class="desc">{{ $blurb }}</div>
+    @endif
 
-  @if (! empty($type?->learnings))
-    <div class="learn-block">
-      <div class="learn-title">What you'll learn</div>
-      <ul class="learn-list">
-        @foreach ($type->learnings as $bullet)
-          <li>{{ $bullet }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
+    @if (! empty($type?->learnings))
+      <div class="learn-block">
+        <div class="learn-title">What you'll learn</div>
+        <ul class="learn-list">
+          @foreach ($type->learnings as $bullet)
+            <li>{{ $bullet }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+  </div>
 
-  @if (! empty($specs))
-    <x-site.dope-card :rows="$specs" />
-  @endif
+  <div class="course-specs">
+    @if (! empty($specs))
+      <x-site.dope-card :rows="$specs" />
+    @endif
+  </div>
 
   <div class="price">
-    @if ($fromPriceCents > 0)
-      @if ($priceIsFrom)<s class="text-lead">From</s>@endif
-      <b>{{ Money::format((int) $fromPriceCents, false) }}</b>
-      <s>per shooter</s>
-    @else
-      <b>On request</b>
-    @endif
+    {{-- Always reserve the "From" line so the rand amounts share a baseline
+         whether or not this card's price varies by date. --}}
+    <s class="text-lead">{{ $priceIsFrom && $fromPriceCents > 0 ? 'From' : '' }}</s>
+    <div class="price-main">
+      @if ($fromPriceCents > 0)
+        <b>{{ Money::format((int) $fromPriceCents, false) }}</b>
+        <s>per shooter</s>
+      @else
+        <b>On request</b>
+      @endif
+    </div>
   </div>
 
   <div class="dates">

@@ -107,9 +107,9 @@
           <ul class="learn-list">
             <li>10+ years on the line — rifle and handgun.</li>
             <li>Active PRS competitor.</li>
-            <li>Match director, Royal Flush Steel Challenge.</li>
-            <li>Founder &amp; first Chairperson, Pretoria Precision Rifle Club.</li>
-            <li>SAPRF board.</li>
+            <li>Founder, Royal Flush Steel Challenge.</li>
+            <li>SAPRF match director — hosts provincial and national matches.</li>
+            <li>Founder, Pretoria Precision Rifle Club.</li>
           </ul>
           <p>This isn't classroom theory. Every course is built around the same techniques, equipment and decision-making Dirk uses on the competition line and at his own bench.</p>
           <p>You'll leave with a rifle and a load you trust, a DOPE you built yourself, and the confidence to make the shot when it counts.</p>
