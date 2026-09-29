@@ -41,6 +41,7 @@
           <li><strong>Member accounts</strong> — name, email and password if you register to access gated videos.</li>
           <li><strong>Rifle builder and shop</strong> — build specs, quote details, and the contact details you submit with a request.</li>
           <li><strong>Technical data</strong> — IP address, browser type and basic server logs needed to keep the site secure and working.</li>
+          <li><strong>Site analytics</strong> — pages viewed, device and browser type, and an approximate location, collected by Google Analytics.</li>
         </ul>
         <p>We do not ask for identity numbers, firearm licence numbers or other special personal information on the public forms unless you choose to include them in a message. Please do not send copies of licences or other official documents through the contact form.</p>
 
@@ -51,13 +52,14 @@
           <li>send the monthly newsletter if you asked for it;</li>
           <li>issue quotes, confirm payments and deliver products or builds;</li>
           <li>operate member accounts and gated videos;</li>
+          <li>see which pages are used, so we can improve the site;</li>
           <li>keep the site secure and prevent spam (including a hidden honeypot field and a short timing check on forms);</li>
           <li>meet legal, tax and safety obligations that apply to a South African training and firearms-related business.</li>
         </ul>
-        <p>The legal bases we rely on are your consent (newsletter, optional fields), performance of a contract or taking steps at your request (bookings, quotes, contact replies), and our legitimate interests in running a safe, spam-free site.</p>
+        <p>The legal bases we rely on are your consent (newsletter, optional fields), performance of a contract or taking steps at your request (bookings, quotes, contact replies), and our legitimate interests in running a safe site and understanding how it is used.</p>
 
         <h3>4. Who we share it with</h3>
-        <p>We do not sell personal information. We share it only with operators who help us run the service — email delivery, hosting, and payment or banking channels you use to pay us. Those operators may process data outside South Africa; we expect them to protect it to a standard comparable with POPIA.</p>
+        <p>We do not sell personal information. We share it only with operators who help us run the service — email delivery, hosting, Google Analytics, and payment or banking channels you use to pay us. Those operators may process data outside South Africa; we expect them to protect it to a standard comparable with POPIA. Google’s own privacy policy is at <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">policies.google.com/privacy</a>.</p>
         <p>We may disclose information if a South African law or court requires it, or to protect someone’s safety on the range.</p>
 
         <h3>5. How long we keep it</h3>
@@ -67,7 +69,10 @@
         <p>We protect personal information with TLS on the public site, hashed passwords for member accounts, access control so only authorised people reach admin tools, and retention limits so we do not keep data longer than we need it. No method of transmission or storage is perfectly secure; we take reasonable steps required of a responsible party under POPIA.</p>
 
         <h3>7. Cookies and analytics</h3>
-        <p>The site uses a session cookie so forms and sign-in work. We do not run third-party advertising cookies or analytics scripts. If we add analytics later, this policy will be updated.</p>
+        <p>The site uses a session cookie so forms, the shop cart and sign-in work. That cookie is needed to run the site.</p>
+        <p>We use Google Analytics to see how the public site is used. It sets its own cookies (such as <code>_ga</code>) and sends usage data to Google: pages opened, device and browser type, and an approximate location. We use that to improve the site. We do not use it to advertise to you.</p>
+        <p>Range videos load from YouTube only after you press play. Until then the player uses YouTube’s privacy-enhanced embed, which does not set a YouTube cookie just by opening the page.</p>
+        <p>You can block these cookies in your browser, or install Google’s opt-out add-on: <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener noreferrer" target="_blank">tools.google.com/dlpage/gaoptout</a>.</p>
 
         <h3>8. Your rights</h3>
         <p>You may request access to the personal information we hold about you, ask us to correct it, object to certain processing, withdraw newsletter consent, or ask us to delete it where we have no lawful reason to keep it. Use the <a href="{{ \App\Support\ContactLink::url('Privacy request') }}">contact form</a> and we will respond within a reasonable time.</p>

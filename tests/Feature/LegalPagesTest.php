@@ -25,6 +25,16 @@ class LegalPagesTest extends TestCase
         }
     }
 
+    public function test_privacy_policy_discloses_google_analytics(): void
+    {
+        $this->get('/privacy')
+            ->assertOk()
+            ->assertSee('29 September 2026')
+            ->assertSee('Google Analytics')
+            ->assertSee('policies.google.com/privacy', false)
+            ->assertDontSee('do not run third-party advertising cookies');
+    }
+
     public function test_sitemap_lists_all_legal_documents(): void
     {
         $xml = $this->get('/sitemap.xml')->assertOk()->getContent();
