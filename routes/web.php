@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ShopController;
@@ -55,7 +56,7 @@ Route::get('/courses', function () {
     // Fully-booked dates DO show (as "Fully booked" on the row).
     $trainingTypes = TrainingType::query()
         ->activeOrdered()
-        ->with(['courseTemplates' => fn ($q) => $q->where('is_active', true)])
+        ->with(['courseTemplates' => fn ($q) => $q->where('is_active', true)->orderBy('id')])
         ->get();
 
     $upcomingEvents = TrainingEvent::query()
@@ -82,6 +83,7 @@ Route::get('/courses', function () {
         return [
             'type' => $type,
             'representative' => $representative,
+            'templates' => $type->courseTemplates,
             'events' => $events,
             'from_price_cents' => $fromPriceCents ? (int) $fromPriceCents : ($representative?->base_price_cents ?? 0),
             'price_is_from' => $priceIsFrom,
@@ -92,6 +94,8 @@ Route::get('/courses', function () {
         'disciplines' => $disciplines,
     ]);
 })->name('courses');
+
+Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
 
 Route::get('/calendar', function (Request $request) {
     // Visual month grid. `?month=YYYY-MM` picks the month; default is the

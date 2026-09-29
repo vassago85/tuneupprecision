@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseTemplate;
 use App\Models\Product;
 use Illuminate\Http\Response;
 
@@ -23,6 +24,13 @@ class SitemapController extends Controller
         $urls = [
             $this->url(route('home'), 'weekly', '1.0'),
             $this->url(route('courses'), 'daily', '0.9'),
+            ...CourseTemplate::query()
+                ->where('is_active', true)
+                ->whereHas('trainingType', fn ($q) => $q->where('is_active', true))
+                ->orderBy('title')
+                ->get()
+                ->map(fn (CourseTemplate $course): array => $this->url(route('courses.show', $course), 'weekly', '0.8'))
+                ->all(),
             $this->url(route('calendar'), 'daily', '0.8'),
             $this->url(route('range'), 'weekly', '0.7'),
             $this->url(route('shop'), 'weekly', '0.6'),

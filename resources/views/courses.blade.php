@@ -19,7 +19,7 @@
                 'availability' => $d['events']->contains(fn ($e) => ! $e->isFull())
                     ? 'https://schema.org/InStock'
                     : 'https://schema.org/SoldOut',
-                'url' => route('courses'),
+                'url' => $tpl ? route('courses.show', $tpl) : route('courses'),
             ],
             'hasCourseInstance' => $d['events']->map(fn ($e) => [
                 '@type' => 'CourseInstance',
@@ -57,6 +57,7 @@
           <x-training.discipline-card
             :type="$discipline['type']"
             :representative="$discipline['representative']"
+            :templates="$discipline['templates']"
             :events="$discipline['events']"
             :from-price-cents="$discipline['from_price_cents']"
             :price-is-from="$discipline['price_is_from']"

@@ -106,6 +106,25 @@ class CourseTemplate extends Model implements HasMedia
     }
 
     /**
+     * Absolute image URL for link previews (WhatsApp, etc.). The course's
+     * own tile — featured thumbnail, else the first gallery image.
+     */
+    public function shareImageUrl(): ?string
+    {
+        $url = $this->thumbnailUrl('web') ?? $this->thumbnailUrl(null);
+
+        if ($url === null || $url === '') {
+            return null;
+        }
+
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            return $url;
+        }
+
+        return url($url);
+    }
+
+    /**
      * Display price, e.g. "R1 850.00".
      */
     protected function basePrice(): Attribute

@@ -1,19 +1,25 @@
 @props([
     'type',
     'representative' => null,
+    'templates' => null,
     'events' => null,
     'fromPriceCents' => 0,
     'priceIsFrom' => false,
     'featured' => false,
+    'linked' => true,
 ])
 @php
     use App\Support\Money;
 
     $events = $events ?? collect();
+    $templates = $templates ?? collect();
     $blurb = $representative?->blurb ?? $type?->blurb;
+    $title = $representative?->title ?? $type?->name;
+    $courseUrl = ($linked && $representative) ? route('courses.show', $representative) : null;
 
     $specs = collect($representative?->specs ?? [])->all();
     $photo = $representative?->thumbnailUrl('web') ?? $representative?->thumbnailUrl(null);
+    $others = $templates->reject(fn ($template) => $representative && $template->is($representative))->values();
 @endphp
 <div class="course discipline {{ $featured ? 'feat' : '' }} reveal" id="{{ $type?->slug }}">
   {{-- Four fixed regions so neighbouring cards share the same rows:
@@ -25,7 +31,13 @@
 
     @if ($photo)
       <div class="course-photo">
-        <img src="{{ $photo }}" alt="{{ $representative?->title ?? $type?->name }}" loading="lazy">
+        @if ($courseUrl)
+          <a href="{{ $courseUrl }}">
+            <img src="{{ $photo }}" alt="{{ $title }}" loading="lazy">
+          </a>
+        @else
+          <img src="{{ $photo }}" alt="{{ $title }}" loading="lazy">
+        @endif
       </div>
     @endif
 
@@ -33,7 +45,19 @@
     @if ($representative?->level)
       <div class="lvl">{{ $representative->level }}</div>
     @endif
-    <h3>{{ $representative?->title ?? $type?->name }}</h3>
+    <h3>
+      @if ($courseUrl)
+        <a href="{{ $courseUrl }}">{{ $title }}</a>
+      @else
+        {{ $title }}
+      @endif
+    </h3>
+    @if ($representative)
+      <button type="button" class="course-share" data-share="{{ $courseUrl ?? route('courses.show', $representative) }}" data-share-title="{{ $title }}">Share</button>
+    @endif
+    @if ($others->isNotEmpty())
+      <p class="course-also">Also: @foreach ($others as $template)<a href="{{ route('courses.show', $template) }}">{{ $template->title }}</a>@if (! $loop->last), @endif @endforeach</p>
+    @endif
     @if ($blurb)
       <div class="desc">{{ $blurb }}</div>
     @endif
@@ -91,8 +115,8 @@
             @else
               {{ $seatsLeft }} of {{ $event->capacity }} seats left
             @endif
-            @if ($courseTitle && $courseTitle !== ($representative?->title))
-              · {{ $courseTitle }}
+            @if ($courseTitle && $courseTitle !== ($representative?->title) && $event->courseTemplate)
+              · <a href="{{ route('courses.show', $event->courseTemplate) }}">{{ $courseTitle }}</a>
             @endif
           </div>
         </div>

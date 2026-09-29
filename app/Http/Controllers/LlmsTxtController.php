@@ -69,6 +69,9 @@ class LlmsTxtController extends Controller
                     ->implode(', ');
                 $meta = $templateBlurbs ? ' — '.$templateBlurbs : '';
                 $lines[] = '- **'.$type->name.'**'.$meta.($type->blurb ? ': '.$type->blurb : '');
+                foreach ($type->courseTemplates as $template) {
+                    $lines[] = '  - ['.$template->title.']('.route('courses.show', $template).')';
+                }
             }
         }
 
@@ -140,6 +143,7 @@ class LlmsTxtController extends Controller
             foreach ($type->courseTemplates as $template) {
                 $sections[] = '### '.$template->title;
                 $sections[] = '';
+                $sections[] = '- Page: '.route('courses.show', $template);
                 if ($template->level) {
                     $sections[] = '- Level: '.$template->level;
                 }

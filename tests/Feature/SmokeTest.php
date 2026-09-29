@@ -42,6 +42,11 @@ class SmokeTest extends TestCase
 
         $this->get('/courses')
             ->assertOk()
+            ->assertSee('images/og-share.jpg', false)
+            ->assertDontSee('hero-loop-poster.webp', false)
+            ->assertSee('/courses/precision-reloading', false)
+            ->assertSee('/courses/applied-long-range', false)
+            ->assertSee('data-share=', false)
             ->assertSee('Four disciplines')
             ->assertSee('Precision Reloading')
             ->assertSee('PRS Shooting')

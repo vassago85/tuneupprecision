@@ -26,7 +26,13 @@
     $description = $description
         ?: 'Long range rifle training with Dirk Pio in South Africa — foundation, applied long range, PRS shooting and precision reloading. Small squads, private range, your own rifle.';
     $canonical = $canonical ?: url()->current();
-    $image = $image ?: asset('images/hero-loop-poster.webp');
+    // Brand card for link previews. The hero video still stays on the
+    // loop player only — it is not the picture for every shared page.
+    $usingDefaultImage = blank($image);
+    $sharePath = public_path('images/og-share.jpg');
+    $image = $usingDefaultImage
+        ? asset('images/og-share.jpg').(is_file($sharePath) ? '?v='.filemtime($sharePath) : '')
+        : $image;
     $verification = config('services.google.site_verification');
 
     $organizationSchema = [
@@ -76,6 +82,11 @@
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:url" content="{{ $canonical }}">
 <meta property="og:image" content="{{ $image }}">
+@if ($usingDefaultImage)
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ $siteName }} — {{ $tagline }}">
+@endif
 <meta property="og:locale" content="en_ZA">
 
 <meta name="twitter:card" content="summary_large_image">
