@@ -232,8 +232,17 @@
   .course .lvl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--gray);text-transform:uppercase}
   /* Course photo — featured thumbnail (or first gallery image) uploaded in admin. */
   .course-photo{position:relative;margin:-2px 0 18px;border-radius:12px;overflow:hidden;aspect-ratio:16/10;background:var(--base-2);border:1px solid var(--line-soft)}
+  .course-photo a{display:block;height:100%}
   .course-photo img{width:100%;height:100%;object-fit:cover}
   .course h3{font-size:29px;color:var(--charcoal);margin:8px 0 8px}
+  .course h3 a:hover{color:var(--copper-deep)}
+  .course-share{align-self:flex-start;margin:0 0 12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--charcoal);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+  .course-share:hover{border-color:var(--copper-deep);color:var(--copper-deep)}
+  .course-also{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 12px}
+  .course-also a{color:var(--copper-deep);border-bottom:1px solid transparent}
+  .course-also a:hover{border-bottom-color:var(--copper-deep)}
+  .courses-single{grid-template-columns:minmax(0,760px);justify-content:center}
+  .courses-single .course.discipline{display:flex;flex-direction:column;grid-row:auto}
   .course .desc{font-size:14.5px;color:var(--muted);min-height:44px;margin-bottom:18px}
   .spec{border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);padding:14px 0;margin-bottom:20px;display:grid;gap:9px}
   .spec .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
@@ -590,20 +599,18 @@
   .loop-copy h2{font-family:var(--disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:44px;line-height:1.02;color:#fff;margin:8px 0 14px}
   .loop-copy p{color:rgba(255,255,255,.72);font-size:16px;line-height:1.55;margin:0 0 22px;max-width:44ch}
   .loop-frame{position:relative;aspect-ratio:16/9;width:100%;border-radius:14px;overflow:hidden;background:var(--charcoal);box-shadow:var(--shadow-lg)}
-  /* Video must stay opacity:1 — Chrome Android treats opacity:0 as "not visible"
-     and pauses muted autoplay. Poster sits on top and fades once playback starts. */
+  /* The video stays fully opaque. Chrome Android pauses opacity:0 media,
+     and a poster image stacked on top of it keeps the phone on a still
+     even after playback has started. The <video poster> attribute covers
+     the first frame; this img is only the no-file placeholder. */
   .loop-poster,.loop-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
   .loop-video{opacity:1;z-index:0}
-  .loop-poster{z-index:1;transition:opacity .45s ease;pointer-events:none}
-  .loop-frame.is-playing .loop-poster{opacity:0}
-  /* Play cue is visible by default (any state where the video isn't already
-     playing) — mobile autoplay is unreliable across Chrome Android Data
-     Saver, iOS Low Power Mode, Samsung Internet and Firefox Mobile, and the
-     failures don't always reach the .play() promise rejection handler. A
-     tap on the poster triggers the frame click handler in site.blade.php,
-     which calls video.play() from a real user gesture. */
-  .loop-play-cue{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff;transition:opacity .3s ease}
-  .loop-frame.is-playing .loop-play-cue{opacity:0;pointer-events:none}
+  .loop-poster{z-index:1}
+  .loop-poster-still{display:none}
+  /* Play cue stays hidden while autoplay is working. It appears only after
+     play() is rejected (Low Power Mode, Data Saver). */
+  .loop-play-cue{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff;opacity:0;pointer-events:none;transition:opacity .3s ease}
+  .loop-frame.needs-gesture:not(.is-playing) .loop-play-cue{opacity:1;pointer-events:auto}
   .loop-play-cue svg{width:64px;height:64px;filter:drop-shadow(0 4px 18px rgba(0,0,0,.55));background:rgba(212,91,46,.92);border-radius:999px;padding:14px}
   /* Pause stays available while the loop is running. WCAG 2.2.2: anything
      that moves on its own for more than five seconds needs a real pause. */
@@ -616,7 +623,7 @@
 
   @media (prefers-reduced-motion: reduce){
     .loop-video,.loop-play-cue,.loop-pause{display:none!important}
-    .loop-poster{opacity:1!important}
+    .loop-poster,.loop-poster-still{display:block!important;opacity:1!important;z-index:1}
   }
 
   /* ---------- the range (video library) ---------- */

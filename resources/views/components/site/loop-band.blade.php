@@ -15,8 +15,9 @@
     // it renders a CSS-only "coming soon" tile with the reticle mark centred.
     //
     // Drop the files in these paths (no code changes needed):
-    //   public/videos/hero-loop.mp4        - H.264 fallback, universal
-    //   public/videos/hero-loop.webm       - VP9/AV1 primary, smaller (optional)
+    //   public/videos/hero-loop.mp4        - H.264 Main, yuv420p, faststart, no audio
+    //   public/videos/hero-loop.webm       - optional; not used for playback (iOS
+    //                                        will not autoplay a <source> child)
     //   public/images/hero-loop-poster.webp - poster image ~1280x720 (optional)
     //
     // The rest is just cache-busting so re-encodes don't get stuck in browsers.
@@ -33,6 +34,11 @@
     $posterUrl = $hasPoster ? asset('images/hero-loop-poster.webp').'?v='.filemtime($posterPath) : null;
 
     $hasVideo = $hasMp4 || $hasWebm;
+    // iOS Safari autoplays a muted inline video when the URL is the video's
+    // own src. A <source> child (and WebM, which iOS cannot play) is ignored
+    // for that check, so the phone stays on the poster. MP4 wins when both
+    // files exist.
+    $playUrl = $mp4Url ?? $webmUrl;
     $href = $ctaHref ?? route('shop');
 
     // Treat any http(s) href that isn't ours as an external link so we can
@@ -63,8 +69,37 @@
       </a>
     </div>
 
-    <div class="loop-frame reveal" data-loop>
-      @if ($hasPoster)
+    {{-- No .reveal here. That class is opacity:0 until scroll, and both
+         iOS Safari and Chrome Android refuse to start a muted inline
+         video that is not actually visible. They also do not resume it
+         once the fade finishes. --}}
+    <div class="loop-frame" data-loop>
+      @if ($hasVideo)
+        {{-- muted before autoplay, and src on the video itself (not a
+             <source> child). iOS decides autoplay from those attributes
+             before any script runs, and it ignores autoplay on <source>. --}}
+        <video class="loop-video"
+               src="{{ $playUrl }}"
+               muted="muted"
+               playsinline
+               webkit-playsinline
+               autoplay
+               loop
+               preload="auto"{!! $videoPosterAttr !!}
+               disablepictureinpicture
+               disableremoteplayback
+               aria-hidden="true"></video>
+        @if ($hasPoster)
+          {{-- Hidden while the video can play. Shown only for reduced-motion,
+               where the video itself is hidden. Kept out of the paint tree
+               otherwise so it cannot cover the video and block mobile autoplay. --}}
+          <img class="loop-poster loop-poster-still"
+               src="{{ $posterUrl }}"
+               alt=""
+               width="1280" height="720"
+               loading="lazy" decoding="async">
+        @endif
+      @elseif ($hasPoster)
         <img class="loop-poster"
              src="{{ $posterUrl }}"
              alt="{{ $title }}"
@@ -86,20 +121,6 @@
       @endif
 
       @if ($hasVideo)
-        {{-- muted+playsinline+autoplay in markup (not only JS) — Chrome Android
-             evaluates autoplay policy from attributes before script runs.
-             Video stays visible; poster fades via .is-playing on the frame. --}}
-        <video class="loop-video"
-               autoplay muted loop playsinline webkit-playsinline
-               preload="auto"{!! $videoPosterAttr !!}
-               aria-hidden="true">
-          @if ($hasMp4)
-            <source src="{{ $mp4Url }}" type="video/mp4">
-          @endif
-          @if ($hasWebm)
-            <source src="{{ $webmUrl }}" type="video/webm">
-          @endif
-        </video>
         <button type="button" class="loop-play-cue" aria-label="Play video">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
         </button>

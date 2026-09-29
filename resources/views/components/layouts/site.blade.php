@@ -68,6 +68,23 @@
         b.addEventListener('click',function(){showToast('Seat request started · '+b.dataset.course);});
       });
 
+      document.querySelectorAll('[data-share]').forEach(function(btn){
+        btn.addEventListener('click',function(){
+          var url=btn.getAttribute('data-share');
+          var title=btn.getAttribute('data-share-title')||document.title;
+          if(!url) return;
+          if(navigator.share){
+            navigator.share({title:title,url:url}).catch(function(){});
+            return;
+          }
+          if(navigator.clipboard&&navigator.clipboard.writeText){
+            navigator.clipboard.writeText(url).then(function(){showToast('Link copied');});
+            return;
+          }
+          window.prompt('Copy this link',url);
+        });
+      });
+
       var drawer=document.getElementById('cartDrawer');
       var cartBtn=document.getElementById('cartBtn');
       function openCart(){
@@ -121,10 +138,11 @@
         els.forEach(function(e){io.observe(e);});
       }
 
-      // ambient loop bands (merch strip): keep the <video> visually opaque
-      // (Chrome Android pauses opacity:0 media). Fade the poster via
-      // .is-playing on the frame. Show a play cue when autoplay is blocked
-      // (Data Saver / Low Power Mode).
+      // Ambient loop. iOS and Chrome Android only autoplay a muted inline
+      // video that is actually visible, and only if we have not already
+      // called pause() on it. Do not pause it for being below the fold —
+      // that cancels autoplay, and a later play() from this observer is
+      // not a user gesture so the phone leaves it stuck on the poster.
       var reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.querySelectorAll('[data-loop]').forEach(function(frame){
         var video=frame.querySelector('video.loop-video');
@@ -135,88 +153,106 @@
         video.muted=true;
         video.defaultMuted=true;
         video.playsInline=true;
-        video.setAttribute('muted','');
+        video.setAttribute('muted','muted');
         video.setAttribute('playsinline','');
         video.setAttribute('webkit-playsinline','');
 
-        var wantPlay=false;
+        var inView=false;
         var userPaused=false;
+        var retries=0;
         function markPlaying(){
           frame.classList.add('is-playing');
+          frame.classList.remove('needs-gesture');
           video.classList.add('playing');
+          retries=0;
         }
-        function markStopped(){
-          // Poster stays visible and the play cue re-appears via CSS —
-          // the cue is default-visible now and only hides on .is-playing,
-          // so any pause (autoplay blocked, scroll-out, ended, error)
-          // automatically gives the user a tap target on mobile.
+        function markNeedsGesture(){
           frame.classList.remove('is-playing');
           video.classList.remove('playing');
+          frame.classList.add('needs-gesture');
         }
         function tryPlay(){
-          if(userPaused) return;
-          wantPlay=true;
+          if(userPaused||!inView) return;
           video.muted=true;
           var p=video.play();
           if(p&&typeof p.then==='function'){
-            p.then(markPlaying).catch(markStopped);
+            p.then(markPlaying).catch(function(){
+              if(userPaused||!inView) return;
+              if(retries<5){
+                retries++;
+                setTimeout(tryPlay, 300);
+              }else{
+                markNeedsGesture();
+              }
+            });
           }else if(!video.paused){
             markPlaying();
           }else{
-            markStopped();
+            markNeedsGesture();
           }
         }
         function tryPause(){
-          wantPlay=false;
           if(!video.paused){try{video.pause();}catch(e){}}
-          markStopped();
+          markNeedsGesture();
         }
 
-        // HTML autoplay may start the video before our observer runs — sync UI.
         video.addEventListener('playing',markPlaying);
-        video.addEventListener('pause',function(){
-          if(!wantPlay) markStopped();
-        });
-        // Safari (and some Android WebViews) often ignore the loop attribute.
+        // Safari often ignores the loop attribute. Restart without treating
+        // the gap as a failed autoplay.
         video.addEventListener('ended',function(){
-          if(!wantPlay) return;
+          if(userPaused||!inView) return;
           try{video.currentTime=0;}catch(e){}
+          retries=0;
           tryPlay();
         });
         video.addEventListener('canplay',function(){
-          if(wantPlay&&video.paused) tryPlay();
+          if(!userPaused&&inView&&video.paused) tryPlay();
         });
 
-        function unlock(e){
-          if(e) e.preventDefault();
+        // Do not preventDefault. Cancelling the tap drops the user-activation
+        // iOS requires before it will honor play().
+        function unlock(){
           userPaused=false;
+          retries=0;
+          inView=true;
           tryPlay();
         }
         if(cue) cue.addEventListener('click',unlock);
         if(pauseBtn) pauseBtn.addEventListener('click',function(e){
-          e.preventDefault();
           e.stopPropagation();
           userPaused=true;
           tryPause();
         });
-        // Whole frame is a tap target on mobile — user shouldn't have to hit
-        // the tiny play icon dead-centre.
         frame.addEventListener('click',function(e){
-          if(e.target.closest&&e.target.closest('a,button:not(.loop-play-cue)')) return;
-          if(video.paused) unlock(e);
+          if(e.target.closest&&e.target.closest('a,button.loop-pause')) return;
+          if(video.paused) unlock();
         });
+
+        // A tap anywhere counts. Low Power Mode blocks autoplay until then,
+        // including a tap that isn't on the video itself.
+        function nudge(){
+          if(userPaused||!inView||!video.paused) return;
+          retries=0;
+          tryPlay();
+        }
+        window.addEventListener('touchend',nudge,{passive:true});
+        window.addEventListener('click',nudge);
 
         if(!video.paused) markPlaying();
 
         if('IntersectionObserver'in window){
           var vo=new IntersectionObserver(function(es){
             es.forEach(function(en){
-              if(en.isIntersecting) tryPlay();
-              else tryPause();
+              inView=en.isIntersecting;
+              if(inView){
+                retries=0;
+                tryPlay();
+              }
             });
-          },{threshold:0.15, rootMargin:'40px 0px'});
+          },{threshold:0.25});
           vo.observe(frame);
         }else{
+          inView=true;
           tryPlay();
         }
       });
