@@ -134,4 +134,19 @@ return [
         'mailgun_endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Owner alerts
+    |--------------------------------------------------------------------------
+    |
+    | Inbox for new testimonials (reviews), shop orders, and website
+    | enquiries. The public legal email stays on the letterhead and is not
+    | used for these alerts.
+    |
+    */
+
+    'notifications' => [
+        'email' => env('NOTIFY_EMAIL', 'dirkpio01@gmail.com'),
+    ],
+
 ];

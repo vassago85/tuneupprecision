@@ -97,15 +97,15 @@
           </div>
         </div>
         @if ($isFull)
-          <a href="{{ route('contact.create', ['subject' => 'Fully booked: '.$dataLabel]) }}" class="btn-mini waitlist">Enquire</a>
+          <a href="{{ \App\Support\ContactLink::url('Fully booked: '.$dataLabel) }}" class="btn-mini waitlist">Enquire</a>
         @else
-          <a href="{{ route('contact.create', ['subject' => 'Book: '.$dataLabel]) }}"
+          <a href="{{ \App\Support\ContactLink::url('Book: '.$dataLabel) }}"
              class="btn-mini book"
              data-course="{{ $dataLabel }}">Book</a>
         @endif
       </div>
     @empty
-      <div class="date-empty">Dates coming soon — <a href="{{ route('contact.create', ['subject' => 'Next '.$type?->name.' date']) }}">message Dirk</a> to be first on the list.</div>
+      <div class="date-empty">Dates coming soon — <a href="{{ \App\Support\ContactLink::url('Next '.$type?->name.' date') }}">message Dirk</a> to be first on the list.</div>
     @endforelse
   </div>
 </div>

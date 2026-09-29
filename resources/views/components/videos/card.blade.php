@@ -26,6 +26,7 @@
 <article class="video-card">
   @switch ($state)
     @case ('play')
+      @if ($playUrl)
       <button type="button"
               class="video-facade"
               data-embed="{{ $playUrl }}"
@@ -43,6 +44,14 @@
           <span class="video-tag">Members</span>
         @endif
       </button>
+      @else
+      <div class="video-facade" role="img" aria-label="{{ $video->title }} has no video file yet">
+        <span class="video-thumb-blank" aria-hidden="true"></span>
+        <span class="video-lock">
+          <span>No video file yet</span>
+        </span>
+      </div>
+      @endif
       @break
 
     @case ('guest')

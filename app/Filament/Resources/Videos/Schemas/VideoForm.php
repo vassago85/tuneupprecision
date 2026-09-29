@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Videos\Schemas;
 
 use App\Models\TrainingType;
+use App\Support\YoutubeId;
+use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
@@ -41,10 +43,16 @@ class VideoForm
                     ->columnSpanFull()
                     ->helperText('Optional one-liner shown under the title.'),
                 TextInput::make('youtube_id')
-                    ->label('YouTube video ID')
-                    ->maxLength(32)
-                    ->placeholder('dQw4w9WgXcQ')
-                    ->helperText('Just the 11-character ID from the YouTube URL. Ignored if you upload an MP4 below.'),
+                    ->label('YouTube link')
+                    ->maxLength(255)
+                    ->placeholder('https://www.youtube.com/watch?v=…')
+                    ->helperText('Paste the full YouTube URL, or just the 11-character video ID. Ignored when a video file is uploaded below.')
+                    ->dehydrateStateUsing(fn (?string $state): ?string => YoutubeId::extract($state))
+                    ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                        if (filled($value) && YoutubeId::extract(is_string($value) ? $value : null) === null) {
+                            $fail('Paste a YouTube link or an 11-character video ID.');
+                        }
+                    }),
                 SpatieMediaLibraryFileUpload::make('poster')
                     ->label('Custom poster (optional)')
                     ->collection('poster')
@@ -55,11 +63,12 @@ class VideoForm
                     ->imageResizeTargetHeight('900')
                     ->helperText('Falls back to the YouTube thumbnail if not set.'),
                 SpatieMediaLibraryFileUpload::make('file')
-                    ->label('Upload MP4 (optional)')
+                    ->label('Upload video (optional)')
                     ->collection('file')
-                    ->acceptedFileTypes(['video/mp4'])
-                    ->maxSize(1024 * 1024) // 1 GB
-                    ->helperText('If set, the native player is used instead of the YouTube embed.'),
+                    ->disk('public')
+                    ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                    ->maxSize(512 * 1024) // 512 MB — must stay within nginx, PHP, and Livewire limits
+                    ->helperText('MP4, WebM, or MOV, up to 512 MB. If set, this plays instead of YouTube.'),
                 Toggle::make('is_featured')
                     ->label('Featured video')
                     ->helperText('Shown at the top of The Range page. Only the newest featured wins.'),

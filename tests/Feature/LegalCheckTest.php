@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\LegalCompliance;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class LegalCheckTest extends TestCase
@@ -46,6 +49,39 @@ class LegalCheckTest extends TestCase
         Setting::put('business.tel', '+27 12 345 6789');
 
         $this->artisan('legal:check')->assertSuccessful();
+    }
+
+    public function test_admin_can_save_the_legal_identity_on_the_compliance_page(): void
+    {
+        $admin = User::factory()->create();
+        $identity = [
+            'legal_name' => 'Tune Up Precision (Pty) Ltd',
+            'trading_as' => 'Tune Up Precision',
+            'legal_status' => 'Private company',
+            'registration_no' => '2026/123456/07',
+            'vat_no' => '4123456789',
+            'dealer_licence_no' => 'DL-1234567',
+            'office_bearers' => 'Dirk Pio',
+            'physical_address' => '1 Example Road, Pretoria, Gauteng',
+            'postal_address' => 'PO Box 12, Pretoria, 0182',
+            'legal_email' => 'info@tuneupprecision.co.za',
+            'legal_phone' => '+27 12 345 6789',
+        ];
+
+        Livewire::actingAs($admin)
+            ->test(LegalCompliance::class)
+            ->fillForm($identity)
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('Tune Up Precision (Pty) Ltd', Setting::get('legal.legal_name'));
+        $this->assertSame('+27 12 345 6789', Setting::get('business.tel'));
+        $this->artisan('legal:check')->assertSuccessful();
+
+        $this->get(route('legal.privacy'))
+            ->assertOk()
+            ->assertSee('Tune Up Precision (Pty) Ltd')
+            ->assertSee('1 Example Road, Pretoria, Gauteng');
     }
 
     /**

@@ -63,7 +63,7 @@
         @foreach (\App\Models\TrainingType::query()->activeOrdered()->get() as $type)
           <a href="{{ route('courses') }}#{{ $type->slug }}">{{ $type->name }}</a>
         @endforeach
-        <a href="{{ route('contact.create', ['subject' => 'One-on-one coaching']) }}">One-on-one</a>
+        <a href="{{ \App\Support\ContactLink::url('One-on-one coaching') }}">One-on-one</a>
       </div>
       <div class="foot-col">
         <h3>Explore</h3>

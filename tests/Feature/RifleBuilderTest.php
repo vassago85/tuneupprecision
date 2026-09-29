@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
-use App\Livewire\RifleBuildPicker;
 use App\Livewire\RifleBuilder;
+use App\Livewire\RifleBuildPicker;
 use App\Mail\BuildEnquiry;
 use App\Models\Component;
 use App\Models\Quote;
 use App\Models\RifleBuildShare;
 use App\Models\User;
+use App\Support\OwnerInbox;
 use Database\Seeders\ComponentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -117,6 +118,8 @@ class RifleBuilderTest extends TestCase
         $this->assertMatchesRegularExpression('/^TU-\d{4}-\d{4}$/', $quote->reference);
 
         Mail::assertQueued(BuildEnquiry::class, 2);
+        Mail::assertQueued(BuildEnquiry::class, fn (BuildEnquiry $mail): bool => $mail->hasTo(OwnerInbox::email()) && $mail->forCustomer === false);
+        Mail::assertQueued(BuildEnquiry::class, fn (BuildEnquiry $mail): bool => $mail->hasTo('sam@example.com') && $mail->forCustomer);
     }
 
     public function test_share_code_rehydrates_the_builder(): void

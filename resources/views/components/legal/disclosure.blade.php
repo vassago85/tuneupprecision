@@ -63,6 +63,6 @@
       · <a href="{{ route('legal.shipping') }}">Shipping Policy</a>
       · <a href="{{ route('legal.refunds') }}">Returns &amp; Refunds Policy</a>
     </p>
-    <p>Disputes go first through the <a href="{{ route('contact.create', ['subject' => 'Dispute']) }}">contact form</a>. If we cannot resolve the matter, consumer complaints may be taken to the National Consumer Commission, and remaining disputes to the courts of {{ $legal['jurisdiction'] }}, with {{ $legal['forum'] }} as the preferred forum.</p>
+    <p>Disputes go first through the <a href="{{ \App\Support\ContactLink::url('Dispute') }}">contact form</a>. If we cannot resolve the matter, consumer complaints may be taken to the National Consumer Commission, and remaining disputes to the courts of {{ $legal['jurisdiction'] }}, with {{ $legal['forum'] }} as the preferred forum.</p>
   </aside>
 @endif

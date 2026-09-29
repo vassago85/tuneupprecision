@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ContactEnquiry;
 use App\Support\BusinessDetails;
+use App\Support\ContactLink;
 use App\Support\LegalIdentity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,10 +19,15 @@ class ContactController extends Controller
     /** Minimum seconds a real human takes to fill and submit the form. */
     private const int MIN_SUBMIT_SECONDS = 3;
 
-    public function create(Request $request): ViewContract
+    public function create(Request $request): ViewContract|RedirectResponse
     {
+        // Old enquire links used ?subject=. Fold them onto the one contact URL.
+        if ($request->query->has('subject')) {
+            return new RedirectResponse(ContactLink::url($request->query('subject')), 301);
+        }
+
         return View::make('contact', [
-            'subject' => (string) $request->query('subject', ''),
+            'subject' => '',
         ]);
     }
 

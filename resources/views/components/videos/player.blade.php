@@ -23,6 +23,7 @@
   <div class="video-featured-media">
     @switch ($state)
       @case ('play')
+        @if ($playUrl)
         <button type="button"
                 class="video-facade video-facade-lg"
                 data-embed="{{ $playUrl }}"
@@ -37,6 +38,14 @@
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
           </span>
         </button>
+        @else
+        <div class="video-facade video-facade-lg" role="img" aria-label="{{ $video->title }} has no video file yet">
+          <span class="video-thumb-blank" aria-hidden="true"></span>
+          <span class="video-lock video-lock-lg">
+            <span>No video file yet</span>
+          </span>
+        </div>
+        @endif
         @break
 
       @case ('guest')

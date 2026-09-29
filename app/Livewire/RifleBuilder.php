@@ -8,8 +8,7 @@ use App\Mail\BuildEnquiry;
 use App\Models\RifleBuildShare;
 use App\RifleBuilder\BuildSelection;
 use App\Services\RifleBuildService;
-use App\Support\BusinessDetails;
-use App\Support\LegalIdentity;
+use App\Support\OwnerInbox;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -100,9 +99,7 @@ class RifleBuilder extends Component
 
         $quote->load('lines');
 
-        $dirk = BusinessDetails::details()['email']
-            ?? LegalIdentity::email();
-        Mail::to($dirk)->queue(new BuildEnquiry($quote, false));
+        Mail::to(OwnerInbox::email())->queue(new BuildEnquiry($quote, false));
         Mail::to($quote->customer_email)->queue(new BuildEnquiry($quote, true));
 
         $this->submittedReference = $quote->reference;

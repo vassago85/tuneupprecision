@@ -30,7 +30,7 @@
         @if ($legal['legal_email'])
           <p>Statutory email: <a href="mailto:{{ $legal['legal_email'] }}">{{ $legal['legal_email'] }}</a>.</p>
         @endif
-        <p>The information officer is {{ $officer }}. You can reach them about this policy, or to exercise your rights, through the <a href="{{ route('contact.create', ['subject' => 'Privacy request']) }}">contact form</a> or, where published, the statutory email above. The same details appear on the <a href="{{ route('legal.index') }}">legal page</a>.</p>
+        <p>The information officer is {{ $officer }}. You can reach them about this policy, or to exercise your rights, through the <a href="{{ \App\Support\ContactLink::url('Privacy request') }}">contact form</a> or, where published, the statutory email above. The same details appear on the <a href="{{ route('legal.index') }}">legal page</a>.</p>
 
         <h3>2. What we collect</h3>
         <p>We only collect what we need to run the site and the training:</p>
@@ -70,7 +70,7 @@
         <p>The site uses a session cookie so forms and sign-in work. We do not run third-party advertising cookies or analytics scripts. If we add analytics later, this policy will be updated.</p>
 
         <h3>8. Your rights</h3>
-        <p>You may request access to the personal information we hold about you, ask us to correct it, object to certain processing, withdraw newsletter consent, or ask us to delete it where we have no lawful reason to keep it. Use the <a href="{{ route('contact.create', ['subject' => 'Privacy request']) }}">contact form</a> and we will respond within a reasonable time.</p>
+        <p>You may request access to the personal information we hold about you, ask us to correct it, object to certain processing, withdraw newsletter consent, or ask us to delete it where we have no lawful reason to keep it. Use the <a href="{{ \App\Support\ContactLink::url('Privacy request') }}">contact form</a> and we will respond within a reasonable time.</p>
         <p>You may also lodge a complaint with the Information Regulator (South Africa): <a href="https://inforegulator.org.za" rel="noopener noreferrer" target="_blank">inforegulator.org.za</a>.</p>
 
         <h3>9. Children</h3>

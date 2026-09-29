@@ -38,7 +38,7 @@
 
         <h3>4. How to return something</h3>
         <ol>
-          <li>Use the <a href="{{ route('contact.create', ['subject' => 'Return authorisation']) }}">contact form</a> and ask for a return authorisation. Say what you bought, when, and why it is coming back.</li>
+          <li>Use the <a href="{{ \App\Support\ContactLink::url('Return authorisation') }}">contact form</a> and ask for a return authorisation. Say what you bought, when, and why it is coming back.</li>
           <li>Wait for the authorisation before you post. We will give you the returns address.</li>
           <li>Return the goods unused where the reason is cooling-off, in the original packaging where you still have it, with all parts and paperwork.</li>
         </ol>

@@ -20,6 +20,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Livewire's default temporary-upload rule is 12 MB. Range clips are
+        // larger than that, so the file never attached and the public play
+        // button was left with an empty URL. 524288 KB = 512 MB, matching
+        // nginx, PHP, and the video form.
+        config([
+            'livewire.temporary_file_upload.rules' => ['required', 'file', 'max:524288'],
+            'livewire.temporary_file_upload.max_upload_time' => 15,
+        ]);
+
         // Let the admin-configured mail settings (settings table) override the
         // .env defaults without a deploy. No-op until the settings table exists.
         MailSettings::apply();

@@ -35,7 +35,7 @@
         <p>Risk and ownership of the goods pass to you on delivery to the address you gave. Until then, the parcel is our responsibility or the courier’s under their conditions of carriage.</p>
 
         <h3>6. Lost or damaged parcels</h3>
-        <p>If a parcel is lost, or arrives damaged, tell us through the <a href="{{ route('contact.create', ['subject' => 'Shipping problem']) }}">contact form</a> within 7 days of the delivery date (or the date it should have arrived). Keep the packaging and take photographs. We will raise the claim with the courier and repair, replace or refund the goods once the claim is settled.</p>
+        <p>If a parcel is lost, or arrives damaged, tell us through the <a href="{{ \App\Support\ContactLink::url('Shipping problem') }}">contact form</a> within 7 days of the delivery date (or the date it should have arrived). Keep the packaging and take photographs. We will raise the claim with the courier and repair, replace or refund the goods once the claim is settled.</p>
 
         <h3>7. Firearms and controlled components</h3>
         <p>Firearms and controlled components are never couriered to a buyer. Transfers happen in person through a licensed dealer. That rule is set out in the <a href="{{ route('legal.terms') }}">Terms</a> (rifle builder and firearms).</p>

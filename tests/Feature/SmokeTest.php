@@ -23,6 +23,8 @@ class SmokeTest extends TestCase
         // asserted with the escape flag disabled.
         $this->get('/')
             ->assertOk()
+            ->assertSee('G-56QNVHD4GV', false)
+            ->assertSee('https://www.googletagmanager.com/gtag/js?id=G-56QNVHD4GV', false)
             ->assertSee('Dial in')
             ->assertSee('Meet Dirk')
             // "What you'll learn" tabs are driven by TrainingType + at least one

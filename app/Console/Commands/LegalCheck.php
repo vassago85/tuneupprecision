@@ -30,7 +30,7 @@ class LegalCheck extends Command
         }
 
         $this->newLine();
-        $this->line('Set them in .env (LEGAL_*) or, for telephone / email / VAT / dealer licence, on the admin Settings page.');
+        $this->line('Set them on Legal & Compliance in the admin, or in .env (LEGAL_*).');
 
         return self::FAILURE;
     }

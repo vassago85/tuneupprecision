@@ -9,9 +9,8 @@ return [
     | Statutory identity (ECTA s43 / POPIA)
     |--------------------------------------------------------------------------
     |
-    | Single source of truth for legal documents and the public disclosure.
-    | Telephone, email, VAT and dealer licence can still be overridden at
-    | runtime from Filament Settings (see App\Support\LegalIdentity).
+    | Fallback for legal documents and the public disclosure. Values saved on
+    | Legal & Compliance override these without a deploy.
     |
     */
 

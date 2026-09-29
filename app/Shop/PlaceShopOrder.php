@@ -9,8 +9,7 @@ use App\Enums\PaymentStatus;
 use App\Mail\OrderPlaced;
 use App\Models\Order;
 use App\Models\Product;
-use App\Support\BusinessDetails;
-use App\Support\LegalIdentity;
+use App\Support\OwnerInbox;
 use App\Support\ShopShipping;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -98,10 +97,7 @@ final class PlaceShopOrder
 
         Mail::to($order->email)->queue(new OrderPlaced($order, forCustomer: true));
 
-        $dirk = BusinessDetails::details()['email'] ?? LegalIdentity::email();
-        if (filled($dirk)) {
-            Mail::to($dirk)->queue(new OrderPlaced($order, forCustomer: false));
-        }
+        Mail::to(OwnerInbox::email())->queue(new OrderPlaced($order, forCustomer: false));
 
         return $order;
     }

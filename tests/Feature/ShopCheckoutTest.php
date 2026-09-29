@@ -10,6 +10,7 @@ use App\Mail\OrderPlaced;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Support\OwnerInbox;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
@@ -116,6 +117,8 @@ class ShopCheckoutTest extends TestCase
         $this->assertFalse((bool) Product::query()->where('sku', 'KES0857XWLFDEM')->value('is_active'));
 
         Mail::assertQueued(OrderPlaced::class, 2);
+        Mail::assertQueued(OrderPlaced::class, fn (OrderPlaced $mail): bool => $mail->hasTo('jane@example.com') && $mail->forCustomer);
+        Mail::assertQueued(OrderPlaced::class, fn (OrderPlaced $mail): bool => $mail->hasTo(OwnerInbox::email()) && $mail->forCustomer === false);
     }
 
     public function test_a_saved_courier_fee_is_shown_before_payment_and_stored_on_the_order(): void

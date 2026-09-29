@@ -7,6 +7,7 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use App\Support\BusinessDetails;
 use App\Support\Eft;
+use App\Support\LegalIdentity;
 use App\Support\Money;
 use App\Support\ShopShipping;
 use App\Support\SocialLinks;
@@ -75,7 +76,7 @@ class ManageEftSettings extends Page
                             ->maxLength(255),
                     ]),
                 Section::make('Business details')
-                    ->description('Overrides config/legal.php for telephone, email, VAT and dealer licence. Shown on quotes, the disclosure and legal:check. Leave blank to use .env. Placeholders such as 0000 are omitted.')
+                    ->description('Also editable on Legal & Compliance, which is where the rest of the statutory identity lives. Leave blank to use .env. Placeholders such as 0000 are omitted.')
                     ->columns(2)
                     ->schema([
                         TextInput::make('tel')
@@ -141,8 +142,12 @@ class ManageEftSettings extends Page
             Setting::put("eft.{$key}", $data[$key] ?? null);
         }
 
-        foreach (BusinessDetails::keys() as $key) {
-            Setting::put("business.{$key}", $data[$key] ?? null);
+        foreach (LegalIdentity::legacyBusinessKeys() as $businessKey => $legalKey) {
+            $value = trim((string) ($data[$businessKey] ?? ''));
+            $stored = $value === '' ? null : $value;
+
+            Setting::put('business.'.$businessKey, $stored);
+            Setting::put('legal.'.$legalKey, $stored);
         }
 
         foreach (SocialLinks::keys() as $key) {

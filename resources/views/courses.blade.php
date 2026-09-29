@@ -73,7 +73,7 @@
         </div>
         <div class="p2">
           <div class="amt">On request <s>Quoted per day · scoped to what you need</s></div>
-          <a href="{{ route('contact.create', ['subject' => 'One-on-one coaching']) }}" class="btn btn-primary book" data-course="One-on-one coaching">Enquire</a>
+          <a href="{{ \App\Support\ContactLink::url('One-on-one coaching') }}" class="btn btn-primary book" data-course="One-on-one coaching">Enquire</a>
         </div>
       </div>
     </div>

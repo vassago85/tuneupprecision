@@ -6,6 +6,7 @@ namespace App\Filament\Pages;
 
 use App\Mail\SiteQuestionnaireSubmitted;
 use App\Models\Setting;
+use App\Support\OwnerInbox;
 use BackedEnum;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -26,7 +27,7 @@ use UnitEnum;
  * "Site questionnaire" admin page — Dirk answers 15 questions about
  * positioning, courses, pricing and proof so we can rewrite the homepage
  * from real answers instead of guesses. Answers are stored in the settings
- * table (one row per question) and emailed to the ADMIN_EMAIL address plus
+ * table (one row per question) and emailed to Dirk plus
  * paul@charsley.co.za on save.
  */
 class SiteQuestionnaire extends Page
@@ -43,7 +44,7 @@ class SiteQuestionnaire extends Page
 
     protected static ?string $title = 'Site questionnaire';
 
-    /** Second recipient (in addition to ADMIN_EMAIL) copied on every save. */
+    /** Second recipient copied on every save. */
     private const NOTIFY_CC = 'paul@charsley.co.za';
 
     /**
@@ -460,7 +461,7 @@ class SiteQuestionnaire extends Page
         // swallow the save (his answers are already persisted).
         try {
             $recipients = array_values(array_filter(array_unique([
-                (string) env('ADMIN_EMAIL', 'dirkpio01@gmail.com'),
+                OwnerInbox::email(),
                 self::NOTIFY_CC,
             ])));
 

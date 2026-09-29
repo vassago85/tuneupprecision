@@ -1,6 +1,7 @@
 <x-layouts.site
     title="Contact"
     description="Message Dirk at Tune Up Precision — book a course date, ask about one-on-one coaching, or enquire about a rifle build. The form is the preferred route; statutory details are on the legal page."
+    :canonical="route('contact.create')"
 >
 
   <section>
@@ -54,6 +55,17 @@
           <div class="form-field">
             <label for="subject">Subject</label>
             <input id="subject" type="text" name="subject" value="{{ old('subject', $subject) }}" required>
+            <script>
+            (function () {
+              var input = document.getElementById('subject');
+              if (!input || input.value) return;
+              var raw = location.hash.replace(/^#/, '');
+              if (!raw) return;
+              try { raw = decodeURIComponent(raw.replace(/\+/g, ' ')); } catch (e) { return; }
+              raw = raw.replace(/\s+/g, ' ').trim().slice(0, 160);
+              if (raw) input.value = raw;
+            })();
+            </script>
             @error('subject')<div class="form-err">{{ $message }}</div>@enderror
           </div>
 

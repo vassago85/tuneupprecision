@@ -9,8 +9,7 @@ use App\Mail\TestimonialCopy;
 use App\Models\Testimonial;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
-use App\Support\BusinessDetails;
-use App\Support\LegalIdentity;
+use App\Support\OwnerInbox;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -82,9 +81,7 @@ class TestimonialController extends Controller
 
         $testimonial->load('trainingType');
 
-        $dirk = BusinessDetails::details()['email'] ?? LegalIdentity::email();
-
-        Mail::to($dirk)->queue(new TestimonialCopy($testimonial, false));
+        Mail::to(OwnerInbox::email())->queue(new TestimonialCopy($testimonial, false));
         Mail::to($testimonial->author_email)->queue(new TestimonialCopy($testimonial, true));
 
         return redirect()->route('testimonials.thanks');

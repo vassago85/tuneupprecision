@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Support\YoutubeId;
+use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,7 +18,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Video extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\VideoFactory> */
+    /** @use HasFactory<VideoFactory> */
     use HasFactory;
 
     use InteractsWithMedia;
@@ -51,11 +54,13 @@ class Video extends Model implements HasMedia
             ->singleFile()
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
 
-        // Optional native MP4 upload. When present, the facade plays this
-        // instead of the YouTube iframe.
+        // Optional uploaded video. When present, the facade plays this
+        // instead of the YouTube iframe. Public disk so the URL is reachable
+        // from the site (the default disk can be private).
         $this->addMediaCollection('file')
             ->singleFile()
-            ->acceptsMimeTypes(['video/mp4']);
+            ->useDisk('public')
+            ->acceptsMimeTypes(['video/mp4', 'video/webm', 'video/quicktime']);
     }
 
     public function registerMediaConversions(?Media $media = null): void
@@ -106,8 +111,9 @@ class Video extends Model implements HasMedia
             }
         }
 
-        if ($this->youtube_id) {
-            return "https://i.ytimg.com/vi/{$this->youtube_id}/hqdefault.jpg";
+        $youtubeId = $this->youtubeEmbedId();
+        if ($youtubeId !== null) {
+            return "https://i.ytimg.com/vi/{$youtubeId}/hqdefault.jpg";
         }
 
         return null;
@@ -132,10 +138,26 @@ class Video extends Model implements HasMedia
             return $this->getFirstMediaUrl('file');
         }
 
-        if ($this->youtube_id) {
-            return "https://www.youtube-nocookie.com/embed/{$this->youtube_id}?autoplay=1&rel=0";
+        $youtubeId = $this->youtubeEmbedId();
+        if ($youtubeId !== null) {
+            return "https://www.youtube-nocookie.com/embed/{$youtubeId}?autoplay=1&rel=0";
         }
 
         return null;
+    }
+
+    /**
+     * Store a bare ID even when the admin pastes a full YouTube URL.
+     */
+    protected function youtubeId(): Attribute
+    {
+        return Attribute::make(
+            set: static fn (?string $value): ?string => YoutubeId::extract($value),
+        );
+    }
+
+    private function youtubeEmbedId(): ?string
+    {
+        return YoutubeId::extract($this->youtube_id);
     }
 }

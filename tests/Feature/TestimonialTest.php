@@ -12,19 +12,18 @@ use App\Filament\Resources\TrainingEvents\Actions\SendTestimonialInvitesAction;
 use App\Filament\Widgets\TestimonialLinkWidget;
 use App\Mail\TestimonialCopy;
 use App\Mail\TestimonialInvitation;
-use App\Support\BusinessDetails;
-use App\Support\LegalIdentity;
 use App\Models\Booking;
 use App\Models\CourseTemplate;
 use App\Models\Testimonial;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
 use App\Models\User;
-use Livewire\Livewire;
+use App\Support\OwnerInbox;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class TestimonialTest extends TestCase
@@ -133,7 +132,7 @@ class TestimonialTest extends TestCase
         $this->seed(DatabaseSeeder::class);
 
         $type = TrainingType::query()->where('slug', 'reloading')->firstOrFail();
-        $dirk = BusinessDetails::details()['email'] ?? LegalIdentity::email();
+        $dirk = OwnerInbox::email();
 
         $this->post('/testimonials', [
             'author_name' => 'Sam Shooter',

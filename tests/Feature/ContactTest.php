@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Mail\ContactEnquiry;
+use App\Support\ContactLink;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -26,13 +27,42 @@ class ContactTest extends TestCase
         $this->get('/terms')->assertOk()->assertSee('Terms of use')->assertSee('Bookings, cancellation and refunds');
     }
 
+    public function test_subject_query_redirects_to_the_one_contact_url(): void
+    {
+        $this->get('/contact?subject='.rawurlencode("Book: PRS 12 Sep\r\n"))
+            ->assertStatus(301)
+            ->assertRedirect(ContactLink::url('Book: PRS 12 Sep'));
+
+        $this->get('/contact?subject=')
+            ->assertStatus(301)
+            ->assertRedirect(route('contact.create'));
+    }
+
+    public function test_public_links_use_the_contact_fragment_not_a_query_string(): void
+    {
+        $this->get('/the-range')
+            ->assertOk()
+            ->assertSee(ContactLink::url('Tune Up enquiry'), false)
+            ->assertSee(ContactLink::url('One-on-one coaching'), false)
+            ->assertDontSee('/contact?subject', false);
+
+        $this->get('/privacy')
+            ->assertOk()
+            ->assertSee(ContactLink::url('Privacy request'), false)
+            ->assertDontSee('/contact?subject', false);
+
+        $this->get('/contact')
+            ->assertOk()
+            ->assertSee('rel="canonical" href="'.route('contact.create').'"', false);
+    }
+
     public function test_contact_form_prefills_subject_and_sends_mail(): void
     {
         Mail::fake();
 
-        $this->get('/contact?subject='.rawurlencode('Book: PRS 12 Sep'))
+        $this->get('/contact')
             ->assertOk()
-            ->assertSee('Book: PRS 12 Sep');
+            ->assertSee('location.hash.replace', false);
 
         $this->post('/contact', [
             'name' => 'Pat Tester',

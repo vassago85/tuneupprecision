@@ -18,6 +18,7 @@ use App\Models\Testimonial;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
 use App\Models\Video;
+use App\Support\ContactLink;
 use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -170,13 +171,13 @@ Route::get('/calendar', function (Request $request) {
         if ($isComp) {
             $actionLabel = $event->external_url ? 'Match info' : 'Contact Dirk';
             $actionHref = $event->external_url
-                ?? route('contact.create', ['subject' => $event->displayTitle()]);
+                ?? ContactLink::url($event->displayTitle());
             $actionExternal = (bool) $event->external_url;
         } else {
             $actionLabel = $event->isFull() ? 'Enquire about this date' : 'Book this date';
-            $actionHref = route('contact.create', [
-                'subject' => ($event->isFull() ? 'Fully booked: ' : 'Book: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel,
-            ]);
+            $actionHref = ContactLink::url(
+                ($event->isFull() ? 'Fully booked: ' : 'Book: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel,
+            );
             $actionExternal = false;
         }
 
