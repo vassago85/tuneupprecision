@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Actions\PlaceBooking;
 use App\Enums\EventKind;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
@@ -97,6 +99,10 @@ Route::get('/courses', function () {
 
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
 
+Route::get('/book/{event}', [BookingController::class, 'create'])->name('bookings.create');
+Route::post('/book/{event}', [BookingController::class, 'store'])->name('bookings.store');
+Route::get('/bookings/confirmed', [BookingController::class, 'confirmed'])->name('bookings.confirmed');
+
 Route::get('/calendar', function (Request $request) {
     // Visual month grid. `?month=YYYY-MM` picks the month; default is the
     // current month. The grid always spans full weeks (Mon–Sun) so partial
@@ -178,10 +184,11 @@ Route::get('/calendar', function (Request $request) {
                 ?? ContactLink::url($event->displayTitle());
             $actionExternal = (bool) $event->external_url;
         } else {
-            $actionLabel = $event->isFull() ? 'Enquire about this date' : 'Book this date';
-            $actionHref = ContactLink::url(
-                ($event->isFull() ? 'Fully booked: ' : 'Book: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel,
-            );
+            $bookable = app(PlaceBooking::class)->isBookable($event);
+            $actionLabel = $bookable ? 'Book this date' : 'Enquire about this date';
+            $actionHref = $bookable
+                ? route('bookings.create', $event)
+                : ContactLink::url(($event->isFull() ? 'Fully booked: ' : 'About: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel);
             $actionExternal = false;
         }
 

@@ -123,9 +123,7 @@
         @if ($isFull)
           <a href="{{ \App\Support\ContactLink::url('Fully booked: '.$dataLabel) }}" class="btn-mini waitlist">Enquire</a>
         @else
-          <a href="{{ \App\Support\ContactLink::url('Book: '.$dataLabel) }}"
-             class="btn-mini book"
-             data-course="{{ $dataLabel }}">Book</a>
+          <a href="{{ route('bookings.create', $event) }}" class="btn-mini">Book</a>
         @endif
       </div>
     @empty

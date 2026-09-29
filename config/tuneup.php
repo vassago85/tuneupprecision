@@ -5,14 +5,18 @@ declare(strict_types=1);
 return [
 
     /*
+    | How long a public booking holds its seats before unpaid holds are
+    | released by bookings:release-holds. Dirk confirming payment clears this.
+    */
+    'booking_hold_hours' => (int) env('BOOKING_HOLD_HOURS', 72),
+
+    /*
     |--------------------------------------------------------------------------
     | EFT bank details
     |--------------------------------------------------------------------------
     |
-    | Displayed to guests at checkout (Phase 2) and on the admin Settings page.
-    | For now these are sourced from the environment. A future commit can move
-    | them into a persisted settings store if the client wants to edit them
-    | without a deploy.
+    | Displayed at shop checkout, on a course booking, and on the admin
+    | Settings page. A value saved in Settings wins over these defaults.
     |
     */
 
