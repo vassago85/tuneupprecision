@@ -125,6 +125,63 @@ class CourseTemplate extends Model implements HasMedia
     }
 
     /**
+     * Squad size for the public spec sheet.
+     *
+     * Listed dates that share one max-participants value win, so "N shooters"
+     * matches "x of N seats left". With no dates, the course's own max is
+     * used. Dates with different maxima return null so the card does not
+     * print a squad size that disagrees with one of them.
+     *
+     * @param  iterable<mixed>  $capacities
+     */
+    public static function squadCapacity(iterable $capacities, ?int $fallback): ?int
+    {
+        $unique = collect($capacities)
+            ->map(fn ($value): int => (int) $value)
+            ->filter(fn (int $value): bool => $value > 0)
+            ->unique()
+            ->values();
+
+        if ($unique->count() === 1) {
+            return (int) $unique->first();
+        }
+
+        if ($unique->isEmpty() && $fallback !== null && $fallback > 0) {
+            return $fallback;
+        }
+
+        return null;
+    }
+
+    /**
+     * Public spec rows. Any stored Squad value is dropped; the squad size
+     * always comes from max participants.
+     *
+     * @param  array<array-key, mixed>  $specs
+     * @return array<array-key, mixed>
+     */
+    public static function specsWithSquad(array $specs, ?int $maxParticipants): array
+    {
+        $rows = [];
+
+        foreach ($specs as $label => $value) {
+            if (strcasecmp((string) $label, 'Squad') === 0) {
+                continue;
+            }
+
+            $rows[$label] = $value;
+        }
+
+        if ($maxParticipants !== null && $maxParticipants > 0) {
+            $rows['Squad'] = $maxParticipants === 1
+                ? '1 shooter'
+                : $maxParticipants.' shooters';
+        }
+
+        return $rows;
+    }
+
+    /**
      * Display price, e.g. "R1 850.00".
      */
     protected function basePrice(): Attribute

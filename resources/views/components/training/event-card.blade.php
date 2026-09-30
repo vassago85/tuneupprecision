@@ -3,6 +3,7 @@
     'featured' => false,
 ])
 @php
+    use App\Models\CourseTemplate;
     use App\Support\Money;
 
     $template = $event->courseTemplate;
@@ -15,8 +16,11 @@
         $dateLabel = $event->starts_on->format('D d M').' – '.$event->ends_on->format('D d M Y');
     }
 
-    // DOPE spec block = template specs, plus venue and live seats-left.
-    $specs = collect($template?->specs ?? [])
+    // Squad size is the date's max participants, same number as seats left.
+    $specs = collect(CourseTemplate::specsWithSquad(
+        collect($template?->specs ?? [])->all(),
+        (int) $event->capacity,
+    ))
         ->put('Venue', $event->venue)
         ->put('Seats left', $isFull ? 'Fully booked' : (string) $seatsLeft.' of '.$event->capacity)
         ->all();

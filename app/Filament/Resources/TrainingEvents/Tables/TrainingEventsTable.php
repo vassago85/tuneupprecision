@@ -48,6 +48,7 @@ class TrainingEventsTable
                     ->state(fn (TrainingEvent $record): int => $record->seatsLeft())
                     ->color(fn (TrainingEvent $record): string => $record->isFull() ? 'danger' : 'success'),
                 TextColumn::make('capacity')
+                    ->label('Max participants')
                     ->numeric(),
                 TextColumn::make('status')
                     ->badge(),

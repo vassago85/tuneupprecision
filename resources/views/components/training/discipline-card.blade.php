@@ -9,6 +9,7 @@
     'linked' => true,
 ])
 @php
+    use App\Models\CourseTemplate;
     use App\Support\Money;
 
     $events = $events ?? collect();
@@ -17,7 +18,13 @@
     $title = $representative?->title ?? $type?->name;
     $courseUrl = ($linked && $representative) ? route('courses.show', $representative) : null;
 
-    $specs = collect($representative?->specs ?? [])->all();
+    $specs = CourseTemplate::specsWithSquad(
+        collect($representative?->specs ?? [])->all(),
+        CourseTemplate::squadCapacity(
+            $events->map(fn ($event) => (int) $event->capacity),
+            (int) ($representative?->default_capacity ?? 0),
+        ),
+    );
     $photo = $representative?->thumbnailUrl('web') ?? $representative?->thumbnailUrl(null);
     $others = $templates->reject(fn ($template) => $representative && $template->is($representative))->values();
 @endphp

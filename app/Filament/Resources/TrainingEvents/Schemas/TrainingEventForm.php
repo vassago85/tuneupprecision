@@ -6,11 +6,13 @@ namespace App\Filament\Resources\TrainingEvents\Schemas;
 
 use App\Enums\EventKind;
 use App\Enums\TrainingEventStatus;
+use App\Models\CourseTemplate;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class TrainingEventForm
@@ -34,7 +36,19 @@ class TrainingEventForm
                             ->relationship('courseTemplate', 'title')
                             ->required(fn (Get $get): bool => $get('kind') === EventKind::Training->value)
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->live()
+                            ->afterStateUpdated(function ($state, Set $set, string $operation): void {
+                                if ($operation !== 'create' || ! filled($state)) {
+                                    return;
+                                }
+
+                                $capacity = CourseTemplate::query()->whereKey($state)->value('default_capacity');
+
+                                if ($capacity) {
+                                    $set('capacity', (int) $capacity);
+                                }
+                            }),
                     ]),
 
                 Section::make('Competition details')
@@ -82,12 +96,14 @@ class TrainingEventForm
                             ->required()
                             ->default('Private range · Gauteng'),
                         TextInput::make('capacity')
+                            ->label('Max participants')
                             ->required()
                             ->numeric()
+                            ->minValue(1)
                             ->default(6)
                             ->helperText(fn (Get $get): string => $get('kind') === EventKind::Competition->value
                                 ? 'Max guests who can join.'
-                                : 'Seats available on the course.'),
+                                : 'Seats on this date. The public squad size uses this same number.'),
                         TextInput::make('seats_taken')
                             ->label(fn (Get $get): string => $get('kind') === EventKind::Competition->value ? 'Guests joined' : 'Seats taken')
                             ->required()

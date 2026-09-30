@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\EventKind;
+use App\Models\CourseTemplate;
 use App\Models\TrainingEvent;
 use App\Models\TrainingType;
 use App\Support\Money;
@@ -150,7 +151,11 @@ class LlmsTxtController extends Controller
                 if ($template->base_price_cents) {
                     $sections[] = '- Base price: '.Money::format((int) $template->base_price_cents, false).' per shooter';
                 }
-                foreach ((array) $template->specs as $k => $v) {
+                $squad = CourseTemplate::squadCapacity(
+                    $template->trainingEvents->pluck('capacity'),
+                    (int) $template->default_capacity,
+                );
+                foreach (CourseTemplate::specsWithSquad((array) $template->specs, $squad) as $k => $v) {
                     $sections[] = '- '.$k.': '.$v;
                 }
                 if ($template->blurb) {

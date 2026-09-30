@@ -43,7 +43,7 @@ class CourseTemplatesTable
                     ->counts('trainingEvents')
                     ->badge(),
                 TextColumn::make('default_capacity')
-                    ->label('Capacity')
+                    ->label('Max participants')
                     ->numeric(),
                 IconColumn::make('is_active')
                     ->label('Active')

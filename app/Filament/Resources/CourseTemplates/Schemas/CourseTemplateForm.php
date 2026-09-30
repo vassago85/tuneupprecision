@@ -50,7 +50,7 @@ class CourseTemplateForm
                     ->label('Spec sheet (DOPE card)')
                     ->keyLabel('Label')
                     ->valueLabel('Value')
-                    ->helperText('e.g. Duration → 1 day · 08:00–16:00')
+                    ->helperText('e.g. Duration → 1 day · 08:00–16:00. Leave Squad out — it is filled from Max participants.')
                     ->columnSpanFull(),
                 TextInput::make('base_price_cents')
                     ->label('Base price')
@@ -61,9 +61,12 @@ class CourseTemplateForm
                     ->formatStateUsing(fn (?int $state): float => (int) $state / 100)
                     ->dehydrateStateUsing(fn ($state): int => (int) round(((float) $state) * 100)),
                 TextInput::make('default_capacity')
+                    ->label('Max participants')
                     ->required()
                     ->numeric()
-                    ->default(6),
+                    ->minValue(1)
+                    ->default(6)
+                    ->helperText('Copied onto new dates. The public squad size uses this when a course has no dates yet.'),
                 Toggle::make('is_active')
                     ->default(true)
                     ->helperText('Inactive templates are hidden from the public site.'),

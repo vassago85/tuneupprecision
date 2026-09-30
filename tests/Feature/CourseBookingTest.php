@@ -42,6 +42,52 @@ class CourseBookingTest extends TestCase
         $this->assertMatchesRegularExpression('/book\\\\+\\/'.$event->id.'/', $calendar->getContent());
     }
 
+    public function test_squad_size_follows_max_participants_not_a_typed_spec(): void
+    {
+        $event = $this->event(['capacity' => 6, 'seats_taken' => 0]);
+        $event->courseTemplate->update([
+            'specs' => [
+                'Duration' => '1 day · bench',
+                'Squad' => '4 shooters',
+            ],
+            'default_capacity' => 4,
+        ]);
+
+        $this->get(route('courses.show', $event->courseTemplate))
+            ->assertOk()
+            ->assertSee('6 shooters')
+            ->assertSee('6 of 6 seats left')
+            ->assertDontSee('4 shooters');
+    }
+
+    public function test_squad_size_uses_course_max_participants_when_there_are_no_dates(): void
+    {
+        $type = TrainingType::query()->firstOrCreate(
+            ['slug' => 'handgun'],
+            ['name' => 'Handgun Fundamentals', 'is_active' => true, 'sort_order' => 4],
+        );
+
+        $template = CourseTemplate::query()->create([
+            'training_type_id' => $type->id,
+            'title' => 'Handgun Fundamentals',
+            'slug' => 'handgun-fundamentals',
+            'level' => 'Foundation',
+            'blurb' => 'Safe handling.',
+            'specs' => [
+                'Duration' => '1 day',
+                'Squad' => '4 shooters',
+            ],
+            'base_price_cents' => 0,
+            'default_capacity' => 8,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('courses.show', $template))
+            ->assertOk()
+            ->assertSee('8 shooters')
+            ->assertDontSee('4 shooters');
+    }
+
     public function test_booking_form_shows_the_date_price_and_seats_left(): void
     {
         $event = $this->event(['capacity' => 6, 'seats_taken' => 2, 'price_cents' => 185000]);
