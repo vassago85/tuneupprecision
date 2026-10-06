@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Support\MailSettings;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,5 +34,14 @@ class AppServiceProvider extends ServiceProvider
         // Let the admin-configured mail settings (settings table) override the
         // .env defaults without a deploy. No-op until the settings table exists.
         MailSettings::apply();
+
+        // Queue workers are long-lived and every site email is queued, so the
+        // boot-time apply above would pin the worker to whatever mailer was
+        // saved when it started. Re-read before each job and drop resolved
+        // mailer instances so admin changes take effect immediately.
+        Queue::before(function (): void {
+            MailSettings::apply();
+            Mail::forgetMailers();
+        });
     }
 }
