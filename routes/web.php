@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Actions\PlaceBooking;
-use App\Enums\EventKind;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Auth\PasswordController;
@@ -63,9 +62,7 @@ Route::get('/courses', function () {
 
     $upcomingEvents = TrainingEvent::query()
         ->with('courseTemplate.trainingType')
-        ->where('kind', EventKind::Training->value)
-        ->publiclyVisible()
-        ->upcoming()
+        ->onCoursesPage()
         ->get()
         ->groupBy(fn (TrainingEvent $event): ?int => $event->courseTemplate?->training_type_id);
 

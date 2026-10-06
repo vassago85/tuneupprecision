@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\TrainingEvents\TrainingEventResource;
 use App\Models\TrainingEvent;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -22,10 +23,11 @@ class UpcomingTrainingWidget extends BaseWidget
         return $table
             ->query(
                 TrainingEvent::query()
-                    ->with(['courseTemplate.trainingType', 'trainingType'])
-                    ->upcoming()
+                    ->with('courseTemplate.trainingType')
+                    ->onCoursesPage()
                     ->limit(6)
             )
+            ->recordUrl(fn (TrainingEvent $record): string => TrainingEventResource::getUrl('edit', ['record' => $record]))
             ->columns([
                 TextColumn::make('starts_on')
                     ->label('Date')

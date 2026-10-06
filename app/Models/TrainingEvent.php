@@ -169,4 +169,17 @@ class TrainingEvent extends Model
         return $query->whereDate('starts_on', '>=', now()->toDateString())
             ->orderBy('starts_on');
     }
+
+    /**
+     * Course dates listed on the public /courses page: upcoming, visible
+     * training events.
+     *
+     * @param  Builder<TrainingEvent>  $query
+     */
+    public function scopeOnCoursesPage(Builder $query): Builder
+    {
+        return $query->where('kind', EventKind::Training->value)
+            ->publiclyVisible()
+            ->upcoming();
+    }
 }

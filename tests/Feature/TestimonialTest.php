@@ -109,7 +109,14 @@ class TestimonialTest extends TestCase
         $this->seed(DatabaseSeeder::class);
 
         $type = TrainingType::query()->where('slug', 'prs')->firstOrFail();
-        $event = TrainingEvent::query()->whereHas('courseTemplate', fn ($q) => $q->where('training_type_id', $type->id))->firstOrFail();
+        $event = CourseTemplate::query()->where('slug', 'prs-match-skills')->firstOrFail()
+            ->trainingEvents()->create([
+                'starts_on' => now()->subWeek()->toDateString(),
+                'venue' => 'Private range · Gauteng',
+                'capacity' => 6,
+                'seats_taken' => 0,
+                'status' => TrainingEventStatus::Completed,
+            ]);
 
         $signed = URL::temporarySignedRoute('testimonials.create', now()->addDays(30), [
             'name' => 'Pat Attendee',

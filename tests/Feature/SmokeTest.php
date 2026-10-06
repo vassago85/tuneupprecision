@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Enums\TrainingEventStatus;
 use App\Enums\UserRole;
+use App\Models\CourseTemplate;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,6 +41,17 @@ class SmokeTest extends TestCase
     public function test_courses_page_shows_four_disciplines_with_learn_lists(): void
     {
         $this->seed(DatabaseSeeder::class);
+
+        $applied = CourseTemplate::query()->where('slug', 'applied-long-range')->firstOrFail();
+        foreach ([[2, 6, TrainingEventStatus::Full], [5, 0, TrainingEventStatus::Published]] as [$weeks, $taken, $status]) {
+            $applied->trainingEvents()->create([
+                'starts_on' => now()->addWeeks($weeks)->toDateString(),
+                'venue' => 'Private range · Gauteng',
+                'capacity' => 6,
+                'seats_taken' => $taken,
+                'status' => $status,
+            ]);
+        }
 
         $this->get('/courses')
             ->assertOk()

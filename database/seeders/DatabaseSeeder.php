@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Enums\TrainingEventStatus;
 use App\Enums\UserRole;
 use App\Models\CourseTemplate;
 use App\Models\TrainingType;
@@ -23,7 +22,6 @@ class DatabaseSeeder extends Seeder
         // (cap, patch, DOPE cards, gong) are no longer part of the routine seed
         // now that the real shop has moved on. Re-add the call temporarily if
         // you ever need those four back on a fresh install.
-        $this->call(CompetitionEventSeeder::class);
         $this->call(ComponentSeeder::class);
         // Sample testimonials for the homepage carousel — Dirk deletes/edits
         // them from the Filament Testimonials resource. Idempotent.
@@ -184,20 +182,16 @@ class DatabaseSeeder extends Seeder
                         'title' => 'Handgun Fundamentals',
                         'level' => 'Foundation',
                         'blurb' => 'Build the skills, knowledge and confidence to handle and shoot a handgun safely and effectively.',
-                        // On-request pricing — no dummy dates on this discipline yet.
                         'base_price_cents' => 0,
                         'specs' => [
                             'Duration' => '1 day · 08:00–16:00',
                             'Prerequisite' => 'None',
                             'Rounds' => 'Approx. 60–80',
                         ],
-                        'skip_events' => true,
                     ],
                 ],
             ],
         ];
-
-        $eventOffset = 0;
 
         foreach ($types as $typeData) {
             $type = TrainingType::updateOrCreate(
@@ -213,7 +207,7 @@ class DatabaseSeeder extends Seeder
             );
 
             foreach ($typeData['templates'] as $data) {
-                $template = CourseTemplate::updateOrCreate(
+                CourseTemplate::updateOrCreate(
                     ['slug' => Str::slug($data['title'])],
                     [
                         'training_type_id' => $type->id,
@@ -226,53 +220,6 @@ class DatabaseSeeder extends Seeder
                         'is_active' => true,
                     ],
                 );
-
-                // Some disciplines (e.g. Handgun Fundamentals) are on-request
-                // only and should not seed dummy dates — the public card will
-                // render its "Dates coming soon" empty state.
-                if (! empty($data['skip_events'])) {
-                    $eventOffset++;
-
-                    continue;
-                }
-
-                // Two published future events per template, staggered so the
-                // agenda spreads across months.
-                $template->trainingEvents()->updateOrCreate(
-                    ['starts_on' => now()->addWeeks(3 + $eventOffset)->toDateString()],
-                    [
-                        'venue' => 'Private range · Gauteng',
-                        'capacity' => 6,
-                        'seats_taken' => 2,
-                        'status' => TrainingEventStatus::Published,
-                    ],
-                );
-
-                $template->trainingEvents()->updateOrCreate(
-                    ['starts_on' => now()->addWeeks(9 + $eventOffset)->toDateString()],
-                    [
-                        'venue' => 'Private range · Gauteng',
-                        'capacity' => 6,
-                        'seats_taken' => 0,
-                        'status' => TrainingEventStatus::Published,
-                    ],
-                );
-
-                // Give the Applied course one deliberately full event to exercise
-                // the public "Fully booked" state (which DOES display).
-                if ($template->slug === 'applied-long-range') {
-                    $template->trainingEvents()->updateOrCreate(
-                        ['starts_on' => now()->addWeeks(2)->toDateString()],
-                        [
-                            'venue' => 'Private range · Gauteng',
-                            'capacity' => 6,
-                            'seats_taken' => 6,
-                            'status' => TrainingEventStatus::Full,
-                        ],
-                    );
-                }
-
-                $eventOffset++;
             }
         }
     }

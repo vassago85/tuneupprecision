@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\EventKind;
 use App\Models\CourseTemplate;
 use App\Models\TrainingEvent;
 use Illuminate\Contracts\View\View;
@@ -19,9 +18,7 @@ class CourseController extends Controller
 
         $events = $course->trainingEvents()
             ->with('courseTemplate')
-            ->where('kind', EventKind::Training->value)
-            ->publiclyVisible()
-            ->upcoming()
+            ->onCoursesPage()
             ->get();
 
         $prices = $events->map(fn (TrainingEvent $e) => $e->effectivePriceCents())->filter()->unique();
