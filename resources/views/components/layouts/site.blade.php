@@ -228,13 +228,26 @@
           if(video.paused) unlock();
         });
 
-        // A tap anywhere counts. Low Power Mode blocks autoplay until then,
-        // including a tap that isn't on the video itself.
+        // Scroll-into-view is not a user gesture, and the intersection
+        // callback runs after the finger has lifted — so iOS rejects play().
+        // Measure the frame inside the touch handler itself and call play()
+        // before that gesture ends.
+        function onScreen(){
+          var r=frame.getBoundingClientRect();
+          return r.width>0&&r.bottom>40&&r.top<window.innerHeight-40;
+        }
         function nudge(){
-          if(userPaused||!inView||!video.paused) return;
+          if(userPaused||!video.paused) return;
+          if(!inView&&!onScreen()) return;
+          inView=true;
           retries=0;
           tryPlay();
         }
+        if(cue) cue.addEventListener('touchstart',unlock,{passive:true});
+        frame.addEventListener('touchstart',function(e){
+          if(e.target.closest&&e.target.closest('a,button.loop-pause')) return;
+          if(video.paused) unlock();
+        },{passive:true});
         window.addEventListener('touchend',nudge,{passive:true});
         window.addEventListener('click',nudge);
 

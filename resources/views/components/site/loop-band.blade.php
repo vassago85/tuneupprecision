@@ -78,11 +78,14 @@
         {{-- muted before autoplay, and src on the video itself (not a
              <source> child). iOS decides autoplay from those attributes
              before any script runs, and it ignores autoplay on <source>. --}}
+        {{-- #t=0.001 forces iOS to decode and paint a frame instead of
+             sitting on the poster. width/height give it a size before CSS. --}}
         <video class="loop-video"
-               src="{{ $playUrl }}"
+               src="{{ $playUrl }}#t=0.001"
+               width="1280" height="720"
                muted="muted"
-               playsinline
-               webkit-playsinline
+               playsinline="true"
+               webkit-playsinline="true"
                autoplay
                loop
                preload="auto"{!! $videoPosterAttr !!}

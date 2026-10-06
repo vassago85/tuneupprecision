@@ -72,7 +72,13 @@
   .reticle-rule .dot{width:7px;height:7px;border-radius:50%;background:var(--copper);box-shadow:0 0 0 4px rgba(212,91,46,.14)}
 
   /* ---------- nav ---------- */
-  header.nav{position:sticky;top:0;z-index:60;background:rgba(239,239,234,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
+  header.nav{position:sticky;top:0;z-index:60;background:rgba(239,239,234,.96);border-bottom:1px solid var(--line-soft)}
+  /* Blur only on a real mouse. iOS Safari will not paint a <video> anywhere
+     on the page while a sticky/fixed element uses backdrop-filter — the kit
+     loop stays frozen on its poster. Phones get a solid bar instead. */
+  @media (hover:hover) and (pointer:fine){
+    header.nav{background:rgba(239,239,234,.82);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  }
   .nav-inner{display:flex;align-items:center;gap:24px;height:70px}
   .brand{display:flex;align-items:center;gap:12px}
   .brand .mark{width:34px;height:34px;flex:none}
@@ -598,19 +604,21 @@
   .loop-copy .eyebrow{color:#F09A72}
   .loop-copy h2{font-family:var(--disp);text-transform:uppercase;letter-spacing:.01em;font-weight:800;font-size:44px;line-height:1.02;color:#fff;margin:8px 0 14px}
   .loop-copy p{color:rgba(255,255,255,.72);font-size:16px;line-height:1.55;margin:0 0 22px;max-width:44ch}
-  .loop-frame{position:relative;aspect-ratio:16/9;width:100%;border-radius:14px;overflow:hidden;background:var(--charcoal);box-shadow:var(--shadow-lg)}
-  /* The video stays fully opaque. Chrome Android pauses opacity:0 media,
-     and a poster image stacked on top of it keeps the phone on a still
-     even after playback has started. The <video poster> attribute covers
-     the first frame; this img is only the no-file placeholder. */
-  .loop-poster,.loop-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-  .loop-video{opacity:1;z-index:0}
+  /* No overflow:hidden. Combined with border-radius it stops iOS from
+     compositing the video, so the poster never clears. Radius lives on
+     the video itself. translate3d gives it its own layer. */
+  .loop-frame{position:relative;aspect-ratio:16/9;width:100%;border-radius:14px;background:var(--charcoal);box-shadow:var(--shadow-lg)}
+  .loop-poster,.loop-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:14px}
+  .loop-video{opacity:1;z-index:0;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
   .loop-poster{z-index:1}
   .loop-poster-still{display:none}
-  /* Play cue stays hidden while autoplay is working. It appears only after
-     play() is rejected (Low Power Mode, Data Saver). */
-  .loop-play-cue{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff;opacity:0;pointer-events:none;transition:opacity .3s ease}
+  /* Hidden on desktop while autoplay works. On a phone it stays up until
+     the clip is actually playing, so a tap can start it. */
+  .loop-play-cue{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border:0;padding:0;cursor:pointer;background:rgba(13,22,32,.28);color:#fff;border-radius:14px;opacity:0;pointer-events:none;transition:opacity .3s ease}
   .loop-frame.needs-gesture:not(.is-playing) .loop-play-cue{opacity:1;pointer-events:auto}
+  @media (hover:none){
+    .loop-frame:not(.is-playing) .loop-play-cue{opacity:1;pointer-events:auto}
+  }
   .loop-play-cue svg{width:64px;height:64px;filter:drop-shadow(0 4px 18px rgba(0,0,0,.55));background:rgba(212,91,46,.92);border-radius:999px;padding:14px}
   /* Pause stays available while the loop is running. WCAG 2.2.2: anything
      that moves on its own for more than five seconds needs a real pause. */
