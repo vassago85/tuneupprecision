@@ -67,10 +67,9 @@ class CourseBookingTest extends TestCase
             ['name' => 'Handgun Fundamentals', 'is_active' => true, 'sort_order' => 4],
         );
 
-        $template = CourseTemplate::query()->create([
+        $template = CourseTemplate::query()->updateOrCreate(['slug' => 'handgun-fundamentals'], [
             'training_type_id' => $type->id,
             'title' => 'Handgun Fundamentals',
-            'slug' => 'handgun-fundamentals',
             'level' => 'Foundation',
             'blurb' => 'Safe handling.',
             'specs' => [
@@ -244,6 +243,25 @@ class CourseBookingTest extends TestCase
             $this->post(route('bookings.store', $event), $this->payload())->assertNotFound();
         }
 
+        $this->assertSame(0, Booking::query()->count());
+    }
+
+    public function test_dates_on_a_switched_off_course_are_hidden_and_not_bookable(): void
+    {
+        $event = $this->event();
+        $event->courseTemplate->update(['is_active' => false]);
+
+        $this->get('/courses')
+            ->assertOk()
+            ->assertDontSee('/book/'.$event->id, false)
+            ->assertDontSee(route('courses.show', $event->courseTemplate), false);
+
+        $this->get('/calendar?month='.$event->starts_on->format('Y-m'))
+            ->assertOk()
+            ->assertDontSee('Zero to First Steel');
+
+        $this->get(route('bookings.create', $event))->assertNotFound();
+        $this->post(route('bookings.store', $event), $this->payload())->assertNotFound();
         $this->assertSame(0, Booking::query()->count());
     }
 

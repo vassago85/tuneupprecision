@@ -149,16 +149,34 @@ class TrainingEvent extends Model
     }
 
     /**
-     * Events shown on the public site: published or full (never draft/cancelled).
+     * Events shown on the public site: published or full (never draft/cancelled),
+     * and never a date on a course or discipline that has been switched off.
      *
      * @param  Builder<TrainingEvent>  $query
      */
     public function scopePubliclyVisible(Builder $query): Builder
     {
-        return $query->whereIn('status', array_map(
-            fn (TrainingEventStatus $s): string => $s->value,
-            TrainingEventStatus::publiclyVisible(),
-        ));
+        return $query
+            ->whereIn('status', array_map(
+                fn (TrainingEventStatus $s): string => $s->value,
+                TrainingEventStatus::publiclyVisible(),
+            ))
+            ->where(fn (Builder $q): Builder => $q
+                ->whereNull('course_template_id')
+                ->orWhereHas('courseTemplate', fn (Builder $t): Builder => $t
+                    ->where('is_active', true)
+                    ->where(fn (Builder $q): Builder => $q
+                        ->whereNull('training_type_id')
+                        ->orWhereHas('trainingType', fn (Builder $type): Builder => $type->where('is_active', true)))));
+    }
+
+    public function isOnActiveCourse(): bool
+    {
+        $template = $this->courseTemplate;
+
+        return $template !== null
+            && $template->is_active
+            && ($template->training_type_id === null || (bool) $template->trainingType?->is_active);
     }
 
     /**

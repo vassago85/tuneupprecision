@@ -66,7 +66,7 @@ final class PlaceBooking
 
     public function isBookable(TrainingEvent $event): bool
     {
-        if ($event->isCompetition() || $event->isFull() || $event->course_template_id === null) {
+        if ($event->isCompetition() || $event->isFull() || ! $event->isOnActiveCourse()) {
             return false;
         }
 

@@ -40,6 +40,7 @@ class CourseTemplateForm
                 TextInput::make('slug')
                     ->required()
                     ->unique(ignoreRecord: true)
+                    ->dehydrateStateUsing(fn ($state): string => Str::slug((string) $state))
                     ->helperText('Used in the URL. Auto-filled from the title.'),
                 TextInput::make('level')
                     ->placeholder('Level 01 · Foundation'),
