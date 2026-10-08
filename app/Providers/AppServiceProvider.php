@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Setting;
 use App\Support\EmailLogger;
 use App\Support\MailSettings;
 use Illuminate\Mail\Events\MessageSent;
@@ -37,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Let the admin-configured mail settings (settings table) override the
         // .env defaults without a deploy. No-op until the settings table exists.
+        // The settings memo is static, so drop any copy left by a previous app
+        // instance in the same process (tests boot many).
+        Setting::forgetLoaded();
         MailSettings::apply();
 
         // Queue workers are long-lived and every site email is queued, so the
@@ -44,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         // saved when it started. Re-read before each job and drop resolved
         // mailer instances so admin changes take effect immediately.
         Queue::before(function (): void {
+            Setting::forgetLoaded();
             MailSettings::apply();
             Mail::forgetMailers();
         });

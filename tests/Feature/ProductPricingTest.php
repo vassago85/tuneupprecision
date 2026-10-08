@@ -119,7 +119,7 @@ class ProductPricingTest extends TestCase
             ->get('/admin/products/'.$product->id.'/edit')
             ->assertOk()
             ->assertSee('Selling price ex VAT')
-            ->assertSee('Round up to the next rand')
+            ->assertSee('Round the shop price up to the next rand')
             ->assertSee('Nett cost ex VAT')
             ->assertSee('Shop name')
             ->assertSee('Short description');

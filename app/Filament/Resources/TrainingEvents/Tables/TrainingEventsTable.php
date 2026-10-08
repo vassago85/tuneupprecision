@@ -22,6 +22,7 @@ class TrainingEventsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with(['courseTemplate.trainingType', 'trainingType']))
             ->defaultSort('starts_on')
             ->columns([
                 TextColumn::make('kind')

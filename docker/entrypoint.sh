@@ -83,8 +83,10 @@ fi
 echo "Preparing for production..."
 php artisan optimize:clear || true
 php artisan config:cache || true
+php artisan route:cache || true
+php artisan event:cache || true
 php artisan view:cache || true
-# NOTE: route:cache is intentionally skipped — routes/web.php uses a closure.
+php artisan filament:optimize || true
 
 # Publish Livewire + Filament assets and link storage
 php artisan livewire:publish --assets 2>/dev/null || true

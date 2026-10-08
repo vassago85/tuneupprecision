@@ -7,7 +7,6 @@ namespace App\Support;
 use App\Models\Setting;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 /**
@@ -84,15 +83,12 @@ final class MailSettings
     public static function apply(): void
     {
         try {
-            if (! Schema::hasTable('settings')) {
-                return;
-            }
+            $settings = self::details();
         } catch (Throwable) {
-            // No usable DB connection yet (install/build step) — skip silently.
+            // No settings table or DB connection yet (install/build step).
             return;
         }
 
-        $settings = self::details();
         $from = $settings['from_address']
             ?: LegalIdentity::filled(config('legal.legal_email'))
             ?: config('mail.from.address');

@@ -60,7 +60,7 @@
       </div>
       <div class="foot-col">
         <h3>Training</h3>
-        @foreach (\App\Models\TrainingType::query()->activeOrdered()->get() as $type)
+        @foreach (\App\Models\TrainingType::activeList() as $type)
           <a href="{{ route('courses') }}#{{ $type->slug }}">{{ $type->name }}</a>
         @endforeach
         <a href="{{ \App\Support\ContactLink::url('One-on-one coaching') }}">One-on-one</a>

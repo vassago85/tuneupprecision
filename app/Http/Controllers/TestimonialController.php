@@ -50,7 +50,7 @@ class TestimonialController extends Controller
             // to keep Blade free of inline imports.
             'trainingTypeOptions' => $trainingType
                 ? collect()
-                : TrainingType::query()->activeOrdered()->get(),
+                : TrainingType::activeList(),
         ]);
     }
 

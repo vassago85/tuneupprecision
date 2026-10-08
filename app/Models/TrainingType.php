@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\TrainingTypeFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TrainingType extends Model
 {
-    /** @use HasFactory<\Database\Factories\TrainingTypeFactory> */
+    /** @use HasFactory<TrainingTypeFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -55,5 +57,16 @@ class TrainingType extends Model
     public function scopeActiveOrdered(Builder $query): Builder
     {
         return $query->where('is_active', true)->orderBy('sort_order')->orderBy('name');
+    }
+
+    /**
+     * Active disciplines in display order, loaded once per request — the site
+     * footer lists them on every page and most pages need them too.
+     *
+     * @return Collection<int, TrainingType>
+     */
+    public static function activeList(): Collection
+    {
+        return once(fn (): Collection => static::query()->activeOrdered()->get());
     }
 }

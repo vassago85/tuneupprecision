@@ -2,97 +2,27 @@
 
 declare(strict_types=1);
 
-use App\Actions\PlaceBooking;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\RangeController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Livewire\RifleBuilder;
-use App\Models\Testimonial;
-use App\Models\TrainingEvent;
-use App\Models\TrainingType;
-use App\Models\Video;
-use App\Support\ContactLink;
-use App\Support\Money;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    // The "What you'll learn" tabs are driven by the active training types so
-    // Dirk can add/reorder disciplines and edit bullets from the admin without
-    // touching Blade.
-    $disciplineTypes = TrainingType::query()
-        ->activeOrdered()
-        ->get();
+Route::get('/', HomeController::class)->name('home');
 
-    // Approved testimonials feed the homepage carousel (rendered only when at
-    // least one exists). Random order so returning visitors don't see the same
-    // one at the top every time.
-    $testimonials = Testimonial::query()
-        ->approved()
-        ->with(['trainingType', 'trainingEvent'])
-        ->inRandomOrder()
-        ->limit(8)
-        ->get();
-
-    return view('home', [
-        'disciplineTypes' => $disciplineTypes,
-        'testimonials' => $testimonials,
-    ]);
-})->name('home');
-
-Route::get('/courses', function () {
-    // Public agenda: one card per active training discipline (Reloading,
-    // PRS Shooting, Precision Long Range, Handgun Fundamentals, ...), each
-    // with the "What you'll learn" list and a compact list of upcoming dates.
-    // Fully-booked dates DO show (as "Fully booked" on the row).
-    $trainingTypes = TrainingType::query()
-        ->activeOrdered()
-        ->with(['courseTemplates' => fn ($q) => $q->where('is_active', true)->orderBy('id')])
-        ->get();
-
-    $upcomingEvents = TrainingEvent::query()
-        ->with('courseTemplate.trainingType')
-        ->onCoursesPage()
-        ->get()
-        ->groupBy(fn (TrainingEvent $event): ?int => $event->courseTemplate?->training_type_id);
-
-    // Build one payload per active training type — its representative template
-    // (for the on-card blurb/specs) plus every upcoming date on it.
-    $disciplines = $trainingTypes->map(function (TrainingType $type) use ($upcomingEvents) {
-        $events = ($upcomingEvents->get($type->id) ?? collect())
-            ->sortBy(fn (TrainingEvent $e) => $e->starts_on->timestamp)
-            ->values();
-
-        $representative = $type->courseTemplates->first();
-
-        $prices = $events->map(fn (TrainingEvent $e) => $e->effectivePriceCents())->filter()->unique();
-        $fromPriceCents = $prices->min();
-        $priceIsFrom = $prices->count() > 1;
-
-        return [
-            'type' => $type,
-            'representative' => $representative,
-            'templates' => $type->courseTemplates,
-            'events' => $events,
-            'from_price_cents' => $fromPriceCents ? (int) $fromPriceCents : ($representative?->base_price_cents ?? 0),
-            'price_is_from' => $priceIsFrom,
-        ];
-    })->values();
-
-    return view('courses', [
-        'disciplines' => $disciplines,
-    ]);
-})->name('courses');
+Route::get('/courses', [CourseController::class, 'index'])->name('courses');
 
 Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
 
@@ -100,123 +30,7 @@ Route::get('/book/{event}', [BookingController::class, 'create'])->name('booking
 Route::post('/book/{event}', [BookingController::class, 'store'])->name('bookings.store');
 Route::get('/bookings/confirmed', [BookingController::class, 'confirmed'])->name('bookings.confirmed');
 
-Route::get('/calendar', function (Request $request) {
-    // Visual month grid. `?month=YYYY-MM` picks the month; default is the
-    // current month. The grid always spans full weeks (Mon–Sun) so partial
-    // weeks at either end are filled with adjacent-month days (dimmed).
-    $monthParam = (string) $request->query('month', '');
-    try {
-        $month = $monthParam !== ''
-            ? Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
-            : Carbon::now()->startOfMonth();
-    } catch (Throwable) {
-        $month = Carbon::now()->startOfMonth();
-    }
-
-    $gridStart = $month->copy()->startOfWeek(Carbon::MONDAY);
-    $gridEnd = $month->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
-
-    // The calendar shows both training dates and competitions Dirk is
-    // attending — /courses stays training-only (that's where you book a seat).
-    $events = TrainingEvent::query()
-        ->with('courseTemplate.trainingType', 'trainingType')
-        ->publiclyVisible()
-        ->where(function ($q) use ($gridStart, $gridEnd) {
-            $q->whereBetween('starts_on', [$gridStart->toDateString(), $gridEnd->toDateString()])
-                ->orWhereBetween('ends_on', [$gridStart->toDateString(), $gridEnd->toDateString()])
-                ->orWhere(function ($qq) use ($gridStart, $gridEnd) {
-                    $qq->where('starts_on', '<=', $gridStart->toDateString())
-                        ->where('ends_on', '>=', $gridEnd->toDateString());
-                });
-        })
-        ->orderBy('starts_on')
-        ->get();
-
-    // Index events onto every day they cover within the visible grid.
-    $eventsByDay = [];
-    foreach ($events as $event) {
-        $start = $event->starts_on->copy();
-        $end = ($event->ends_on ?? $event->starts_on)->copy();
-        for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
-            $key = $d->toDateString();
-            $eventsByDay[$key] ??= [];
-            $eventsByDay[$key][] = $event;
-        }
-    }
-
-    $days = [];
-    for ($d = $gridStart->copy(); $d->lte($gridEnd); $d->addDay()) {
-        $days[] = [
-            'date' => $d->copy(),
-            'inMonth' => $d->month === $month->month,
-            'isToday' => $d->isToday(),
-            'events' => $eventsByDay[$d->toDateString()] ?? [],
-        ];
-    }
-
-    // Compact payload for the click-to-open modal — one entry per event, keyed
-    // by id so the chip click can just pass its id.
-    $eventsPayload = [];
-    foreach ($events as $event) {
-        $isComp = $event->isCompetition();
-        $start = $event->starts_on;
-        $end = $event->ends_on;
-        $dateLabel = ($end && $end->ne($start))
-            ? $start->format('D d M').' – '.$end->format('D d M Y')
-            : $start->format('D d M Y');
-
-        $priceCents = $isComp
-            ? (int) ($event->entry_fee_cents ?? 0)
-            : $event->effectivePriceCents();
-
-        $blurb = $isComp
-            ? ($event->dirk_role
-                ? "Dirk is at this match — {$event->dirk_role}."
-                : 'Dirk is attending this match — join him on the line.')
-            : $event->courseTemplate?->blurb;
-
-        if ($isComp) {
-            $actionLabel = $event->external_url ? 'Match info' : 'Contact Dirk';
-            $actionHref = $event->external_url
-                ?? ContactLink::url($event->displayTitle());
-            $actionExternal = (bool) $event->external_url;
-        } else {
-            $bookable = app(PlaceBooking::class)->isBookable($event);
-            $actionLabel = $bookable ? 'Book this date' : 'Enquire about this date';
-            $actionHref = $bookable
-                ? route('bookings.create', $event)
-                : ContactLink::url(($event->isFull() ? 'Fully booked: ' : 'About: ').($event->courseTemplate?->title ?? 'Training').' · '.$dateLabel);
-            $actionExternal = false;
-        }
-
-        $eventsPayload[$event->id] = [
-            'kind' => $isComp ? 'competition' : 'training',
-            'title' => $isComp ? $event->displayTitle() : ($event->courseTemplate?->title ?? 'Training'),
-            'discipline' => $event->disciplineName(),
-            'level' => $event->courseTemplate?->level,
-            'date_label' => $dateLabel,
-            'venue' => $event->venue,
-            'price' => $priceCents > 0 ? Money::format($priceCents, false) : null,
-            'price_note' => $isComp ? 'Entry fee' : 'Per shooter',
-            'seats_note' => $isComp
-                ? null
-                : ($event->isFull() ? 'Fully booked' : $event->seatsLeft().' of '.$event->capacity.' seats left'),
-            'dirk_role' => $event->dirk_role,
-            'blurb' => $blurb,
-            'action_label' => $actionLabel,
-            'action_href' => $actionHref,
-            'action_external' => $actionExternal,
-        ];
-    }
-
-    return view('calendar', [
-        'month' => $month,
-        'prevMonth' => $month->copy()->subMonth()->format('Y-m'),
-        'nextMonth' => $month->copy()->addMonth()->format('Y-m'),
-        'days' => $days,
-        'eventsPayload' => $eventsPayload,
-    ]);
-})->name('calendar');
+Route::get('/calendar', CalendarController::class)->name('calendar');
 
 // Rifle Builder is admin-only for now — Dirk is still curating components.
 // Kept as a real public URL (rather than moving into /admin) so the existing
@@ -237,31 +51,7 @@ Route::patch('/shop/cart/{product}', [ShopController::class, 'update'])->name('s
 Route::delete('/shop/cart/{product}', [ShopController::class, 'remove'])->name('shop.cart.remove');
 Route::get('/shop/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
 
-Route::get('/the-range', function () {
-    // The video library. Videos are grouped by discipline (TrainingType); a
-    // single featured video (if any) renders at the top. Members-only videos
-    // are shown to guests as a locked placeholder and only actually play for
-    // Dirk-verified members.
-    $trainingTypes = TrainingType::query()->activeOrdered()->get();
-
-    $videos = Video::query()
-        ->with('trainingType')
-        ->where('is_active', true)
-        ->orderBy('sort_order')
-        ->orderByDesc('id')
-        ->get();
-
-    $featured = $videos->firstWhere('is_featured', true);
-
-    $videosByType = $videos->groupBy(fn (Video $v): string => $v->trainingType?->slug ?? 'other');
-
-    return view('the-range', [
-        'trainingTypes' => $trainingTypes,
-        'videos' => $videos,
-        'featured' => $featured,
-        'videosByType' => $videosByType,
-    ]);
-})->name('range');
+Route::get('/the-range', RangeController::class)->name('range');
 
 // Public authentication (member accounts). Admins (Dirk) also log in here —
 // they get redirected to /admin on success.
