@@ -25,7 +25,6 @@ services:
       - RUN_SEED=${RUN_SEED:-false}
       - ADMIN_NAME=${ADMIN_NAME:-Dirk}
       - ADMIN_EMAIL=${ADMIN_EMAIL:-dirkpio01@gmail.com}
-      - NOTIFY_EMAIL=${NOTIFY_EMAIL:-dirkpio01@gmail.com}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
       - DB_CONNECTION=pgsql
       - DB_HOST=db

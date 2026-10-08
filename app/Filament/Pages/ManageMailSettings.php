@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use App\Support\MailSettings;
+use App\Support\OwnerInbox;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -102,6 +103,18 @@ class ManageMailSettings extends Page
                             ->helperText('Stored encrypted. Leave blank to keep the existing key.')
                             ->columnSpanFull(),
                     ]),
+
+                Section::make('Notifications')
+                    ->description('Where the site sends owner alerts: new bookings, shop orders, build enquiries, contact-form enquiries, new testimonials and questionnaire answers.')
+                    ->schema([
+                        TextInput::make('notify_email')
+                            ->label('Send all notifications to')
+                            ->email()
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder(OwnerInbox::DEFAULT_EMAIL)
+                            ->helperText('Customers still get their own confirmation emails — this only controls the copy that comes to you.'),
+                    ]),
             ])
             ->statePath('data');
     }
@@ -117,50 +130,49 @@ class ManageMailSettings extends Page
             ->send();
     }
 
-    /**
-     * @return array<int, Action>
-     */
-    protected function getHeaderActions(): array
+    public function sendTestAction(): Action
     {
-        return [
-            Action::make('sendTest')
-                ->label('Send test email')
-                ->icon(Heroicon::OutlinedPaperAirplane)
-                ->color('gray')
-                ->schema([
-                    TextInput::make('recipient')
-                        ->label('Send to')
-                        ->email()
-                        ->required()
-                        ->default(fn (): ?string => MailSettings::details()['from_address'] ?? null),
-                ])
-                ->action(function (array $data): void {
-                    // Test against the currently-saved settings (already applied
-                    // for this request in AppServiceProvider::boot).
-                    try {
-                        Mail::raw(
-                            "This is a test email from Tune Up Precision.\n\nIf you can read this, your mail settings are working.",
-                            fn ($message) => $message
-                                ->to($data['recipient'])
-                                ->subject('Tune Up Precision — test email'),
-                        );
-                    } catch (Throwable $e) {
-                        Notification::make()
-                            ->title('Test email failed')
-                            ->body($e->getMessage())
-                            ->danger()
-                            ->persistent()
-                            ->send();
+        return Action::make('sendTest')
+            ->label('Send test email')
+            ->icon(Heroicon::OutlinedPaperAirplane)
+            ->color('gray')
+            ->modalDescription('Your changes on this page are saved first, then a test is sent using them.')
+            ->modalSubmitActionLabel('Save & send')
+            ->schema([
+                TextInput::make('recipient')
+                    ->label('Send to')
+                    ->email()
+                    ->required()
+                    ->default(fn (): string => $this->data['notify_email'] ?? OwnerInbox::email()),
+            ])
+            ->action(function (array $data): void {
+                MailSettings::save($this->form->getState());
+                MailSettings::apply();
+                Mail::forgetMailers();
 
-                        return;
-                    }
-
+                try {
+                    Mail::raw(
+                        "This is a test email from Tune Up Precision.\n\nIf you can read this, your mail settings are working.",
+                        fn ($message) => $message
+                            ->to($data['recipient'])
+                            ->subject('Tune Up Precision — test email'),
+                    );
+                } catch (Throwable $e) {
                     Notification::make()
-                        ->title('Test email sent')
-                        ->body("Sent to {$data['recipient']} using the saved settings. Save first if you just made changes.")
-                        ->success()
+                        ->title('Test email failed')
+                        ->body($e->getMessage())
+                        ->danger()
+                        ->persistent()
                         ->send();
-                }),
-        ];
+
+                    return;
+                }
+
+                Notification::make()
+                    ->title('Test email sent')
+                    ->body("Settings saved and a test was sent to {$data['recipient']}.")
+                    ->success()
+                    ->send();
+            });
     }
 }

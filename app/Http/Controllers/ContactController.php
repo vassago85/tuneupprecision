@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Mail\ContactEnquiry;
-use App\Support\BusinessDetails;
 use App\Support\ContactLink;
-use App\Support\LegalIdentity;
+use App\Support\OwnerInbox;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -61,10 +60,7 @@ class ContactController extends Controller
             'message' => trim($validated['message']),
         ];
 
-        $dirk = BusinessDetails::details()['email']
-            ?? LegalIdentity::email();
-
-        Mail::to($dirk)->queue(new ContactEnquiry($enquiry, false));
+        Mail::to(OwnerInbox::email())->queue(new ContactEnquiry($enquiry, false));
         Mail::to($enquiry['email'])->queue(new ContactEnquiry($enquiry, true));
 
         return $this->done();

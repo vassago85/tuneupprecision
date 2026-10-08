@@ -39,6 +39,7 @@ final class MailSettings
             'mailgun_domain' => Setting::get('mail.mailgun_domain', config('tuneup.mail.mailgun_domain')),
             'mailgun_secret' => self::secret(),
             'mailgun_endpoint' => Setting::get('mail.mailgun_endpoint', config('tuneup.mail.mailgun_endpoint')),
+            'notify_email' => OwnerInbox::email(),
         ];
     }
 
@@ -49,7 +50,7 @@ final class MailSettings
      */
     public static function keys(): array
     {
-        return ['mailer', 'from_address', 'from_name', 'mailgun_domain', 'mailgun_secret', 'mailgun_endpoint'];
+        return ['mailer', 'from_address', 'from_name', 'mailgun_domain', 'mailgun_secret', 'mailgun_endpoint', 'notify_email'];
     }
 
     /**

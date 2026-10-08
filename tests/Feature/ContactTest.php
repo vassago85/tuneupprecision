@@ -74,6 +74,7 @@ class ContactTest extends TestCase
         ])->assertRedirect(route('contact.create'));
 
         Mail::assertQueued(ContactEnquiry::class, 2);
+        Mail::assertQueued(ContactEnquiry::class, fn (ContactEnquiry $mail): bool => $mail->hasTo('info@tuneupprecision.co.za'));
     }
 
     public function test_honeypot_and_fast_submit_pretend_success_without_mail(): void
