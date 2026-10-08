@@ -63,14 +63,6 @@
   .btn-slide:hover .btn-slide-label span:last-child,.btn-slide:focus-visible .btn-slide-label span:last-child{transform:translateY(0)}
   :focus-visible{outline:2.5px solid var(--copper);outline-offset:3px;border-radius:4px}
 
-  /* ---------- reticle divider ---------- */
-  .reticle-rule{display:flex;align-items:center;gap:0;color:var(--gray);padding:6px 0}
-  .reticle-rule .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line) 12%,var(--line) 88%,transparent)}
-  .reticle-rule .hash{display:flex;align-items:center;gap:6px;padding:0 14px}
-  .reticle-rule .hash i{width:1px;height:9px;background:var(--gray);opacity:.5;display:block}
-  .reticle-rule .hash i.tall{height:15px;opacity:.85}
-  .reticle-rule .dot{width:7px;height:7px;border-radius:50%;background:var(--copper);box-shadow:0 0 0 4px rgba(212,91,46,.14)}
-
   /* ---------- nav ---------- */
   header.nav{position:sticky;top:0;z-index:60;background:rgba(239,239,234,.96);border-bottom:1px solid var(--line-soft)}
   /* Blur only on a real mouse. iOS Safari will not paint a <video> anywhere

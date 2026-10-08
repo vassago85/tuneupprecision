@@ -202,14 +202,6 @@ class RifleBuildService
     }
 
     /**
-     * @return Collection<int, ComponentCategory>
-     */
-    public function visibleCategories(): Collection
-    {
-        return ComponentCategory::query()->visible()->get();
-    }
-
-    /**
      * @param  Collection<int, Component>  $components
      */
     public function clearIncompatible(BuildSelection $selection, ?Collection $components = null): BuildSelection

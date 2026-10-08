@@ -59,23 +59,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Business details (letterhead / quote PDF)
-    |--------------------------------------------------------------------------
-    |
-    | Defaults from the environment. The admin Settings page can override
-    | these at runtime via the settings table (see App\Support\BusinessDetails).
-    |
-    */
-
-    'business' => [
-        'tel' => env('TUNEUP_TEL'),
-        'email' => env('TUNEUP_EMAIL'),
-        'vat_number' => env('TUNEUP_VAT_NO'),
-        'dealer_number' => env('TUNEUP_DEALER_NO'),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Rifle builder
     |--------------------------------------------------------------------------
     */

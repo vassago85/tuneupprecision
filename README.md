@@ -52,11 +52,8 @@ php artisan key:generate
 # 4. Migrate + seed
 php artisan migrate:fresh --seed
 
-# 5. Build front-end assets (optional for the public page — its CSS is a
-#    Blade partial — but required for Filament's own assets in production)
-npm install && npm run build
-
-# 6. Serve
+# 5. Serve (no front-end build: the site inlines its CSS and Filament's
+#    assets ship in public/)
 php artisan serve
 ```
 

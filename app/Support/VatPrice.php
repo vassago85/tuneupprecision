@@ -74,27 +74,4 @@ final class VatPrice
 
         return intdiv($scaled + 5000, 10000);
     }
-
-    /**
-     * Preview line for the product form. $exVatRands is what was typed.
-     */
-    public static function preview(mixed $exVatRands, bool $roundUp): string
-    {
-        if ($exVatRands === null || $exVatRands === '') {
-            return 'Enter a selling price ex VAT.';
-        }
-
-        $ex = Money::toCents($exVatRands);
-        $exact = self::inclusiveCents($ex, false);
-        $shop = self::inclusiveCents($ex, $roundUp);
-        $vat = $exact - $ex;
-
-        $line = 'VAT @ '.self::percentLabel().' '.Money::format($vat).' · Shop price '.Money::format($shop);
-
-        if ($roundUp && $shop !== $exact) {
-            $line .= ' (rounded up from '.Money::format($exact).')';
-        }
-
-        return $line;
-    }
 }

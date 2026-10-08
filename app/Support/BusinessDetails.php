@@ -25,12 +25,4 @@ final class BusinessDetails
             'dealer_number' => $legal['dealer_licence_no'],
         ];
     }
-
-    /**
-     * @return list<string>
-     */
-    public static function keys(): array
-    {
-        return ['tel', 'email', 'vat_number', 'dealer_number'];
-    }
 }

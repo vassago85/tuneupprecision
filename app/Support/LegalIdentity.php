@@ -188,11 +188,4 @@ final class LegalIdentity
 
         return self::filled(is_string($config) ? $config : null);
     }
-
-    public static function email(): string
-    {
-        return self::effective()['legal_email']
-            ?? self::filled(config('legal.legal_email'))
-            ?? 'info@tuneupprecision.co.za';
-    }
 }

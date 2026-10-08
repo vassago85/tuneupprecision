@@ -22,8 +22,6 @@ RUN apk add --no-cache \
     unzip \
     oniguruma-dev \
     icu-dev \
-    nodejs \
-    npm \
     ca-certificates \
     tzdata \
     # Image optimizer binaries used by spatie/laravel-medialibrary ->optimize()
@@ -78,9 +76,9 @@ COPY . .
 # PHP dependencies (respect the committed lock)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Publish Filament assets, then build front-end assets
-RUN php artisan filament:assets \
-    && npm install --no-audit --no-fund && npm run build && rm -rf node_modules
+# Publish Filament assets. The public site inlines its CSS, so there is no
+# front-end build step.
+RUN php artisan filament:assets
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html \

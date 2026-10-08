@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\TestimonialSource;
+use Database\Factories\TestimonialFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Testimonial extends Model
 {
-    /** @use HasFactory<\Database\Factories\TestimonialFactory> */
+    /** @use HasFactory<TestimonialFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -61,19 +62,6 @@ class Testimonial extends Model
     public function scopeApproved(Builder $query): Builder
     {
         return $query->where('is_approved', true);
-    }
-
-    /**
-     * Newest first — falls back to created_at for testimonials that were
-     * approved but never had `approved_at` set (shouldn't happen, but safe).
-     *
-     * @param  Builder<Testimonial>  $query
-     */
-    public function scopeLatestFirst(Builder $query): Builder
-    {
-        return $query
-            ->orderByDesc('approved_at')
-            ->orderByDesc('created_at');
     }
 
     /**

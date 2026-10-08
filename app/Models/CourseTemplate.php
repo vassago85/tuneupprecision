@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Support\Money;
 use Database\Factories\CourseTemplateFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -179,13 +177,5 @@ class CourseTemplate extends Model implements HasMedia
         }
 
         return $rows;
-    }
-
-    /**
-     * Display price, e.g. "R1 850.00".
-     */
-    protected function basePrice(): Attribute
-    {
-        return Attribute::get(fn (): string => Money::format((int) $this->base_price_cents));
     }
 }
