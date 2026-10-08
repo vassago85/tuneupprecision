@@ -48,6 +48,17 @@ until php -r "new PDO('pgsql:host=db;port=5432;dbname=${DB_DATABASE}', '${DB_USE
 done
 echo "Database is ready"
 
+# The queue and scheduler containers share this image and pass their own
+# command. Docker hands it to this script as arguments; without this branch
+# they would fall through to supervisord and run a second web server instead
+# of the worker, leaving every queued email unsent.
+if [ "$#" -gt 0 ]; then
+    php artisan config:cache || true
+    chown -R www-data:www-data /var/www/html/storage/logs /var/www/html/bootstrap/cache
+    echo "Starting worker: $*"
+    exec su-exec www-data "$@"
+fi
+
 # Migrations
 echo "Running migrations..."
 php artisan migrate --force || echo "Migration had issues, continuing..."

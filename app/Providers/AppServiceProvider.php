@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Support\EmailLogger;
 use App\Support\MailSettings;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
@@ -43,5 +47,8 @@ class AppServiceProvider extends ServiceProvider
             MailSettings::apply();
             Mail::forgetMailers();
         });
+
+        Event::listen(fn (MessageSent $event) => EmailLogger::sent($event));
+        Event::listen(fn (JobFailed $event) => EmailLogger::failed($event));
     }
 }

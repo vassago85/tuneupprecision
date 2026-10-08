@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\EmailLog;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -12,3 +13,6 @@ Artisan::command('inspire', function () {
 Schedule::command('bookings:release-holds')
     ->everyFifteenMinutes()
     ->withoutOverlapping();
+
+Schedule::command('model:prune', ['--model' => [EmailLog::class]])
+    ->daily();

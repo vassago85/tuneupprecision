@@ -9,6 +9,7 @@ RUN sed -i 's|dl-cdn.alpinelinux.org|mirror.leaseweb.com|g' /etc/apk/repositorie
 RUN apk add --no-cache \
     nginx \
     supervisor \
+    su-exec \
     git \
     curl \
     netcat-openbsd \

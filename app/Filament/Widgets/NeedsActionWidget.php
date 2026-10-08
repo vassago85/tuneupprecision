@@ -9,10 +9,12 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\QuoteStatus;
 use App\Filament\Resources\Bookings\BookingResource;
+use App\Filament\Resources\EmailLogs\EmailLogResource;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Filament\Resources\Quotes\QuoteResource;
 use App\Filament\Resources\Testimonials\TestimonialResource;
 use App\Models\Booking;
+use App\Models\EmailLog;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Quote;
@@ -20,7 +22,9 @@ use App\Models\Testimonial;
 use App\Support\Money;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+use Throwable;
 
 /**
  * Only the things waiting on Dirk. Collapses to one "All caught up" line
@@ -28,6 +32,8 @@ use Illuminate\Support\Str;
  */
 class NeedsActionWidget extends Widget
 {
+    private const int STUCK_AFTER_MINUTES = 10;
+
     protected static bool $isLazy = false;
 
     protected static ?int $sort = 0;
@@ -63,8 +69,22 @@ class NeedsActionWidget extends Widget
         $toSend = Order::query()->where('status', OrderStatus::Paid)->count();
         $draftQuotes = Quote::query()->where('status', QuoteStatus::Draft)->count();
         $testimonials = Testimonial::query()->where('is_approved', false)->count();
+        $stuckEmails = $this->stuckEmails();
+        $failedEmails = EmailLogResource::failedThisWeek();
 
         $items = [
+            [
+                'count' => $stuckEmails,
+                'label' => Str::plural('Email', $stuckEmails).' stuck in the queue',
+                'detail' => 'The mail worker is not running',
+                'url' => EmailLogResource::getUrl('index'),
+            ],
+            [
+                'count' => $failedEmails,
+                'label' => Str::plural('Email', $failedEmails).' failed to send',
+                'detail' => 'Last 7 days',
+                'url' => EmailLogResource::getUrl('index').'?'.http_build_query(['filters' => ['status' => ['value' => EmailLog::FAILED]]]),
+            ],
             [
                 'count' => $bookingCount,
                 'label' => Str::plural('Course booking', $bookingCount).' awaiting EFT',
@@ -104,5 +124,25 @@ class NeedsActionWidget extends Widget
         ];
 
         return array_values(array_filter($items, fn (array $item): bool => $item['count'] > 0));
+    }
+
+    /**
+     * Queued jobs normally go within seconds; one still waiting after
+     * STUCK_AFTER_MINUTES means no worker is picking them up.
+     */
+    private function stuckEmails(): int
+    {
+        try {
+            $queue = Queue::connection();
+            $oldest = $queue->creationTimeOfOldestPendingJob();
+
+            if ($oldest === null || $oldest > now()->subMinutes(self::STUCK_AFTER_MINUTES)->getTimestamp()) {
+                return 0;
+            }
+
+            return (int) $queue->pendingSize();
+        } catch (Throwable) {
+            return 0;
+        }
     }
 }

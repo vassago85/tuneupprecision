@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Models\EmailLog;
+use App\Support\EmailLogger;
 use App\Support\MailSettings;
 use App\Support\OwnerInbox;
 use BackedEnum;
@@ -150,14 +152,24 @@ class ManageMailSettings extends Page
                 MailSettings::apply();
                 Mail::forgetMailers();
 
+                $subject = 'Tune Up Precision — test email';
+
                 try {
                     Mail::raw(
                         "This is a test email from Tune Up Precision.\n\nIf you can read this, your mail settings are working.",
                         fn ($message) => $message
                             ->to($data['recipient'])
-                            ->subject('Tune Up Precision — test email'),
+                            ->subject($subject),
                     );
                 } catch (Throwable $e) {
+                    EmailLogger::record([
+                        'status' => EmailLog::FAILED,
+                        'mailer' => config('mail.default'),
+                        'recipients' => $data['recipient'],
+                        'subject' => $subject,
+                        'error' => $e->getMessage(),
+                    ]);
+
                     Notification::make()
                         ->title('Test email failed')
                         ->body($e->getMessage())
