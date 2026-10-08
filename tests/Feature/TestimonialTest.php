@@ -8,8 +8,8 @@ use App\Enums\BookingStatus;
 use App\Enums\TestimonialSource;
 use App\Enums\TrainingEventStatus;
 use App\Enums\UserRole;
+use App\Filament\Pages\Dashboard;
 use App\Filament\Resources\TrainingEvents\Actions\SendTestimonialInvitesAction;
-use App\Filament\Widgets\TestimonialLinkWidget;
 use App\Mail\TestimonialCopy;
 use App\Mail\TestimonialInvitation;
 use App\Models\Booking;
@@ -95,13 +95,11 @@ class TestimonialTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin')
             ->assertOk()
-            ->assertSee('Shooter testimonial link')
-            ->assertSee(route('testimonials.create'), false);
+            ->assertSee('Copy testimonial link');
 
         Livewire::actingAs($admin)
-            ->test(TestimonialLinkWidget::class)
-            ->assertSee('Copy link')
-            ->assertSee(route('testimonials.create'), false);
+            ->test(Dashboard::class)
+            ->assertActionExists('copyTestimonialLink');
     }
 
     public function test_signed_submit_form_prefills_name_discipline_and_event(): void

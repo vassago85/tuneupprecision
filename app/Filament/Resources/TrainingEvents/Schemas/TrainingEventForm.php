@@ -30,11 +30,11 @@ class TrainingEventForm
                     ->helperText('Training = a scheduled course. Competition = a match Dirk is attending that guests can join.'),
 
                 Section::make('Course')
-                    ->visible(fn (Get $get): bool => $get('kind') === EventKind::Training->value)
+                    ->visible(fn (Get $get): bool => self::isKind($get, EventKind::Training))
                     ->schema([
                         Select::make('course_template_id')
                             ->relationship('courseTemplate', 'title')
-                            ->required(fn (Get $get): bool => $get('kind') === EventKind::Training->value)
+                            ->required(fn (Get $get): bool => self::isKind($get, EventKind::Training))
                             ->searchable()
                             ->preload()
                             ->live()
@@ -52,13 +52,13 @@ class TrainingEventForm
                     ]),
 
                 Section::make('Competition details')
-                    ->visible(fn (Get $get): bool => $get('kind') === EventKind::Competition->value)
+                    ->visible(fn (Get $get): bool => self::isKind($get, EventKind::Competition))
                     ->columns(2)
                     ->schema([
                         TextInput::make('title')
                             ->label('Match / competition name')
                             ->placeholder('Bloem Precision Series · Round 3')
-                            ->required(fn (Get $get): bool => $get('kind') === EventKind::Competition->value)
+                            ->required(fn (Get $get): bool => self::isKind($get, EventKind::Competition))
                             ->columnSpanFull(),
                         Select::make('training_type_id')
                             ->label('Discipline')
@@ -101,11 +101,11 @@ class TrainingEventForm
                             ->numeric()
                             ->minValue(1)
                             ->default(6)
-                            ->helperText(fn (Get $get): string => $get('kind') === EventKind::Competition->value
+                            ->helperText(fn (Get $get): string => self::isKind($get, EventKind::Competition)
                                 ? 'Max guests who can join.'
                                 : 'Seats on this date. The public squad size uses this same number.'),
                         TextInput::make('seats_taken')
-                            ->label(fn (Get $get): string => $get('kind') === EventKind::Competition->value ? 'Guests joined' : 'Seats taken')
+                            ->label(fn (Get $get): string => self::isKind($get, EventKind::Competition) ? 'Guests joined' : 'Seats taken')
                             ->required()
                             ->numeric()
                             ->default(0),
@@ -113,7 +113,7 @@ class TrainingEventForm
                             ->label('Price override')
                             ->prefix('R')
                             ->numeric()
-                            ->visible(fn (Get $get): bool => $get('kind') === EventKind::Training->value)
+                            ->visible(fn (Get $get): bool => self::isKind($get, EventKind::Training))
                             ->helperText('Leave blank to use the template base price.')
                             ->formatStateUsing(fn (?int $state): ?float => $state === null ? null : $state / 100)
                             ->dehydrateStateUsing(fn ($state): ?int => filled($state) ? (int) round(((float) $state) * 100) : null),
@@ -123,5 +123,16 @@ class TrainingEventForm
                             ->required(),
                     ]),
             ]);
+    }
+
+    /**
+     * The kind is an enum on a fresh create form (from the default) but a
+     * string once the select has been touched, so compare both shapes.
+     */
+    private static function isKind(Get $get, EventKind $kind): bool
+    {
+        $state = $get('kind');
+
+        return ($state instanceof EventKind ? $state : EventKind::tryFrom((string) $state)) === $kind;
     }
 }

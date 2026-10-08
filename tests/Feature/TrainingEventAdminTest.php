@@ -8,6 +8,7 @@ use App\Enums\BookingStatus;
 use App\Enums\EventKind;
 use App\Enums\TrainingEventStatus;
 use App\Enums\UserRole;
+use App\Filament\Resources\TrainingEvents\Pages\CreateTrainingEvent;
 use App\Filament\Resources\TrainingEvents\Pages\EditTrainingEvent;
 use App\Filament\Resources\TrainingEvents\TrainingEventResource;
 use App\Filament\Widgets\UpcomingTrainingWidget;
@@ -38,6 +39,19 @@ class TrainingEventAdminTest extends TestCase
         $event->refresh();
         $this->assertSame($newDate, $event->starts_on->toDateString());
         $this->assertSame('New range', $event->venue);
+    }
+
+    public function test_new_event_form_asks_for_a_course_up_front(): void
+    {
+        $this->actingAs($this->admin());
+
+        Livewire::test(CreateTrainingEvent::class)
+            ->assertFormFieldVisible('course_template_id')
+            ->assertFormFieldVisible('price_cents')
+            ->assertFormFieldHidden('title')
+            ->fillForm(['kind' => EventKind::Competition->value])
+            ->assertFormFieldHidden('course_template_id')
+            ->assertFormFieldVisible('title');
     }
 
     public function test_dashboard_lists_only_course_dates_and_links_to_edit(): void

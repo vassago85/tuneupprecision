@@ -72,12 +72,17 @@ class ProductsTable
                 TextColumn::make('stock_qty')
                     ->label('Stock')
                     ->badge()
-                    ->color(fn (int $state): string => match (true) {
+                    ->color(fn (int $state, Product $record): string => match (true) {
                         $state <= 0 => 'danger',
-                        $state <= 5 => 'warning',
+                        $record->isLowStock() => 'warning',
                         default => 'success',
                     })
                     ->sortable(),
+                TextInputColumn::make('reorder_level')
+                    ->label('Reorder at')
+                    ->type('number')
+                    ->rules(['required', 'integer', 'min:0'])
+                    ->toggleable(),
                 ToggleColumn::make('is_active')
                     ->label('Published'),
             ])

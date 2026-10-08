@@ -198,3 +198,180 @@
 .fi-pagination {
     color: var(--tu-text-2);
 }
+
+/* ---------- dashboard: action strip ---------- */
+.tu-caught-up {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem .9rem;
+    background-color: var(--tu-surface);
+    border: 1px solid var(--tu-border);
+    border-radius: var(--tu-radius);
+    color: var(--tu-text-2);
+    font-size: .875rem;
+}
+
+.tu-caught-up-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--tu-success);
+}
+
+.tu-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: .75rem;
+}
+
+.tu-action {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .7rem .9rem;
+    background-color: var(--tu-surface);
+    border: 1px solid var(--tu-border);
+    border-left: 3px solid var(--tu-orange);
+    border-radius: var(--tu-radius);
+    box-shadow: var(--tu-shadow);
+    color: var(--tu-text);
+    transition: background-color .15s;
+}
+
+.tu-action:hover {
+    background-color: var(--tu-surface-2);
+}
+
+.tu-action-count {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--tu-orange);
+    font-variant-numeric: tabular-nums;
+}
+
+.tu-action-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.tu-action-label {
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+.tu-action-detail {
+    font-size: .78rem;
+    color: var(--tu-text-2);
+}
+
+.tu-action-chevron {
+    width: 1rem;
+    height: 1rem;
+    color: var(--tu-text-2);
+}
+
+/* ---------- dashboard: seat fill bar ---------- */
+.tu-fill {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .25rem .75rem;
+    min-width: 9rem;
+}
+
+.tu-fill-track {
+    flex: 1;
+    height: .4rem;
+    border-radius: 999px;
+    background-color: var(--tu-surface-2);
+    overflow: hidden;
+}
+
+.tu-fill-bar {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.tu-fill-open { background-color: var(--tu-success); }
+.tu-fill-almost { background-color: var(--tu-warning); }
+.tu-fill-full { background-color: var(--tu-danger); }
+
+.tu-fill-label {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--tu-text-2);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .tu-fill {
+        min-width: 0;
+    }
+
+    .tu-fill-track {
+        display: none;
+    }
+}
+
+/* ---------- dashboard: recent activity feed ---------- */
+.tu-feed {
+    margin: -.5rem 0;
+}
+
+.tu-feed li + li {
+    border-top: 1px solid var(--tu-border-soft);
+}
+
+.tu-feed-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .55rem 0;
+    color: var(--tu-text);
+}
+
+.tu-feed-item:hover .tu-feed-name {
+    color: var(--tu-orange);
+}
+
+.tu-feed-main,
+.tu-feed-side {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.tu-feed-side {
+    align-items: flex-end;
+    gap: .2rem;
+    flex-shrink: 0;
+}
+
+.tu-feed-name {
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+.tu-feed-what {
+    font-size: .78rem;
+    color: var(--tu-text-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tu-feed-amount {
+    font-size: .8rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.tu-feed-empty {
+    font-size: .875rem;
+    color: var(--tu-text-2);
+}

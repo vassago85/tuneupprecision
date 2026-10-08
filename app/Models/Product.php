@@ -35,6 +35,7 @@ class Product extends Model implements HasMedia
         'round_price_up',
         'price_cents',
         'stock_qty',
+        'reorder_level',
         'is_active',
     ];
 
@@ -46,6 +47,7 @@ class Product extends Model implements HasMedia
             'round_price_up' => 'boolean',
             'price_cents' => 'integer',
             'stock_qty' => 'integer',
+            'reorder_level' => 'integer',
             'is_active' => 'boolean',
         ];
     }
@@ -104,6 +106,25 @@ class Product extends Model implements HasMedia
             ->where('is_active', true)
             ->where('stock_qty', '>', 0)
             ->where('price_cents', '>', 0);
+    }
+
+    /**
+     * Shop products at or below their own reorder level. Unpriced or
+     * unpublished stock isn't on sale, so it never needs reordering.
+     *
+     * @param  Builder<Product>  $query
+     */
+    public function scopeLowStock(Builder $query): Builder
+    {
+        return $query
+            ->where('is_active', true)
+            ->where('price_cents', '>', 0)
+            ->whereColumn('stock_qty', '<=', 'reorder_level');
+    }
+
+    public function isLowStock(): bool
+    {
+        return (int) $this->stock_qty <= (int) $this->reorder_level;
     }
 
     /**

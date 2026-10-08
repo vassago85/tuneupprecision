@@ -4,17 +4,14 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\KpiStatsWidget;
 use App\Filament\Widgets\LowStockProductsWidget;
-use App\Filament\Widgets\PaymentsAttentionWidget;
-use App\Filament\Widgets\QuotesOverviewWidget;
-use App\Filament\Widgets\ShopDeskWidget;
-use App\Filament\Widgets\TestimonialLinkWidget;
+use App\Filament\Widgets\NeedsActionWidget;
+use App\Filament\Widgets\RecentActivityWidget;
 use App\Filament\Widgets\UpcomingTrainingWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -70,9 +67,6 @@ class AdminPanelProvider extends PanelProvider
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
-            ->pages([
-                Dashboard::class,
-            ])
             // Sidebar link to the public rifle-builder preview. It lives on
             // the site (Livewire), not inside Filament, so this is a plain URL
             // link — the /rifle-builder route is gated so only Dirk sees it.
@@ -86,12 +80,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                TestimonialLinkWidget::class,
+                NeedsActionWidget::class,
                 KpiStatsWidget::class,
-                ShopDeskWidget::class,
-                QuotesOverviewWidget::class,
                 UpcomingTrainingWidget::class,
-                PaymentsAttentionWidget::class,
+                RecentActivityWidget::class,
                 LowStockProductsWidget::class,
             ])
             ->middleware([

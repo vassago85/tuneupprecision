@@ -13,7 +13,7 @@ use App\Enums\UserRole;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Filament\Resources\Products\Pages\ListProducts;
-use App\Filament\Widgets\ShopDeskWidget;
+use App\Filament\Widgets\NeedsActionWidget;
 use App\Mail\OrderDispatched;
 use App\Models\Order;
 use App\Models\Product;
@@ -148,7 +148,7 @@ class ShopAdminTest extends TestCase
             ->assertDontSee('Shop Cap');
     }
 
-    public function test_the_dashboard_shows_the_shop_desk(): void
+    public function test_the_dashboard_flags_paid_orders_to_send(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
         $this->paidOrder();
@@ -158,11 +158,9 @@ class ShopAdminTest extends TestCase
             ->assertOk();
 
         Livewire::actingAs($admin)
-            ->test(ShopDeskWidget::class)
-            ->assertSee('To pay')
-            ->assertSee('To send')
-            ->assertSee('Shop sales')
-            ->assertSee('1');
+            ->test(NeedsActionWidget::class)
+            ->assertSee('Order to send')
+            ->assertSee('?tab=to-send', false);
     }
 
     private function paidOrder(?Product $product = null): Order

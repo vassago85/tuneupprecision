@@ -74,7 +74,7 @@ class EventsCalendar extends Page
         $end = $this->cursor()->endOfMonth();
 
         $events = TrainingEvent::query()
-            ->with('courseTemplate')
+            ->with(['courseTemplate', 'trainingType'])
             ->whereBetween('starts_on', [$start->toDateString(), $end->toDateString()])
             ->orderBy('starts_on')
             ->get()
@@ -114,7 +114,7 @@ class EventsCalendar extends Page
     public function getAgendaProperty(): Collection
     {
         return TrainingEvent::query()
-            ->with('courseTemplate.trainingType')
+            ->with(['courseTemplate.trainingType', 'trainingType'])
             ->whereBetween('starts_on', [
                 $this->cursor()->startOfMonth()->toDateString(),
                 $this->cursor()->endOfMonth()->toDateString(),

@@ -181,6 +181,13 @@ class ProductForm
                     ->default(0)
                     ->required()
                     ->helperText('Out-of-stock products are hidden from the shop.'),
+                TextInput::make('reorder_level')
+                    ->label('Reorder at')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0)
+                    ->required()
+                    ->helperText('The dashboard flags this product when stock drops to this number. 0 means only when it runs out.'),
                 Toggle::make('is_active')
                     ->label('Published')
                     ->default(true)

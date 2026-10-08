@@ -45,10 +45,8 @@ class ListProducts extends ListRecords
                 ))
                 ->modifyQueryUsing(fn (Builder $query): Builder => $query->whereNull('selling_ex_vat_cents')->where('price_cents', 0)),
             'low' => Tab::make('Low stock')
-                ->badge(fn (): ?string => self::countBadge(
-                    Product::query()->where('is_active', true)->where('stock_qty', '<=', 5),
-                ))
-                ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('is_active', true)->where('stock_qty', '<=', 5)),
+                ->badge(fn (): ?string => self::countBadge(Product::query()->lowStock()))
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->lowStock()),
         ];
     }
 

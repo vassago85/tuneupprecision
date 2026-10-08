@@ -110,8 +110,8 @@
                                 @foreach ($cell['events'] as $event)
                                     <a href="{{ $this->eventUrl($event->id) }}"
                                        class="tu-cal-event {{ $statusClasses[$event->status->value] ?? $statusClasses['draft'] }}"
-                                       title="{{ $event->courseTemplate?->title }} — {{ $event->seatsLeft() }}/{{ $event->capacity }} seats left ({{ $event->status->getLabel() }})">
-                                        {{ $event->courseTemplate?->title ?? 'Event' }}
+                                       title="{{ $event->displayTitle() }} — {{ $event->seatsLeft() }}/{{ $event->capacity }} seats left ({{ $event->status->getLabel() }})">
+                                        {{ $event->displayTitle() }}
                                         <span class="cap">· {{ $event->seats_taken }}/{{ $event->capacity }}</span>
                                     </a>
                                 @endforeach
@@ -130,9 +130,9 @@
                         <div class="m">{{ $event->starts_on->format('M') }}</div>
                     </div>
                     <div class="tu-agenda-main">
-                        <div class="t">{{ $event->courseTemplate?->title ?? 'Event' }}</div>
+                        <div class="t">{{ $event->displayTitle() }}</div>
                         <div class="s">
-                            {{ $event->courseTemplate?->trainingType?->name }}
+                            {{ $event->disciplineName() }}
                             @if ($event->venue) · {{ $event->venue }} @endif
                         </div>
                     </div>
