@@ -30,10 +30,12 @@ class AppServiceProvider extends ServiceProvider
         // Livewire's default temporary-upload rule is 12 MB. Range clips are
         // larger than that, so the file never attached and the public play
         // button was left with an empty URL. 524288 KB = 512 MB, matching
-        // nginx, PHP, and the video form.
+        // nginx, PHP, and the video form. Media Library has its own 10 MB cap
+        // that rejects the file on save, so it must match too (bytes).
         config([
             'livewire.temporary_file_upload.rules' => ['required', 'file', 'max:524288'],
             'livewire.temporary_file_upload.max_upload_time' => 15,
+            'media-library.max_file_size' => 512 * 1024 * 1024,
         ]);
 
         // Let the admin-configured mail settings (settings table) override the
