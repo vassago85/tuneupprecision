@@ -272,6 +272,43 @@
 
       // video facade: replace the thumbnail with the real player only on click,
       // so 20 embedded iframes/<video> tags don't slam the page on load.
+      // Only one player runs at a time; the playing grid card widens to the
+      // full row and drops back when another video starts.
+      var players=[];
+      var reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function pauseOthers(active){
+        players.forEach(function(p){
+          if(p===active) return;
+          if(p.tagName==='VIDEO'){
+            if(!p.paused) p.pause();
+          }else if(p.contentWindow){
+            p.contentWindow.postMessage(JSON.stringify({event:'command',func:'pauseVideo',args:[]}),'*');
+          }
+        });
+      }
+      function setActive(player){
+        pauseOthers(player);
+        document.querySelectorAll('.video-card.is-playing').forEach(function(card){
+          if(!card.contains(player)) card.classList.remove('is-playing');
+        });
+        var card=player.closest('.video-card');
+        if(card&&!card.classList.contains('is-playing')){
+          card.classList.add('is-playing');
+          card.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});
+        }
+      }
+      // YouTube reports play/pause back to the page once told we're listening.
+      window.addEventListener('message',function(e){
+        if(!/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(e.origin)) return;
+        var data;
+        try{ data=typeof e.data==='string'?JSON.parse(e.data):e.data; }catch(x){ return; }
+        if(!data) return;
+        var state=data.event==='onStateChange'?data.info:(data.info&&data.info.playerState);
+        if(state!==1) return;
+        players.forEach(function(p){
+          if(p.tagName==='IFRAME'&&p.contentWindow===e.source) setActive(p);
+        });
+      });
       document.querySelectorAll('.video-facade[data-embed]').forEach(function(btn){
         btn.addEventListener('click',function(e){
           var url=btn.getAttribute('data-embed');
@@ -282,7 +319,7 @@
           if(native){
             el=document.createElement('video');
             el.src=url; el.controls=true; el.autoplay=true; el.setAttribute('playsinline','');
-            el.style.width='100%'; el.style.height='100%'; el.style.display='block';
+            el.addEventListener('play',function(){ setActive(el); });
           }else{
             el=document.createElement('iframe');
             el.src=url;
@@ -290,9 +327,18 @@
             el.setAttribute('frameborder','0');
             el.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
             el.setAttribute('allowfullscreen','');
-            el.style.width='100%'; el.style.height='100%'; el.style.display='block'; el.style.border='0';
+            el.addEventListener('load',function(){
+              var id=players.indexOf(el);
+              el.contentWindow.postMessage(JSON.stringify({event:'listening',id:id,channel:'widget'}),'*');
+              el.contentWindow.postMessage(JSON.stringify({event:'command',func:'addEventListener',args:['onStateChange'],id:id,channel:'widget'}),'*');
+            });
           }
-          btn.replaceWith(el);
+          var stage=document.createElement('div');
+          stage.className='video-stage';
+          stage.appendChild(el);
+          btn.replaceWith(stage);
+          players.push(el);
+          setActive(el);
         });
       });
     })();

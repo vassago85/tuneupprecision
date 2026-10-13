@@ -130,7 +130,8 @@ class Video extends Model implements HasMedia
     /**
      * Playable URL for the facade: uploaded MP4 → nocookie YouTube embed URL
      * → null. The blade decides between `<video>` and `<iframe>` based on
-     * hasNativeVideo().
+     * hasNativeVideo(). enablejsapi lets the page pause a YouTube player when
+     * another video starts.
      */
     public function videoUrl(): ?string
     {
@@ -140,7 +141,7 @@ class Video extends Model implements HasMedia
 
         $youtubeId = $this->youtubeEmbedId();
         if ($youtubeId !== null) {
-            return "https://www.youtube-nocookie.com/embed/{$youtubeId}?autoplay=1&rel=0";
+            return "https://www.youtube-nocookie.com/embed/{$youtubeId}?autoplay=1&rel=0&enablejsapi=1";
         }
 
         return null;
