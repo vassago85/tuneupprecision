@@ -53,7 +53,7 @@
         <p>Grouped by discipline so you can pull up exactly what you need before the next range day.</p>
       </div>
 
-      <div class="proc-tabbar reveal" role="tablist">
+      <div class="proc-tabbar proc-tabbar--light reveal" role="tablist">
         @foreach ($trainingTypes as $type)
           <button type="button" role="tab"
                   :class="{ active: tab === '{{ $type->slug }}' }"
@@ -67,7 +67,7 @@
         @php $bucket = $videosByType[$type->slug] ?? collect(); @endphp
         <div x-show="tab === '{{ $type->slug }}'" x-cloak>
           @if ($type->blurb)
-            <p class="proc-meta">{{ $type->blurb }}</p>
+            <p class="proc-meta proc-meta--light">{{ $type->blurb }}</p>
           @endif
 
           @if ($bucket->isEmpty())

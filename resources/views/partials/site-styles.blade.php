@@ -372,6 +372,12 @@
   .proc-tabbar button:hover{color:#fff;border-color:rgba(255,255,255,.34)}
   .proc-tabbar button.active{color:#fff;background:var(--copper-deep);border-color:var(--copper-deep)}
   .proc-meta{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#F09A72;margin:0 0 18px}
+  /* light variant: same tab bar on a light section (The Range library) */
+  .proc-tabbar--light button{color:var(--muted);border-color:rgba(34,48,60,.18)}
+  .proc-tabbar--light button:hover{color:var(--ink);border-color:rgba(34,48,60,.4)}
+  .proc-tabbar--light button.active{color:#fff;background:var(--copper-deep);border-color:var(--copper-deep)}
+  .proc-tabbar--light button:focus-visible{outline:2px solid var(--copper-deep);outline-offset:2px;border-radius:10px}
+  .proc-meta--light{color:var(--copper-deeper)}
   [x-cloak]{display:none!important}
 
   /* ---------- shop ---------- */
