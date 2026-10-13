@@ -67,7 +67,7 @@ class Video extends Model implements HasMedia
     {
         $this->addMediaConversion('thumb')
             ->performOnCollections('poster')
-            ->fit(Fit::Cover, 400, 225)
+            ->fit(Fit::Crop, 400, 225)
             ->optimize()
             ->nonQueued();
 
