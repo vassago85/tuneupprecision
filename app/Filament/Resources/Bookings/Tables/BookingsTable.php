@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Bookings\Tables;
 
 use App\Enums\BookingStatus;
 use App\Filament\Support\MarkAsPaidAction;
+use App\Models\Booking;
 use App\Support\Money;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -13,12 +14,14 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookingsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with('trainingEvent'))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('reference')
@@ -37,7 +40,9 @@ class BookingsTable
                     ->formatStateUsing(fn (int $state): string => Money::format($state))
                     ->sortable(),
                 TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->formatStateUsing(fn (BookingStatus $state, Booking $record): string => $record->isCompleted() ? 'Completed' : $state->getLabel())
+                    ->color(fn (BookingStatus $state, Booking $record): string => $record->isCompleted() ? 'info' : $state->getColor()),
                 TextColumn::make('hold_expires_at')
                     ->label('Hold expires')
                     ->dateTime('d M Y H:i')

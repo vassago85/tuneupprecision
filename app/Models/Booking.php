@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\BookingStatus;
+use App\Enums\TrainingEventStatus;
 use App\Support\HasReference;
 use App\Support\Money;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -61,6 +63,57 @@ class Booking extends Model
     public function payment(): MorphOne
     {
         return $this->morphOne(Payment::class, 'payable');
+    }
+
+    /**
+     * A confirmed booking whose event is over: marked Completed, or its last
+     * day (ends_on, else starts_on) is before today. Not a stored status, so
+     * testimonial invites and attendee mail still see these as Confirmed.
+     */
+    public function isCompleted(): bool
+    {
+        $event = $this->trainingEvent;
+
+        if ($this->status !== BookingStatus::Confirmed || $event === null) {
+            return false;
+        }
+
+        if ($event->status === TrainingEventStatus::Completed) {
+            return true;
+        }
+
+        $lastDay = $event->ends_on ?? $event->starts_on;
+
+        return $lastDay !== null && $lastDay->lt(today());
+    }
+
+    /**
+     * @param  Builder<Booking>  $query
+     */
+    public function scopeCompleted(Builder $query): Builder
+    {
+        return $query->where('status', BookingStatus::Confirmed)
+            ->whereHas('trainingEvent', fn (Builder $event): Builder => $event->where(self::eventIsOver(...)));
+    }
+
+    /**
+     * Confirmed bookings whose event is still to come (or running today).
+     *
+     * @param  Builder<Booking>  $query
+     */
+    public function scopeUpcoming(Builder $query): Builder
+    {
+        return $query->where('status', BookingStatus::Confirmed)
+            ->whereDoesntHave('trainingEvent', fn (Builder $event): Builder => $event->where(self::eventIsOver(...)));
+    }
+
+    /**
+     * @param  Builder<TrainingEvent>  $event
+     */
+    private static function eventIsOver(Builder $event): Builder
+    {
+        return $event->where('status', TrainingEventStatus::Completed)
+            ->orWhereRaw('coalesce(ends_on, starts_on) < ?', [today()->toDateString()]);
     }
 
     /**
